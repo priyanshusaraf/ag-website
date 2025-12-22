@@ -2,17 +2,24 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, X } from 'lucide-react';
 import api from '@/lib/utils';
 
 const SaleBanner = () => {
+  const pathname = usePathname();
   const [banners, setBanners] = useState([]);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [loading, setLoading] = useState(true);
 
+  // Keep homepage strictly lookbook/editorial (no promo bar)
+  // NOTE: Do NOT early-return before hooks; route transitions can otherwise change hook count.
+  const hideOnHome = pathname === '/';
+
   useEffect(() => {
+    if (hideOnHome) return;
     const fetchBanners = async () => {
       setLoading(true);
       try {
@@ -28,47 +35,48 @@ const SaleBanner = () => {
     };
 
     fetchBanners();
-  }, []);
+  }, [hideOnHome]);
 
   // Auto-rotate banners if multiple
   useEffect(() => {
+    if (hideOnHome) return;
     if (banners.length > 1) {
       const interval = setInterval(() => {
         setCurrentBanner((prev) => (prev + 1) % banners.length);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [banners.length]);
+  }, [banners.length, hideOnHome]);
 
-  if (loading || !banners.length || !isVisible) {
+  if (hideOnHome || loading || !banners.length || !isVisible) {
     return null;
   }
 
   const banner = banners[currentBanner];
 
   return (
-    <div className="relative bg-gradient-to-r from-amber-900/20 to-amber-800/30 bg-amber-50 text-amber-900 border-b border-amber-200/50">
-      <div className="container mx-auto px-4 py-4">
+    <div className="relative bg-background/80 text-foreground border-b border-white/10">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 flex-1">
             {banner.image_url && (
               <img 
                 src={banner.image_url} 
                 alt={banner.title}
-                className="w-12 h-12 object-cover rounded"
+                className="w-12 h-12 object-cover rounded-sm border border-white/15"
               />
             )}
             <div className="flex-1">
-              <h3 className="font-normal text-lg">{banner.title}</h3>
+              <h3 className="font-light text-sm md:text-base tracking-wide">{banner.title}</h3>
               {banner.description && (
-                <p className="text-sm opacity-90 line-clamp-1">{banner.description}</p>
+                <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">{banner.description}</p>
               )}
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
             {banner.link_url && (
-              <Button asChild variant="outline" size="sm" className="border-amber-800 text-amber-900 hover:bg-amber-100 bg-amber-50/80">
+              <Button asChild variant="outline" size="sm" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
                 <Link href={banner.link_url} className="flex items-center">
                   Shop Now
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -83,7 +91,7 @@ const SaleBanner = () => {
                     key={index}
                     onClick={() => setCurrentBanner(index)}
                     className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentBanner ? 'bg-amber-900' : 'bg-amber-700'
+                      index === currentBanner ? 'bg-foreground' : 'bg-white/30'
                     }`}
                   />
                 ))}
@@ -92,7 +100,7 @@ const SaleBanner = () => {
             
             <button
               onClick={() => setIsVisible(false)}
-              className="p-1 hover:bg-amber-200/50 rounded transition-colors"
+              className="p-1 hover:bg-white/10 rounded-sm transition-colors"
               aria-label="Close banner"
             >
               <X className="h-4 w-4" />

@@ -81,127 +81,90 @@ const FeaturedProducts = () => {
     if (salePriceNum && salePriceNum < basePrice) {
       return (
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-bold text-green-600">₹{salePriceNum.toLocaleString()}</span>
-          <span className="text-lg text-muted-foreground line-through">₹{basePrice.toLocaleString()}</span>
+          <span className="text-lg font-medium text-foreground">₹{salePriceNum.toLocaleString()}</span>
+          <span className="text-sm text-muted-foreground line-through">₹{basePrice.toLocaleString()}</span>
         </div>
       );
     }
     
-    return <span className="text-2xl font-bold text-primary">₹{basePrice.toLocaleString()}</span>;
+    return <span className="text-lg font-medium text-foreground">₹{basePrice.toLocaleString()}</span>;
   };
 
   const ProductCard = ({ product }) => (
-    <Card className="group hover:shadow-luxury transition-all duration-300 border-border/50 bg-card h-full">
-      <CardHeader className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg">
-          {/* Product Image */}
-          <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center overflow-hidden">
+    <div className="group h-full">
+      <Link href={`/products/${product.id}`} className="block">
+        <div className="lookbook-frame p-3">
+          <div className="aspect-[4/5] w-full bg-white/5 flex items-end">
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-32 h-32 bg-primary/20 rounded-lg flex items-center justify-center">
-                <div className="w-20 h-20 bg-primary/30 rounded"></div>
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="lookbook-kicker">Image placeholder</div>
               </div>
             )}
           </div>
-          {/* Badges */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
-            {product.is_featured && (
-              <Badge className="bg-blue-500">Featured</Badge>
-            )}
-            {product.is_new && (
-              <Badge className="bg-green-500">New</Badge>
-            )}
-            {product.on_sale && (
-              <Badge className="bg-red-500">Sale</Badge>
-            )}
-            {product.badge && (
-              <Badge variant={product.badgeVariant || 'default'}>
-                {product.badge}
-              </Badge>
-            )}
+        </div>
+      </Link>
+
+      <div className="pt-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="lookbook-kicker">
+            {product.category || 'Collection'}
           </div>
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <Button asChild className="shadow-lg">
-              <Link href={`/products/${product.id}`}>
-                View Details
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+          <div className="text-xs text-white/40">
+            {product.is_new ? 'NEW' : product.on_sale ? 'SALE' : product.is_featured ? 'FEATURED' : ''}
+          </div>
+        </div>
+
+        <div className="text-lg font-light tracking-tight">{product.name}</div>
+        <div className="text-sm text-muted-foreground line-clamp-2">{product.description}</div>
+
+        <div className="pt-1">{formatPrice(product.price, product.sale_price)}</div>
+
+        <div className="pt-2 flex gap-2">
+          <Button asChild variant="outline" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
+            <Link href={`/products/${product.id}`} className="flex items-center">
+              View
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+          {product.stock > 0 ? (
+            <Button
+              variant="ghost"
+              className="hover:bg-white/10"
+              onClick={() => handleAddToCart(product)}
+            >
+              Add
             </Button>
-          </div>
+          ) : (
+            <Button variant="ghost" disabled>
+              Out
+            </Button>
+          )}
         </div>
-      </CardHeader>
-
-      <CardContent className="p-6">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">{product.category || ''}</span>
-            <div className="flex items-center space-x-1">
-              {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className={`h-4 w-4 ${i < Math.floor(product.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
-                />
-              ))}
-              <span className="text-sm text-muted-foreground ml-1">({product.reviews || 0})</span>
-            </div>
-          </div>
-          <CardTitle className="font-serif">{product.name}</CardTitle>
-          <CardDescription className="line-clamp-2">
-            {product.description}
-          </CardDescription>
-          <div className="flex items-center space-x-2">
-            {formatPrice(product.price, product.sale_price)}
-          </div>
-        </div>
-      </CardContent>
-
-      <CardFooter className="p-6 pt-0 flex flex-col gap-2">
-        <Button asChild className="w-full">
-          <Link href={`/products/${product.id}`}>
-            View Details
-          </Link>
-        </Button>
-        {product.stock > 0 ? (
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={() => handleAddToCart(product)}
-          >
-            Add to Cart
-          </Button>
-        ) : (
-          <Button 
-            variant="outline" 
-            className="w-full"
-            disabled
-          >
-            Out of Stock
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 
   if (loading) {
     return (
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-              Featured <span className="premium-text">Collections</span>
-            </h2>
+          <div className="mb-12">
+            <div className="lookbook-kicker mb-3">Featured</div>
+            <h2 className="lookbook-h1 text-[clamp(2.4rem,5vw,4rem)]">Collections</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="animate-pulse">
-                <div className="aspect-square bg-gray-200 rounded-t-lg"></div>
-                <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                </CardContent>
-              </Card>
+              <div key={i} className="animate-pulse">
+                <div className="lookbook-frame p-3">
+                  <div className="aspect-[4/5] bg-white/5"></div>
+                </div>
+                <div className="pt-4">
+                  <div className="h-4 bg-white/10 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-white/10 rounded w-1/2"></div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -210,16 +173,15 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-20 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-            Featured <span className="premium-text">Collections</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {featuredProducts.length > 0 
-              ? "Discover our carefully curated featured products, handpicked for excellence."
-              : "Discover our most popular products, each representing quality and craftsmanship."
+        <div className="mb-10">
+          <div className="lookbook-kicker mb-3">Featured</div>
+          <h2 className="lookbook-h1 text-[clamp(2.4rem,5vw,4rem)]">Collections</h2>
+          <p className="mt-4 text-muted-foreground max-w-2xl">
+            {featuredProducts.length > 0
+              ? "A curated selection, chosen for design and detail."
+              : "A selection of our most popular pieces."
             }
           </p>
         </div>
@@ -246,15 +208,15 @@ const FeaturedProducts = () => {
               <>
                 <button 
                   onClick={prevSlide}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200 z-10"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all duration-200 z-10 border border-white/15"
                 >
-                  <ChevronLeft className="h-6 w-6 text-gray-800" />
+                  <ChevronLeft className="h-6 w-6 text-foreground" />
                 </button>
                 <button 
                   onClick={nextSlide}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200 z-10"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all duration-200 z-10 border border-white/15"
                 >
-                  <ChevronRight className="h-6 w-6 text-gray-800" />
+                  <ChevronRight className="h-6 w-6 text-foreground" />
                 </button>
                 
                 {/* Carousel Dots */}
@@ -264,7 +226,7 @@ const FeaturedProducts = () => {
                       key={index}
                       onClick={() => setCurrentIndex(index)}
                       className={`w-3 h-3 rounded-full transition-colors ${
-                        index === currentIndex ? 'bg-primary' : 'bg-gray-300'
+                        index === currentIndex ? 'bg-foreground' : 'bg-white/25'
                       }`}
                     />
                   ))}
@@ -286,10 +248,10 @@ const FeaturedProducts = () => {
           </div>
         )}
 
-        <div className="text-center">
-          <Button asChild size="lg" variant="outline">
+        <div className="pt-10">
+          <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
             <Link href="/products" className="flex items-center">
-              View All Products
+              View all products
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

@@ -1,4 +1,4 @@
-import { Inter, Playfair_Display, Cinzel } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -15,15 +15,9 @@ const inter = Inter({
   display: 'swap',
 });
 
-const playfair = Playfair_Display({ 
+const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const cinzel = Cinzel({ 
-  subsets: ['latin'],
-  variable: '--font-cinzel',
+  variable: '--font-montserrat',
   display: 'swap',
 });
 
@@ -127,7 +121,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} ${cinzel.variable}`}>
+    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <CartProvider>

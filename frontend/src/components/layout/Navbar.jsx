@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -13,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,75 +42,101 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+    <nav className="navbar-sticky">
       <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="flex items-center">
-                <span className="font-display text-2xl font-bold premium-text">
-                  André García
-                </span>
-              </div>
-            </Link>
+          <div className="flex h-[72px] items-center justify-between">
+            {/* Homepage: minimal lookbook chrome (menu + brand) */}
+            {pathname === '/' ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button
+                        aria-label="Open menu"
+                        variant="outline"
+                        size="icon"
+                        className="border-white/20 bg-transparent text-foreground hover:bg-white/10"
+                      >
+                        <Menu className="h-5 w-5" />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-[320px] sm:w-[400px] overflow-y-auto bg-background border-white/10">
+                      <div className="flex flex-col space-y-6 mt-6">
+                        <div className="text-center border-b pb-4">
+                          <span className="text-base font-light tracking-wide text-white/60">Andre Garcia</span>
+                        </div>
+                        <div className="flex flex-col space-y-3">
+                          <Link href="/" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                            Home
+                          </Link>
+                          <Link href="/products" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                            Products
+                          </Link>
+                          <Link href="/about" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                            About
+                          </Link>
+                          <Link href="/contact" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                            Contact
+                          </Link>
+                        </div>
+                        <Separator />
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Search</h4>
+                          <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
+                            <div className="relative flex-1">
+                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
+                              <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-10 pr-4 py-2 w-full border border-white/15 bg-white/5 text-sm text-foreground placeholder:text-white/40 rounded-sm focus:outline-none focus:ring-2 focus:ring-white/10"
+                                autoComplete="off"
+                              />
+                            </div>
+                            <Button type="submit" size="sm" variant="outline" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
+                              Search
+                            </Button>
+                          </form>
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+                <Link href="/" className="flex items-center">
+                  <span className="text-sm md:text-base font-light tracking-wide text-white/60">
+                    Andre Garcia
+                  </span>
+                </Link>
+
+                <div className="flex items-center space-x-2">
+                  <CartSheet />
+                </div>
+              </>
+            ) : (
+              <>
+            {/* Desktop: left navigation */}
+            <div className="hidden md:flex items-center gap-8">
               <NavigationMenu>
-                <NavigationMenuList>
+                <NavigationMenuList className="gap-2">
                   <NavigationMenuItem>
-                    <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    <Link href="/" className="lookbook-kicker px-0 py-2 hover:text-foreground transition-colors">
                       Home
                     </Link>
                   </NavigationMenuItem>
-                  
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger 
-                      className="cursor-pointer" 
-                      onClick={() => router.push('/products')}
-                    >
+                    <Link href="/products" className="lookbook-kicker px-0 py-2 hover:text-foreground transition-colors">
                       Products
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <div className="w-[400px] p-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <Link href="/products" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                            <div className="text-sm font-medium leading-none">All Products</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Browse our complete collection
-                            </p>
-                          </Link>
-                          <Link href="/products?category=humidors" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                            <div className="text-sm font-medium leading-none">Humidors</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Premium cigar storage solutions
-                            </p>
-                          </Link>
-                          <Link href="/products?category=travel-cases" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                            <div className="text-sm font-medium leading-none">Travel Cases</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Portable luxury containers
-                            </p>
-                          </Link>
-                          <Link href="/products?category=accessories" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                            <div className="text-sm font-medium leading-none">Accessories</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Enhance your experience
-                            </p>
-                          </Link>
-                        </div>
-                      </div>
-                    </NavigationMenuContent>
+                    </Link>
                   </NavigationMenuItem>
-
                   <NavigationMenuItem>
-                    <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    <Link href="/about" className="lookbook-kicker px-0 py-2 hover:text-foreground transition-colors">
                       About
                     </Link>
                   </NavigationMenuItem>
-
                   <NavigationMenuItem>
-                    <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    <Link href="/contact" className="lookbook-kicker px-0 py-2 hover:text-foreground transition-colors">
                       Contact
                     </Link>
                   </NavigationMenuItem>
@@ -116,21 +144,28 @@ const Navbar = () => {
               </NavigationMenu>
             </div>
 
+            {/* Brand (Lookbook-style top-right label) */}
+            <Link href="/" className="flex items-center">
+              <span className="text-sm md:text-base font-light tracking-wide text-white/60">
+                Andre Garcia
+              </span>
+            </Link>
+
             {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2">
               {/* Search */}
               <div className="relative">
                 {isSearchOpen ? (
                   <form onSubmit={handleSearchSubmit} className="flex items-center">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
                       <input
                         id="navbar-search"
                         type="text"
-                        placeholder="Search products..."
+                        placeholder="Search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 pr-4 py-2 w-64 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="pl-10 pr-4 py-2 w-56 border border-white/15 bg-white/5 text-sm text-foreground placeholder:text-white/40 rounded-sm focus:outline-none focus:ring-2 focus:ring-white/10"
                         autoComplete="off"
                       />
                     </div>
@@ -138,7 +173,7 @@ const Navbar = () => {
                       type="button" 
                       variant="ghost" 
                       size="icon" 
-                      className="ml-2"
+                      className="ml-2 hover:bg-white/10"
                       onClick={() => {
                         setIsSearchOpen(false);
                         setSearchQuery('');
@@ -148,7 +183,7 @@ const Navbar = () => {
                     </Button>
                   </form>
                 ) : (
-                  <Button variant="ghost" size="icon" onClick={handleSearchToggle}>
+                  <Button variant="ghost" size="icon" className="hover:bg-white/10" onClick={handleSearchToggle}>
                     <Search className="h-5 w-5" />
                   </Button>
                 )}
@@ -156,29 +191,29 @@ const Navbar = () => {
               
               {/* User Authentication */}
               {isAuthenticated ? (
-                <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm" asChild>
+                <div className="flex items-center space-x-1">
+                  <Button variant="ghost" size="sm" className="hover:bg-white/10" asChild>
                     <Link href="/orders">
                       <Package className="h-4 w-4 mr-2" />
                       Orders
                     </Link>
                   </Button>
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button variant="ghost" size="sm" className="hover:bg-white/10" asChild>
                     <Link href="/account">
                       <User className="h-4 w-4 mr-2" />
                       {user?.name || user?.email}
                     </Link>
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={handleLogout}>
+                  <Button variant="ghost" size="icon" className="hover:bg-white/10" onClick={handleLogout}>
                     <LogOut className="h-5 w-5" />
                   </Button>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button variant="ghost" size="sm" className="hover:bg-white/10" asChild>
                     <Link href="/auth/signin">Sign In</Link>
                   </Button>
-                  <Button size="sm" asChild>
+                  <Button variant="outline" size="sm" className="border-white/20 bg-transparent text-foreground hover:bg-white/10" asChild>
                     <Link href="/auth/signup">Sign Up</Link>
                   </Button>
                 </div>
@@ -194,14 +229,14 @@ const Navbar = () => {
                 {isSearchOpen ? (
                   <form onSubmit={handleSearchSubmit} className="flex items-center">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
                       <input
                         id="mobile-navbar-search"
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 pr-4 py-2 mobile-search-input border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="pl-10 pr-4 py-2 mobile-search-input border border-white/15 bg-white/5 text-sm text-foreground placeholder:text-white/40 rounded-sm focus:outline-none focus:ring-2 focus:ring-white/10"
                         autoComplete="off"
                       />
                     </div>
@@ -209,7 +244,7 @@ const Navbar = () => {
                       type="button" 
                       variant="ghost" 
                       size="icon" 
-                      className="ml-2"
+                      className="ml-2 hover:bg-white/10"
                       onClick={() => {
                         setIsSearchOpen(false);
                         setSearchQuery('');
@@ -219,7 +254,7 @@ const Navbar = () => {
                     </Button>
                   </form>
                 ) : (
-                  <Button variant="ghost" size="icon" onClick={handleSearchToggle}>
+                  <Button variant="ghost" size="icon" className="hover:bg-white/10" onClick={handleSearchToggle}>
                     <Search className="h-5 w-5" />
                   </Button>
                 )}
@@ -231,31 +266,29 @@ const Navbar = () => {
               {/* Mobile Menu */}
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[320px] sm:w-[400px] overflow-y-auto">
+                <SheetContent side="right" className="w-[320px] sm:w-[400px] overflow-y-auto bg-background border-white/10">
                   <div className="flex flex-col space-y-6 mt-6">
                     {/* Brand Logo in Mobile Menu */}
                     <div className="text-center border-b pb-4">
-                      <span className="font-display text-xl font-bold premium-text">
-                        André García
-                      </span>
+                      <span className="text-base font-light tracking-wide text-white/60">Andre Garcia</span>
                     </div>
                     
                     {/* Navigation Links */}
                     <div className="flex flex-col space-y-4">
-                      <Link href="/" className="text-lg font-medium py-2 px-3 rounded-md hover:bg-muted transition-colors">
+                      <Link href="/" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Home
                       </Link>
-                      <Link href="/products" className="text-lg font-medium py-2 px-3 rounded-md hover:bg-muted transition-colors">
+                      <Link href="/products" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Products
                       </Link>
-                      <Link href="/about" className="text-lg font-medium py-2 px-3 rounded-md hover:bg-muted transition-colors">
+                      <Link href="/about" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         About
                       </Link>
-                      <Link href="/contact" className="text-lg font-medium py-2 px-3 rounded-md hover:bg-muted transition-colors">
+                      <Link href="/contact" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Contact
                       </Link>
                     </div>
@@ -267,17 +300,17 @@ const Navbar = () => {
                       <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Search</h4>
                       <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
                         <div className="relative flex-1">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
                           <input
                             type="text"
                             placeholder="Search products..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 pr-4 py-2 w-full border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            className="pl-10 pr-4 py-2 w-full border border-white/15 bg-white/5 text-sm text-foreground placeholder:text-white/40 rounded-sm focus:outline-none focus:ring-2 focus:ring-white/10"
                             autoComplete="off"
                           />
                         </div>
-                        <Button type="submit" size="sm">
+                        <Button type="submit" size="sm" variant="outline" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
                           Search
                         </Button>
                       </form>
@@ -290,13 +323,13 @@ const Navbar = () => {
                       <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Account</h4>
                       {isAuthenticated ? (
                         <div className="flex flex-col space-y-2">
-                          <Button variant="ghost" asChild className="justify-start py-2 px-3">
+                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10">
                             <Link href="/orders">
                               <Package className="h-4 w-4 mr-3" />
                               My Orders
                             </Link>
                           </Button>
-                          <Button variant="ghost" asChild className="justify-start py-2 px-3">
+                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10">
                             <Link href="/account">
                               <User className="h-4 w-4 mr-3" />
                               {user?.name || user?.email}
@@ -309,10 +342,10 @@ const Navbar = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col space-y-2">
-                          <Button variant="ghost" asChild className="justify-start py-2 px-3">
+                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10">
                             <Link href="/auth/signin">Sign In</Link>
                           </Button>
-                          <Button asChild className="justify-start py-2 px-3">
+                          <Button variant="outline" asChild className="justify-start py-2 px-3 border-white/20 bg-transparent text-foreground hover:bg-white/10">
                             <Link href="/auth/signup">Sign Up</Link>
                           </Button>
                         </div>
@@ -322,6 +355,8 @@ const Navbar = () => {
                 </SheetContent>
               </Sheet>
             </div>
+              </>
+            )}
           </div>
         </div>
       </nav>

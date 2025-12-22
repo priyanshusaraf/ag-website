@@ -182,13 +182,17 @@ const ProductsContent = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-12 lg:py-16 bg-gradient-to-br from-primary/10 to-secondary/10 leather-texture">
+      <section className="relative py-14 lg:py-18 leather-texture border-b border-white/10">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center space-y-4 lg:space-y-6">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif font-bold">
-              Premium <span className="premium-text">Collection</span>
+          <div className="max-w-5xl mx-auto space-y-4 lg:space-y-6">
+            <div className="flex items-start justify-between">
+              <div className="text-white/35 font-light tracking-wide">02</div>
+              <div className="text-white/35 font-light tracking-wide">ANDRE GARCIA</div>
+            </div>
+            <h1 className="lookbook-h1 text-[clamp(2.6rem,5.6vw,5.2rem)]">
+              Premium collection
             </h1>
-            <p className="text-base lg:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+            <p className="text-base lg:text-lg text-muted-foreground leading-relaxed max-w-3xl">
               Discover our complete range of handcrafted cigar containers, humidors, 
               and accessories. Each piece represents decades of refinement and 
               uncompromising attention to detail.
