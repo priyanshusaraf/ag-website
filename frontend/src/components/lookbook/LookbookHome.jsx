@@ -16,17 +16,8 @@ function Spread1({ data }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
-        <div className="absolute inset-0 flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            <img src={data?.left?.img1 || '/imagecompressor/website-product-img26-min.jpg'} alt="" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <img src={data?.left?.img2 || '/imagecompressor/website-product-img35-min.jpg'} alt="" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <img src={data?.left?.img3 || '/imagecompressor/website-product-img34-min.jpg'} alt="" className="w-full h-full object-cover" />
-          </div>
-        </div>
+        {/* Single logo image instead of 3 stacked */}
+        <img src={data?.left?.img || '/imagecompressor/website-product-img39-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
       </PageFrame>
       <PageFrame>
         <div className="absolute top-[12%] left-6 right-6 z-10">
@@ -171,6 +162,53 @@ function Spread6({ data }) {
   );
 }
 
+function Footer() {
+  return (
+    <footer className="bg-[#0a0a0b] border-t border-white/10">
+      <div className="container mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <h3 className="text-2xl font-light tracking-tight text-white mb-4">Andre Garcia</h3>
+            <p className="text-sm text-white/60 max-w-md">
+              Handcrafted luxury cigar cases since 2003. The Rolls-Royce of cigar storage, made in Kolkata, India.
+            </p>
+          </div>
+          
+          {/* Links */}
+          <div>
+            <h4 className="text-[10px] tracking-[0.2em] text-white/50 uppercase mb-4">Navigate</h4>
+            <ul className="space-y-2">
+              <li><Link href="/" className="text-sm text-white/70 hover:text-white transition-colors">Home</Link></li>
+              <li><Link href="/products" className="text-sm text-white/70 hover:text-white transition-colors">Products</Link></li>
+              <li><Link href="/about" className="text-sm text-white/70 hover:text-white transition-colors">About</Link></li>
+              <li><Link href="/contact" className="text-sm text-white/70 hover:text-white transition-colors">Contact</Link></li>
+            </ul>
+          </div>
+          
+          {/* Contact */}
+          <div>
+            <h4 className="text-[10px] tracking-[0.2em] text-white/50 uppercase mb-4">Contact</h4>
+            <ul className="space-y-2">
+              <li className="text-sm text-white/70">info@andregarcia.com</li>
+              <li className="text-sm text-white/70">Kolkata, India</li>
+            </ul>
+          </div>
+        </div>
+        
+        {/* Bottom */}
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-white/40">© {new Date().getFullYear()} Andre Garcia. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="text-xs text-white/40 hover:text-white/70 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="text-xs text-white/40 hover:text-white/70 transition-colors">Terms of Service</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 export default function LookbookHome({ content }) {
   const spreads = content?.spreads || [];
   return (
@@ -191,26 +229,7 @@ export default function LookbookHome({ content }) {
           <Spread6 data={{}} />
         </>
       )}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="bg-white/5 p-6 md:p-10">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-              <div>
-                <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase mb-2">Explore</p>
-                <p className="text-2xl md:text-3xl font-light tracking-tight text-white/90">For further details, visit www.andregarcia.com</p>
-              </div>
-              <div className="flex gap-3">
-                <Button asChild className="bg-white text-black hover:bg-white/90">
-                  <Link href={content?.cta?.primaryHref || '/products'}>{content?.cta?.primaryLabel || 'Shop'}</Link>
-                </Button>
-                <Button asChild variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
-                  <Link href={content?.cta?.secondaryHref || '/about'}>{content?.cta?.secondaryLabel || 'About'}</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </div>
   );
 }

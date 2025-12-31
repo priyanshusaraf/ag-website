@@ -77,7 +77,7 @@ const Navbar = () => {
             {/* Brand */}
             <Link href="/" className="flex items-center">
               <span className="text-sm md:text-base font-light tracking-wide text-white/60">
-                Andre
+                Andre Garcia
               </span>
             </Link>
 
