@@ -18,13 +18,13 @@ function Spread1({ data }) {
       <PageFrame>
         <div className="absolute inset-0 flex flex-col">
           <div className="flex-1 overflow-hidden">
-            <img src={data?.left?.img1 || '/website-imgs/website-bg-img-1.jpg'} alt="" className="w-full h-full object-cover" />
+            <img src={data?.left?.img1 || '/imagecompressor/website-product-img26-min.jpg'} alt="" className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 overflow-hidden">
-            <img src={data?.left?.img2 || '/website-imgs/website-bg-logo-img.jpg'} alt="" className="w-full h-full object-cover" />
+            <img src={data?.left?.img2 || '/imagecompressor/website-product-img35-min.jpg'} alt="" className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 overflow-hidden">
-            <img src={data?.left?.img3 || '/website-imgs/website-bg-img-2.jpg'} alt="" className="w-full h-full object-cover" />
+            <img src={data?.left?.img3 || '/imagecompressor/website-product-img34-min.jpg'} alt="" className="w-full h-full object-cover" />
           </div>
         </div>
       </PageFrame>
@@ -37,7 +37,7 @@ function Spread1({ data }) {
         <div className="absolute left-6 bottom-[8%] w-[55%] z-20">
           <div className="relative">
             <div className="absolute -left-2 top-0 bottom-0 w-[3px] bg-white/20" />
-            <img src={data?.right?.insetImg || '/website-imgs/products-intro-img.jpg'} alt="" className="w-full aspect-[4/3] object-cover" />
+            <img src={data?.right?.insetImg || '/imagecompressor/website-product-img40-min.jpg'} alt="" className="w-full aspect-[4/3] object-cover" />
           </div>
         </div>
       </PageFrame>
@@ -50,7 +50,7 @@ function Spread2({ data }) {
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
         <div className="absolute left-0 top-[5%] bottom-[35%] w-[18%] z-10">
-          <img src={data?.left?.cigarImg || '/website-imgs/website-product-img31.jpg'} alt="" className="h-full w-full object-contain object-left" />
+          <img src={data?.left?.cigarImg || '/imagecompressor/website-product-img31-min.jpg'} alt="" className="h-full w-full object-contain object-left" />
         </div>
         <div className="absolute top-[8%] left-[22%] right-6 z-10">
           <p className="text-[13px] leading-relaxed text-white font-medium">{data?.left?.quote || '"Andre Garcia is a luxury cigar and cigar case making brand founded in Kolkata in the year 2003. It is currently operating from a workshop in Alipore, South Kolkata. The brand is registered and marketed by US-based Ash & Burn, co-promoted by my brother Anindya and myself."'}</p>
@@ -62,10 +62,10 @@ function Spread2({ data }) {
           <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase mt-1">{data?.left?.city || 'KOLKATA'}</p>
         </div>
         <div className="absolute right-6 top-[42%] w-[35%] z-10">
-          <img src={data?.left?.productImg || '/website-imgs/website-product-img44.jpg'} alt="" className="w-full aspect-[4/3] object-cover" />
+          <img src={data?.left?.productImg || '/imagecompressor/website-product-img44-min.jpg'} alt="" className="w-full aspect-[4/3] object-cover" />
         </div>
         <div className="absolute left-6 bottom-[5%] w-[50%] z-10">
-          <img src={data?.left?.foundersImg || '/website-imgs/website-product-img23.jpg'} alt="" className="w-full aspect-[4/3] object-cover grayscale" />
+          <img src={data?.left?.foundersImg || '/imagecompressor/website-product-img28-min.jpg'} alt="" className="w-full aspect-[4/3] object-cover grayscale" />
           <p className="text-[9px] tracking-[0.1em] text-white/40 mt-1 uppercase">ROY BROTHERS</p>
         </div>
       </PageFrame>
@@ -83,7 +83,7 @@ function Spread2({ data }) {
           <p className="text-[12px] leading-relaxed text-white font-medium">{data?.right?.body3 || "Roy returned with a renewed gusto and quit his salaried job and became a full-fledged entrepreneur. He always believed that if you know the functionality of a product, the design becomes more or less apparent. This turned out to be his raison de succès."}</p>
         </div>
         <div className="absolute right-0 top-[25%] bottom-[10%] w-[22%] z-10">
-          <img src={data?.right?.cigarImg || '/website-imgs/website-product-img24.jpg'} alt="" className="h-full w-full object-contain object-right" />
+          <img src={data?.right?.cigarImg || '/imagecompressor/website-product-img27-min.jpg'} alt="" className="h-full w-full object-contain object-right" />
         </div>
       </PageFrame>
     </div>
@@ -94,10 +94,10 @@ function Spread3({ data }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
-        <img src={data?.left?.img || '/website-imgs/website-product-img29.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={data?.left?.img || '/imagecompressor/website-product-img29-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
       </PageFrame>
       <PageFrame>
-        <img src={data?.right?.img || '/website-imgs/website-product-img33.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={data?.right?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute bottom-[8%] right-6 z-10 text-right">
           <h2 className="text-[clamp(48px,8vw,96px)] font-light leading-[0.95] tracking-tight text-white">{data?.right?.title || 'Cigar Cases'}</h2>
         </div>
@@ -118,11 +118,11 @@ function Spread4({ data }) {
           <p className="text-[11px] leading-relaxed text-white/60">{data?.left?.body2 || 'Striving for multiplicity, Andre Garcia crafted 1–, 2–, 4–, 5–, 6–, 8–, 10–, 16– and 20–finger cases in various designs, leather grains, dimensions, and colors, as well as widths and lengths.'}</p>
         </div>
         <div className="absolute right-[8%] top-[15%] bottom-[15%] w-[32%] z-0">
-          <img src={data?.left?.textureImg || '/website-imgs/website-bg-img-1.jpg'} alt="" className="h-full w-full object-cover" />
+          <img src={data?.left?.textureImg || '/imagecompressor/website-product-img26-min.jpg'} alt="" className="h-full w-full object-cover" />
         </div>
       </PageFrame>
       <PageFrame>
-        <img src={data?.right?.img || '/website-imgs/website-product-img44.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={data?.right?.img || '/imagecompressor/website-product-img44-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
       </PageFrame>
     </div>
   );
@@ -132,10 +132,10 @@ function Spread5({ data }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
-        <img src={data?.left?.img || '/website-imgs/website-product-img10.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={data?.left?.img || '/imagecompressor/website-product-img30-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
       </PageFrame>
       <PageFrame>
-        <img src={data?.right?.img || '/website-imgs/website-product-img36.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={data?.right?.img || '/imagecompressor/website-product-img36-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute bottom-[10%] right-6 z-10 text-right">
           <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[0.95] tracking-tight text-white whitespace-pre-line">{data?.right?.title || 'St.\nJames\nCollection'}</h2>
         </div>
@@ -155,14 +155,14 @@ function Spread6({ data }) {
           <p className="text-[10px] leading-relaxed text-white/60">{data?.left?.body || 'Perhaps the most innovative case on the market, here is a case that combined not only space for cigars, but also for accessories! The cigar section is a telescoping case with space for 6-16 cigars, depending on model, with a zip-around section on the top to keep your lighter, cutter and other accessories handy and in one place. You can choose from both smooth leather finishes, a weaved style and a crocodile-style finish, all in multiple colors.'}</p>
         </div>
         <div className="absolute left-6 bottom-[8%] w-[45%] z-10">
-          <img src={data?.left?.productImg || '/website-imgs/website-product-img10.jpg'} alt="" className="w-full aspect-square object-cover" />
+          <img src={data?.left?.productImg || '/imagecompressor/website-product-img30-min.jpg'} alt="" className="w-full aspect-square object-cover" />
         </div>
         <div className="absolute right-[5%] top-[8%] bottom-[8%] w-[38%] z-0">
-          <img src={data?.left?.textureImg || '/website-imgs/website-bg-logo-img.jpg'} alt="" className="h-full w-full object-cover" />
+          <img src={data?.left?.textureImg || '/imagecompressor/website-product-img35-min.jpg'} alt="" className="h-full w-full object-cover" />
         </div>
       </PageFrame>
       <PageFrame>
-        <img src={data?.right?.img || '/website-imgs/website-product-img36.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={data?.right?.img || '/imagecompressor/website-product-img36-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute top-[8%] left-6 z-10">
           <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[0.95] tracking-tight text-white whitespace-pre-line">{data?.right?.title || 'Manhattan\nCollection'}</h2>
         </div>
