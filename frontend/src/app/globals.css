@@ -6,7 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  /* Keep typography consistent site-wide: use the homepage font everywhere */
+  --font-sans: var(--font-montserrat);
   --font-serif: var(--font-montserrat);
   --font-display: var(--font-montserrat);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -231,7 +232,7 @@
   }
 
   .lookbook-kicker {
-    font-family: var(--font-inter);
+    font-family: var(--font-montserrat);
     text-transform: uppercase;
     letter-spacing: 0.24em;
     font-size: 11px;

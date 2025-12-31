@@ -20,6 +20,7 @@ import ProductsManagement from './components/ProductsManagement';
 import SaleBannersManagement from './components/SaleBannersManagement';
 import GalleryManagement from './components/GalleryManagement';
 import ReviewsManagement from './components/ReviewsManagement';
+import HomepageManagement from './components/HomepageManagement';
 
 export default function AdminPanel() {
   const { isLoading, isSuperAdmin, token } = useAuth();
@@ -55,9 +56,9 @@ export default function AdminPanel() {
         </div>
 
         {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Desktop Tabs */}
-          <TabsList className="hidden lg:grid w-full grid-cols-7">
+          <TabsList className="hidden lg:grid w-full grid-cols-8">
             <TabsTrigger value="stats">Dashboard</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
@@ -65,6 +66,7 @@ export default function AdminPanel() {
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="banners">Sale Banners</TabsTrigger>
             <TabsTrigger value="gallery">Carousel Images</TabsTrigger>
+            <TabsTrigger value="homepage">Homepage</TabsTrigger>
           </TabsList>
           
           {/* Mobile Tabs - Responsive Grid */}
@@ -96,6 +98,11 @@ export default function AdminPanel() {
                 <TabsTrigger value="gallery" className="text-xs">Carousel Images</TabsTrigger>
               </TabsList>
             </div>
+            <div className="grid grid-cols-1 gap-2">
+              <TabsList className="grid grid-cols-1">
+                <TabsTrigger value="homepage" className="text-xs">Homepage</TabsTrigger>
+              </TabsList>
+            </div>
           </div>
           
           <TabsContent value="stats" className="mt-6">
@@ -124,6 +131,10 @@ export default function AdminPanel() {
           
           <TabsContent value="gallery" className="mt-6">
             <GalleryManagement token={token} />
+          </TabsContent>
+
+          <TabsContent value="homepage" className="mt-6">
+            <HomepageManagement token={token} />
           </TabsContent>
         </Tabs>
       </div>

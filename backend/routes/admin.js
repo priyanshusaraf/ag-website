@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
-const { productUpload, bannerUpload, heroUpload } = require('../middleware/upload');
+const { productUpload, bannerUpload, heroUpload, homepageUpload } = require('../middleware/upload');
 const adminController = require('../controllers/adminController');
 
 // All routes below require admin authentication
@@ -58,5 +58,11 @@ router.delete('/gallery-images/:id', adminController.deleteAdminGalleryImage);
 router.post('/upload/product-image', productUpload, adminController.uploadProductImage);
 router.post('/upload/banner-image', bannerUpload, adminController.uploadBannerImage);
 router.post('/upload/hero-image', heroUpload, adminController.uploadHeroImage);
+router.post('/upload/homepage-image', homepageUpload, adminController.uploadHomepageImage);
+
+// HOMEPAGE CMS (Lookbook)
+router.get('/homepage', adminController.getHomepageContent);
+router.put('/homepage', adminController.updateHomepageContent);
+router.delete('/homepage', adminController.resetHomepageContent);
 
 module.exports = router; 

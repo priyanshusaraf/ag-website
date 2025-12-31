@@ -5,6 +5,8 @@ const SaleBanner = require('../models/saleBanner');
 const AdminSettings = require('../models/adminSettings');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+
+const HOMEPAGE_SETTINGS_KEY = 'homepage_lookbook_v1';
 // GALLERY IMAGES (Admin CRUD)
 async function getAdminGalleryImages(req, res) {
   try {
@@ -469,6 +471,63 @@ async function uploadHeroImage(req, res) {
   }
 }
 
+async function uploadHomepageImage(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file provided' });
+    }
+
+    const imageUrl = `${process.env.SERVER_URL || 'http://localhost:5000'}/uploads/homepage/${req.file.filename}`;
+    res.json({ imageUrl });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+}
+
+async function getHomepageContent(req, res) {
+  try {
+    const raw = await AdminSettings.get(HOMEPAGE_SETTINGS_KEY);
+    if (!raw) return res.json(null);
+    try {
+      return res.json(JSON.parse(raw));
+    } catch (e) {
+      // If data is corrupted, don't break the admin UI
+      return res.status(500).json({ message: 'Homepage content is invalid JSON. Please reset it.', error: e.message });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+}
+
+async function updateHomepageContent(req, res) {
+  try {
+    const { content } = req.body || {};
+    if (!content || typeof content !== 'object') {
+      return res.status(400).json({ message: 'content is required and must be an object' });
+    }
+
+    // Basic size guard to avoid storing huge blobs by mistake
+    const serialized = JSON.stringify(content);
+    if (serialized.length > 250_000) {
+      return res.status(413).json({ message: 'Homepage content is too large' });
+    }
+
+    await AdminSettings.set(HOMEPAGE_SETTINGS_KEY, serialized);
+    res.json({ message: 'Homepage content updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+}
+
+async function resetHomepageContent(req, res) {
+  try {
+    await AdminSettings.remove(HOMEPAGE_SETTINGS_KEY);
+    res.json({ message: 'Homepage content reset successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+}
+
 module.exports = {
   // Orders
   getAllOrders,
@@ -506,10 +565,16 @@ module.exports = {
   uploadProductImage,
   uploadBannerImage,
   uploadHeroImage,
+  uploadHomepageImage,
 
   // Gallery Images (Admin)
   getAdminGalleryImages,
   createAdminGalleryImage,
   updateAdminGalleryImage,
-  deleteAdminGalleryImage
+  deleteAdminGalleryImage,
+
+  // Homepage CMS
+  getHomepageContent,
+  updateHomepageContent,
+  resetHomepageContent
 }; 

@@ -1,11 +1,18 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 // Configure storage for different types of uploads
 const createStorage = (folder) => {
   return multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, `uploads/${folder}/`);
+      const dir = path.join('uploads', folder);
+      try {
+        fs.mkdirSync(dir, { recursive: true });
+      } catch (e) {
+        // no-op: let multer surface any real filesystem errors
+      }
+      cb(null, `${dir}/`);
     },
     filename: (req, file, cb) => {
       // Generate unique filename with timestamp
@@ -49,8 +56,17 @@ const heroUpload = multer({
   }
 });
 
+const homepageUpload = multer({
+  storage: createStorage('homepage'),
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
 module.exports = {
   productUpload: productUpload.single('image'),
   bannerUpload: bannerUpload.single('image'),
-  heroUpload: heroUpload.single('image')
+  heroUpload: heroUpload.single('image'),
+  homepageUpload: homepageUpload.single('image')
 }; 

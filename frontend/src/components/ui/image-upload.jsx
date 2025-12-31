@@ -12,7 +12,7 @@ export function ImageUpload({
   label = "Image", 
   onImageUploaded, 
   currentImage = null, 
-  uploadType = "product", // "product" or "banner"
+  uploadType = "product", // "product" | "banner" | "hero" | "homepage"
   className = "" 
 }) {
   const { token } = useAuth();
@@ -53,6 +53,8 @@ export function ImageUpload({
         endpoint = '/admin/upload/product-image';
       } else if (uploadType === 'hero') {
         endpoint = '/admin/upload/hero-image';
+      } else if (uploadType === 'homepage') {
+        endpoint = '/admin/upload/homepage-image';
       } else {
         endpoint = '/admin/upload/banner-image';
       }

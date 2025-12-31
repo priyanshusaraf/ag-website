@@ -45,77 +45,7 @@ const Navbar = () => {
     <nav className="navbar-sticky">
       <div className="container mx-auto px-4 lg:px-8">
           <div className="flex h-[72px] items-center justify-between">
-            {/* Homepage: minimal lookbook chrome (menu + brand) */}
-            {pathname === '/' ? (
-              <>
-                <div className="flex items-center gap-2">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button
-                        aria-label="Open menu"
-                        variant="outline"
-                        size="icon"
-                        className="border-white/20 bg-transparent text-foreground hover:bg-white/10"
-                      >
-                        <Menu className="h-5 w-5" />
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="w-[320px] sm:w-[400px] overflow-y-auto bg-background border-white/10">
-                      <div className="flex flex-col space-y-6 mt-6">
-                        <div className="text-center border-b pb-4">
-                          <span className="text-base font-light tracking-wide text-white/60">Andre Garcia</span>
-                        </div>
-                        <div className="flex flex-col space-y-3">
-                          <Link href="/" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
-                            Home
-                          </Link>
-                          <Link href="/products" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
-                            Products
-                          </Link>
-                          <Link href="/about" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
-                            About
-                          </Link>
-                          <Link href="/contact" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
-                            Contact
-                          </Link>
-                        </div>
-                        <Separator />
-                        <div className="space-y-3">
-                          <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Search</h4>
-                          <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
-                            <div className="relative flex-1">
-                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
-                              <input
-                                type="text"
-                                placeholder="Search products..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 pr-4 py-2 w-full border border-white/15 bg-white/5 text-sm text-foreground placeholder:text-white/40 rounded-sm focus:outline-none focus:ring-2 focus:ring-white/10"
-                                autoComplete="off"
-                              />
-                            </div>
-                            <Button type="submit" size="sm" variant="outline" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
-                              Search
-                            </Button>
-                          </form>
-                        </div>
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                </div>
-
-                <Link href="/" className="flex items-center">
-                  <span className="text-sm md:text-base font-light tracking-wide text-white/60">
-                    Andre Garcia
-                  </span>
-                </Link>
-
-                <div className="flex items-center space-x-2">
-                  <CartSheet />
-                </div>
-              </>
-            ) : (
-              <>
+            <>
             {/* Desktop: left navigation */}
             <div className="hidden md:flex items-center gap-8">
               <NavigationMenu>
@@ -144,10 +74,10 @@ const Navbar = () => {
               </NavigationMenu>
             </div>
 
-            {/* Brand (Lookbook-style top-right label) */}
+            {/* Brand */}
             <Link href="/" className="flex items-center">
               <span className="text-sm md:text-base font-light tracking-wide text-white/60">
-                Andre Garcia
+                Andre
               </span>
             </Link>
 
@@ -274,7 +204,7 @@ const Navbar = () => {
                   <div className="flex flex-col space-y-6 mt-6">
                     {/* Brand Logo in Mobile Menu */}
                     <div className="text-center border-b pb-4">
-                      <span className="text-base font-light tracking-wide text-white/60">Andre Garcia</span>
+                      <span className="text-base font-light tracking-wide text-white/60">Menu</span>
                     </div>
                     
                     {/* Navigation Links */}
@@ -355,8 +285,7 @@ const Navbar = () => {
                 </SheetContent>
               </Sheet>
             </div>
-              </>
-            )}
+            </>
           </div>
         </div>
       </nav>

@@ -10,6 +10,7 @@ const paymentRoutes = require('./routes/payment');
 const reviewRoutes = require('./routes/review');
 const galleryRoutes = require('./routes/gallery');
 const contactRoutes = require('./routes/contact');
+const homepageRoutes = require('./routes/homepage');
 
 // Load environment variables
 dotenv.config();
@@ -38,5 +39,6 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/gallery-images', galleryRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/homepage', homepageRoutes);
 
 module.exports = app; 
