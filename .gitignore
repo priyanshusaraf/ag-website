@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+production-deployment-config.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Vercel
+.vercel
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Prisma generated
+**/generated/prisma
+
+# Uploads (backend user-uploaded content)
+backend/uploads/
+
+# Misc
+*.pem
+*.tsbuildinfo
