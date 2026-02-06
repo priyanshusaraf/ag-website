@@ -77,10 +77,10 @@ const hardcodedCollections = {
     name: 'Carbon Fibre Collection',
     tagline: 'High-Tech Luxury',
     description: 'Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case.',
-    heroImage: '/imagecompressor/website-product-img31-min.jpg',
+    heroImage: '/imagecompressor/carbon-fiber-collection-main.png',
     products: [
-      { id: 'carbon-fibre-2', name: 'Carbon Fibre 2 Finger Case', basePrice: 17000, images: ['/imagecompressor/website-product-img31-min.jpg', '/imagecompressor/website-product-img38-min.jpg', '/imagecompressor/carbon-fibre-material.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
-      { id: 'carbon-fibre-3', name: 'Carbon Fibre 3 Finger Case', basePrice: 21250, images: ['/imagecompressor/website-product-img38-min.jpg', '/imagecompressor/website-product-img31-min.jpg', '/imagecompressor/carbon-fibre-material.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
+      { id: 'carbon-fibre-2', name: 'Carbon Fibre 2 Finger Case', basePrice: 17000, images: ['/imagecompressor/carbon-fiber-collection-main.png', '/imagecompressor/carbon-fiber-collection-second.png', '/imagecompressor/carbon-fibre-material.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
+      { id: 'carbon-fibre-3', name: 'Carbon Fibre 3 Finger Case', basePrice: 21250, images: ['/imagecompressor/carbon-fiber-collection-second.png', '/imagecompressor/carbon-fiber-collection-main.png', '/imagecompressor/carbon-fibre-material.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
     ],
     features: ['Genuine carbon fiber exterior', 'Crush-resistant aluminum shell', 'Cedar wood inner lining', 'Lightweight construction', 'Limited edition'],
     leatherOptions: [
@@ -193,12 +193,12 @@ const hardcodedCollections = {
     name: 'All Cigar Cases',
     tagline: 'Complete Collection',
     description: 'Explore our complete collection of handcrafted cigar cases.',
-    heroImage: '/imagecompressor/website-product-img30-min.jpg',
+    heroImage: '/imagecompressor/website-product-img33-min.jpg',
     products: [
       { id: 'classic-1', name: 'Classic 1 Finger Case', basePrice: 7225, images: ['/imagecompressor/cigar-cases-preview-below-founder-page.png', '/imagecompressor/cigar-cases-preview-below-founder-page-2.png'], availability: 'In Stock - Ships in 1-2 weeks' },
-      { id: 'classic-2', name: 'Classic 2 Finger Case', basePrice: 8075, images: ['/imagecompressor/website-product-img30-min.jpg', '/imagecompressor/cigar-cases-preview-below-founder-page.png'], availability: 'In Stock - Ships in 1-2 weeks' },
-      { id: 'classic-3', name: 'Classic 3 Finger Case', basePrice: 9350, images: ['/imagecompressor/cigar-cases-preview-below-founder-page-2.png', '/imagecompressor/website-product-img30-min.jpg'], availability: 'In Stock - Ships in 1-2 weeks' },
-      { id: 'classic-5', name: 'Classic 5 Finger Case', basePrice: 11050, images: ['/imagecompressor/website-product-img30-min.jpg', '/imagecompressor/cigar-cases-preview-below-founder-page.png'], availability: 'Usually ships in 2-3 weeks' },
+      { id: 'classic-2', name: 'Classic 2 Finger Case', basePrice: 8075, images: ['/imagecompressor/website-product-img33-min.jpg', '/imagecompressor/cigar-cases-preview-below-founder-page.png'], availability: 'In Stock - Ships in 1-2 weeks' },
+      { id: 'classic-3', name: 'Classic 3 Finger Case', basePrice: 9350, images: ['/imagecompressor/cigar-cases-preview-below-founder-page-2.png', '/imagecompressor/website-product-img33-min.jpg'], availability: 'In Stock - Ships in 1-2 weeks' },
+      { id: 'classic-5', name: 'Classic 5 Finger Case', basePrice: 11050, images: ['/imagecompressor/website-product-img33-min.jpg', '/imagecompressor/cigar-cases-preview-below-founder-page.png'], availability: 'Usually ships in 2-3 weeks' },
     ],
     features: ['Wide variety of sizes', 'Multiple leather options', 'Cedar wood lining', 'Custom personalization', 'Premium craftsmanship'],
     leatherOptions: [

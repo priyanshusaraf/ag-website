@@ -115,7 +115,7 @@ function Spread2({ data }) {
       <PageFrame>
         <div className="absolute inset-0">
           <img
-            src={data?.right?.image || '/imagecompressor/website-product-img27-min.jpg'}
+            src={data?.right?.image || '/imagecompressor/buffalo-horn-main.png'}
             alt=""
             className="h-full w-full object-cover"
           />
@@ -130,7 +130,7 @@ function Spread3({ data }) {
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
         <Link href="/collections/all-cases" className="absolute inset-0 group cursor-pointer">
-          <img src={data?.left?.img || '/imagecompressor/website-product-img30-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <img src={data?.left?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           <div className="absolute bottom-[8%] left-[6%] z-10">
             <h2 className="text-[clamp(48px,8vw,96px)] font-light leading-[0.95] tracking-tight text-white group-hover:text-primary transition-colors">{data?.left?.title || 'Cigar Cases'}</h2>
@@ -256,7 +256,7 @@ function Spread6({ data }) {
           </div>
           {/* Main product image - closer to title */}
           <div className="absolute top-[32%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <img src={data?.left?.productImg || '/imagecompressor/website-product-img31-min.jpg'} alt="" className="w-full h-full object-cover" />
+            <img src={data?.left?.productImg || '/imagecompressor/carbon-fiber-collection-main.png'} alt="" className="w-full h-full object-cover" />
           </div>
         </Link>
       </PageFrame>
@@ -270,7 +270,7 @@ function Spread6({ data }) {
         </div>
         {/* Second product image */}
         <div className="absolute bottom-[6%] left-[6%] right-[32%] z-10">
-          <img src={data?.right?.productImg || '/imagecompressor/website-product-img38-min.jpg'} alt="" className="w-full aspect-[16/9] object-cover" />
+          <img src={data?.right?.productImg || '/imagecompressor/carbon-fiber-collection-second.png'} alt="" className="w-full aspect-[16/9] object-cover" />
         </div>
         {/* Bold text - bottom right */}
         <div className="absolute bottom-[20%] right-[8%] w-[20%] z-10 text-right">

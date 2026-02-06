@@ -38,12 +38,12 @@ export const defaultLookbookContent = {
           "Roy returned with a renewed gusto and quit his salaried job and became a full-fledged entrepreneur. He always believed that if you know the functionality of a product, the design becomes more or less apparent. This turned out to be his raison de succès.",
       },
       right: {
-        image: '/imagecompressor/website-product-img27-min.jpg',
+        image: '/imagecompressor/buffalo-horn-main.png',
       },
     },
     {
       left: {
-        img: '/imagecompressor/website-product-img30-min.jpg',
+        img: '/imagecompressor/website-product-img33-min.jpg',
         title: 'Cigar Cases',
       },
       right: {
@@ -80,11 +80,11 @@ export const defaultLookbookContent = {
     {
       left: {
         title: 'Carbon\nFibre\nCollection',
-        productImg: '/imagecompressor/website-product-img31-min.jpg',
+        productImg: '/imagecompressor/carbon-fiber-collection-main.png',
       },
       right: {
         body: "Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case. Each piece is hand made with a crush-resistant aluminum shell, genuine cedar wood inner lining, and an exterior of leather and genuine carbon fiber. This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size. Several thousand carbon fibers are twisted together to form a yarn that's woven into a fabric, combined with epoxy, and molded to form composite reinforced sheets that are tough but very lightweight. The cases are available in two- and three-finger capacity models.",
-        productImg: '/imagecompressor/website-product-img38-min.jpg',
+        productImg: '/imagecompressor/carbon-fiber-collection-second.png',
         boldText: 'This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size.',
         textureImg: '/imagecompressor/carbon-fibre-material.png',
       },
