@@ -54,7 +54,7 @@ const Hero = () => {
             <div className="flex items-center justify-center space-x-3">
               <Clock className="h-6 w-6 text-amber-300" />
               <div>
-                <h3 className="font-semibold text-white">Since 1985</h3>
+                <h3 className="font-semibold text-white">Since 2003</h3>
                 <p className="text-sm text-white/80">Trusted craftsmanship</p>
               </div>
             </div>

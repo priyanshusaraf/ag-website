@@ -6,8 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 
 export const metadata = {
-  title: 'Collections',
-  description: 'Explore our complete range of handcrafted cigar cases and accessories. From the innovative St. James Collection to the luxurious Buffalo Horn cases.',
+  title: 'Collections – Luxury Cigar Case Collections',
+  description:
+    'Explore Andre Garcia\'s complete range of handcrafted luxury cigar cases. St. James, Buffalo Horn, Carbon Fibre, Manhattan, Pack & Go, Golf, Harris Tweed and more. Spanish cedar lined, premium leather, made in India.',
+  openGraph: {
+    title: 'Andre Garcia Collections – Luxury Handcrafted Cigar Cases',
+    description:
+      'From the innovative St. James Collection to the patent-pending Pack & Go. Explore our complete range of handcrafted luxury cigar cases.',
+    images: ['/imagecompressor/brand-logo.jpg'],
+  },
 };
 
 // Default hardcoded collections as fallback

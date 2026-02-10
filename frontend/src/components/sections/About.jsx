@@ -39,10 +39,10 @@ const About = () => {
                 The Art of <span className="premium-text">Preservation</span>
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Since 1985, André García has been synonymous with uncompromising quality 
-                and artisan craftsmanship. What began as a passion project in a small 
-                Miami workshop has evolved into the world's most trusted name in premium 
-                cigar storage solutions.
+                Since 2003, Andre Garcia has been synonymous with uncompromising quality 
+                and artisan craftsmanship. What began as a vision by the Roy brothers in 
+                Kolkata has evolved into the world's most trusted name in premium 
+                cigar cases — the Rolls-Royce of Cigar Cases.
               </p>
             </div>
 

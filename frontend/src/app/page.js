@@ -23,60 +23,63 @@ export async function generateMetadata() {
 }
 
 // Structured data for the homepage
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://andregarciacases.com';
 const homepageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "André García - Luxury Cigar Containers & Premium Humidors",
-  "description": "Discover handcrafted luxury cigar containers and premium humidors by André García. Award-winning artisan quality since 1985.",
-  "url": "https://andregarcia.com",
+  "name": "Andre Garcia – Luxury Handcrafted Cigar Cases | Since 2003",
+  "description": "Andre Garcia — the Rolls-Royce of Cigar Cases. Handcrafted luxury cigar cases and travel humidors since 2003. Made in Kolkata, India.",
+  "url": siteUrl,
   "mainEntity": {
-    "@type": "LocalBusiness",
-    "name": "André García",
-    "description": "Master craftsman specializing in luxury cigar containers and premium humidors",
-    "foundingDate": "1985",
-    "founder": {
-      "@type": "Person",
-      "name": "André García",
-      "jobTitle": "Master Craftsman",
-      "knowsAbout": ["Cigar Storage", "Humidor Craftsmanship", "Luxury Woodworking", "Tobacco Preservation"]
+    "@type": "Organization",
+    "name": "Andre Garcia",
+    "alternateName": "Andre Garcia Cases",
+    "description": "The Rolls-Royce of Cigar Cases. Handcrafted luxury cigar cases and travel humidors since 2003.",
+    "foundingDate": "2003",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Kolkata, India"
     },
-    "specialties": [
-      "Luxury Cigar Containers",
-      "Premium Humidors", 
-      "Custom Cigar Storage Solutions",
-      "Artisan Woodworking",
-      "Cigar Preservation Systems"
+    "founder": [
+      {
+        "@type": "Person",
+        "name": "Abhik Roy"
+      },
+      {
+        "@type": "Person",
+        "name": "Anindya Roy"
+      }
+    ],
+    "knowsAbout": [
+      "Luxury Cigar Cases",
+      "Travel Humidors",
+      "Cedar-Lined Cigar Storage",
+      "Premium Leather Goods",
+      "Handcrafted Cigar Accessories"
     ],
     "award": [
-      "International Luxury Goods Excellence Award 2023",
-      "Master Craftsman Recognition 2022",
-      "Premium Cigar Accessories Award 2021"
+      "Robb Report Front Runner 2009",
+      "Cigar Aficionado Good Life Guide 2009"
     ],
     "makesOffer": [
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Product",
-          "name": "Premium Humidors",
-          "description": "Handcrafted luxury humidors for optimal cigar preservation",
-          "category": "Cigar Storage",
-          "brand": {
-            "@type": "Brand",
-            "name": "André García"
-          }
+          "name": "Luxury Cigar Cases",
+          "description": "Handcrafted leather cigar cases with Spanish cedar lining, from 1 to 40 finger capacity",
+          "category": "Cigar Cases",
+          "brand": { "@type": "Brand", "name": "Andre Garcia" }
         }
       },
       {
-        "@type": "Offer", 
+        "@type": "Offer",
         "itemOffered": {
           "@type": "Product",
-          "name": "Artisan Cigar Containers",
-          "description": "Custom luxury cigar containers with superior craftsmanship",
-          "category": "Luxury Accessories",
-          "brand": {
-            "@type": "Brand",
-            "name": "André García"
-          }
+          "name": "Pack & Go Travel Humidor",
+          "description": "Patent-pending travel humidor with cedar lining and collapsible wooden dividers",
+          "category": "Travel Humidors",
+          "brand": { "@type": "Brand", "name": "Andre Garcia" }
         }
       }
     ]
@@ -88,7 +91,7 @@ const homepageSchema = {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://andregarcia.com"
+        "item": siteUrl
       }
     ]
   }

@@ -20,9 +20,9 @@ const Footer = () => {
               <span className="text-base font-light tracking-wide text-white/60">Andre Garcia</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
-              Crafting premium cigar containers and humidors since 1985. 
-              Each piece is meticulously designed to preserve the essence and 
-              quality of your finest cigars.
+              Handcrafting luxury cigar cases since 2003. 
+              The Rolls-Royce of Cigar Cases — each piece is meticulously 
+              designed to preserve the essence of your finest cigars.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-white/40 hover:text-foreground transition-colors">

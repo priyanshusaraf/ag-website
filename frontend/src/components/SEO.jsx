@@ -1,121 +1,79 @@
 import Head from 'next/head';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://andregarciacases.com';
+
 const SEO = ({ 
   title, 
   description, 
   keywords, 
-  image = '/og-image.jpg',
+  image = '/imagecompressor/brand-logo.jpg',
   url,
   type = 'website',
   schemaData 
 }) => {
-  const defaultTitle = 'André García - Luxury Cigar Containers & Premium Humidors';
-  const defaultDescription = 'Discover André García\'s handcrafted luxury cigar containers and premium humidors. Award-winning artisan quality since 1985.';
+  const defaultTitle = 'Andre Garcia – Luxury Handcrafted Cigar Cases';
+  const defaultDescription = 'Andre Garcia — the Rolls-Royce of Cigar Cases. Handcrafted luxury cigar cases and travel humidors since 2003. Made in Kolkata, India.';
   
   const pageTitle = title ? `${title} | ${defaultTitle}` : defaultTitle;
   const pageDescription = description || defaultDescription;
-  const pageUrl = url ? `https://andregarcia.com${url}` : 'https://andregarcia.com';
+  const pageUrl = url ? `${siteUrl}${url}` : siteUrl;
   
   const defaultSchemaData = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "André García",
-    "description": "Luxury cigar containers and premium humidors handcrafted since 1985",
-    "url": "https://andregarcia.com",
-    "telephone": "+1-555-CIGAR-AG",
-    "email": "info@andregarcia.com",
-    "foundingDate": "1985",
-    "founder": {
-      "@type": "Person",
-      "name": "André García"
+    "@type": "Organization",
+    "name": "Andre Garcia",
+    "alternateName": "Andre Garcia Cases",
+    "description": "The Rolls-Royce of Cigar Cases. Handcrafted luxury cigar cases and travel humidors since 2003.",
+    "url": siteUrl,
+    "logo": `${siteUrl}/logo.png`,
+    "image": `${siteUrl}/imagecompressor/brand-logo.jpg`,
+    "foundingDate": "2003",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Kolkata, India"
     },
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "US"
+    "founder": [
+      { "@type": "Person", "name": "Abhik Roy" },
+      { "@type": "Person", "name": "Anindya Roy" }
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "abhik@andregarciacases.com",
+      "contactType": "customer service"
     },
-    "sameAs": [
-      "https://instagram.com/andregarcia",
-      "https://facebook.com/andregarcia",
-      "https://twitter.com/andregarcia"
+    "knowsAbout": [
+      "Luxury Cigar Cases",
+      "Travel Humidors",
+      "Cedar-Lined Cigar Storage",
+      "Premium Leather Goods",
+      "Handcrafted Cigar Accessories"
     ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": "Cigar Storage Solutions",
+      "name": "Andre Garcia Cigar Case Collections",
       "itemListElement": [
         {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Product",
-            "name": "Premium Cigar Humidors",
-            "description": "Handcrafted luxury humidors for premium cigar storage",
-            "category": "Cigar Accessories"
+            "name": "Luxury Cigar Cases",
+            "description": "Handcrafted leather cigar cases with Spanish cedar lining",
+            "category": "Cigar Cases",
+            "brand": { "@type": "Brand", "name": "Andre Garcia" }
           }
         },
         {
           "@type": "Offer",
           "itemOffered": {
-            "@type": "Product", 
-            "name": "Artisan Cigar Containers",
-            "description": "Custom cigar containers with superior craftsmanship",
-            "category": "Cigar Storage"
+            "@type": "Product",
+            "name": "Pack & Go Travel Humidor",
+            "description": "Patent-pending travel humidor with cedar lining and collapsible dividers",
+            "category": "Travel Humidors",
+            "brand": { "@type": "Brand", "name": "Andre Garcia" }
           }
         }
       ]
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "127",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "review": [
-      {
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": "Michael Rodriguez"
-        },
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": "5",
-          "bestRating": "5"
-        },
-        "reviewBody": "Exceptional craftsmanship and attention to detail. My cigars have never been better preserved."
-      }
-    ]
-  };
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "André García",
-    "alternateName": "Andre Garcia Cigar Containers",
-    "url": "https://andregarcia.com",
-    "logo": "https://andregarcia.com/logo.png",
-    "description": "Luxury cigar containers and premium humidors handcrafted since 1985",
-    "foundingDate": "1985",
-    "founder": {
-      "@type": "Person",
-      "name": "André García"
-    },
-    "knowsAbout": [
-      "Cigar Storage",
-      "Humidor Craftsmanship", 
-      "Luxury Accessories",
-      "Tobacco Preservation",
-      "Artisan Woodworking"
-    ],
-    "makesOffer": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Custom Humidor Design",
-          "description": "Bespoke humidor creation for luxury cigar collections"
-        }
-      }
-    ]
+    }
   };
 
   const breadcrumbSchema = {
@@ -126,7 +84,7 @@ const SEO = ({
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://andregarcia.com"
+        "item": siteUrl
       }
     ]
   };
@@ -134,10 +92,10 @@ const SEO = ({
   return (
     <Head>
       {/* Additional SEO Meta Tags */}
-      <meta name="author" content="André García" />
-      <meta name="publisher" content="André García" />
-      <meta name="copyright" content="© 2025 André García. All rights reserved." />
-      <meta name="classification" content="Luxury Cigar Accessories" />
+      <meta name="author" content="Andre Garcia" />
+      <meta name="publisher" content="Andre Garcia" />
+      <meta name="copyright" content={`© ${new Date().getFullYear()} Andre Garcia Cases. All rights reserved.`} />
+      <meta name="classification" content="Luxury Cigar Cases & Accessories" />
       <meta name="category" content="Luxury Goods" />
       <meta name="coverage" content="Worldwide" />
       <meta name="distribution" content="Global" />
@@ -145,11 +103,11 @@ const SEO = ({
       <meta name="revisit-after" content="7 days" />
       
       {/* Geo Tags */}
-      <meta name="geo.region" content="US" />
-      <meta name="geo.placename" content="United States" />
+      <meta name="geo.region" content="IN-WB" />
+      <meta name="geo.placename" content="Kolkata, India" />
       
       {/* Product Specific */}
-      <meta name="product" content="Cigar Containers, Humidors" />
+      <meta name="product" content="Cigar Cases, Travel Humidors, Leather Goods" />
       <meta name="target" content="Cigar Enthusiasts, Luxury Collectors" />
       
       {/* Additional Keywords */}
@@ -157,11 +115,6 @@ const SEO = ({
       
       {/* Canonical URL */}
       <link rel="canonical" href={pageUrl} />
-      
-      {/* Alternate Languages */}
-      <link rel="alternate" hrefLang="en" href="https://andregarcia.com/en" />
-      <link rel="alternate" hrefLang="es" href="https://andregarcia.com/es" />
-      <link rel="alternate" hrefLang="x-default" href="https://andregarcia.com" />
       
       {/* Preconnect for Performance */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -172,12 +125,6 @@ const SEO = ({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(schemaData || defaultSchemaData)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationSchema)
         }}
       />
       <script
