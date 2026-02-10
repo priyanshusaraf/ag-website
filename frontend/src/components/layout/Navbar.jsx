@@ -44,7 +44,7 @@ const Navbar = () => {
   return (
     <nav className="navbar-sticky">
       <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex h-[72px] items-center justify-between">
+          <div className="flex h-[72px] items-center justify-between relative">
             <>
             {/* Desktop: left navigation */}
             <div className="hidden md:flex items-center gap-8">
@@ -79,8 +79,8 @@ const Navbar = () => {
               </NavigationMenu>
             </div>
 
-            {/* Brand */}
-            <Link href="/" className="flex items-center">
+            {/* Brand - absolutely centered */}
+            <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center">
               <span className="text-sm md:text-base font-light tracking-wide text-white/60">
                 Andre Garcia
               </span>

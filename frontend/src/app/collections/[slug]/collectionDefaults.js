@@ -103,8 +103,8 @@ export const hardcodedCollections = {
     description: 'Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case.',
     heroImage: '/imagecompressor/carbon-fiber-collection-main.png',
     products: [
-      { id: 'carbon-fibre-2', name: 'Carbon Fibre 2 Finger Case', basePrice: 17000, images: ['/imagecompressor/carbon-fiber-collection-main.png', '/imagecompressor/carbon-fiber-collection-second.png', '/imagecompressor/carbon-fibre-material.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
-      { id: 'carbon-fibre-3', name: 'Carbon Fibre 3 Finger Case', basePrice: 21250, images: ['/imagecompressor/carbon-fiber-collection-second.png', '/imagecompressor/carbon-fiber-collection-main.png', '/imagecompressor/carbon-fibre-material.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
+      { id: 'carbon-fibre-2', name: 'Carbon Fibre 2 Finger Case', basePrice: 17000, images: ['/imagecompressor/carbon-fiber-collection-main.png', '/imagecompressor/carbon-fiber-collection-second.png', '/imagecompressor/carbon-fibre-material.png', '/imagecompressor/carbon-fiber-another.png', '/imagecompressor/carbon-fibre-collection.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
+      { id: 'carbon-fibre-3', name: 'Carbon Fibre 3 Finger Case', basePrice: 21250, images: ['/imagecompressor/carbon-fiber-collection-second.png', '/imagecompressor/carbon-fiber-collection-main.png', '/imagecompressor/carbon-fibre-material.png', '/imagecompressor/carbon-fiber-another.png', '/imagecompressor/carbon-fibre-collection.png'], availability: 'Limited Edition - Ships in 2-4 weeks' },
     ],
     features: ['Genuine carbon fiber exterior', 'Crush-resistant aluminum shell', 'Cedar wood inner lining', 'Lightweight construction', 'Limited edition'],
     leatherOptions: [
@@ -156,12 +156,12 @@ export const hardcodedCollections = {
     description: 'Patent Pending. Featured in Robb Report Front Runner 2009 and Cigar Aficionado Good Life Guide 2009.',
     heroImage: '/imagecompressor/pack-and-go.png',
     products: [
-      { id: 'pack-go-3-4-5', name: 'Pack & Go Travel Humidor (3-4-5 Count)', basePrice: 24565, images: ['/imagecompressor/pack-and-go.png', '/imagecompressor/website-product-img28-min.jpg'], availability: 'Usually ships in 1-2 weeks', description: 'Compact travel humidor with 3, 4, or 5 finger capacity options.' },
-      { id: 'pack-go-golf-series', name: 'Pack & Go - Golf Series', basePrice: 25415, images: ['/imagecompressor/pack-and-go.png', '/imagecompressor/website-product-img28-min.jpg'], availability: 'Usually ships in 1-2 weeks', description: 'The Golf Series combines the legendary Pack & Go design.' },
-      { id: 'pack-go-harris-tweed', name: 'Harris Tweed Pack & Go Travel Humidor', basePrice: 28050, images: ['/imagecompressor/harris-pack-and-tweed.png', '/imagecompressor/robusto-harris-tweed-case.jpeg', '/imagecompressor/pack-and-go.png'], availability: 'Usually ships in 1-2 weeks', description: 'Premium Harris Tweed finish travel humidor.' },
-      { id: 'pack-go-standard', name: 'Pack & Go Travel Humidor', basePrice: 29750, images: ['/imagecompressor/pack-and-go.png', '/imagecompressor/website-product-img28-min.jpg', '/imagecompressor/website-product-img40-min.jpg', '/imagecompressor/website-product-img35-min.jpg'], availability: 'Usually ships in 6-8 weeks', description: 'The ultimate travel companion that stores up to 40 cigars.' },
-      { id: 'pack-go-4-finger-limited', name: '4 Finger Pack & Go Limited Edition', basePrice: 25415, images: ['/imagecompressor/finger04-pack-n-go.png', '/imagecompressor/pack-and-go.png'], availability: 'Usually ships in 1-2 weeks', description: "Andre Garcia's 11th Anniversary Edition." },
-      { id: 'pack-go-40-finger-briefcase', name: '40 Finger Cigar Briefcase', basePrice: 72250, images: ['/imagecompressor/cigar-40-pack-n-go.png', '/imagecompressor/pack-and-go.png'], availability: 'Usually ships in 1-2 weeks', description: 'Completely cedar-lined, this patent pending case can help you carry 40 cigars.' },
+      { id: 'pack-go-3-4-5', name: 'Pack & Go Travel Humidor (3-4-5 Count)', basePrice: 24565, images: ['/imagecompressor/pack-and-go.png', '/imagecompressor/pack-and-go-another.png', '/imagecompressor/pack-n-go-new.png'], availability: 'Usually ships in 1-2 weeks', description: 'Compact travel humidor with 3, 4, or 5 finger capacity options.' },
+      { id: 'pack-go-golf-series', name: 'Pack & Go - Golf Series', basePrice: 25415, images: ['/imagecompressor/pack-and-go.png', '/imagecompressor/pack-n-go-new.png', '/imagecompressor/pack-and-go-another.png'], availability: 'Usually ships in 1-2 weeks', description: 'The Golf Series combines the legendary Pack & Go design.' },
+      { id: 'pack-go-harris-tweed', name: 'Harris Tweed Pack & Go Travel Humidor', basePrice: 28050, images: ['/imagecompressor/harris-pack-and-tweed.png', '/imagecompressor/robusto-harris-tweed-case.jpeg', '/imagecompressor/pack-and-go.png', '/imagecompressor/pack-and-go-another.png'], availability: 'Usually ships in 1-2 weeks', description: 'Premium Harris Tweed finish travel humidor.' },
+      { id: 'pack-go-standard', name: 'Pack & Go Travel Humidor', basePrice: 29750, images: ['/imagecompressor/pack-and-go.png', '/imagecompressor/pack-and-go-another.png', '/imagecompressor/pack-n-go-new.png'], availability: 'Usually ships in 6-8 weeks', description: 'The ultimate travel companion that stores up to 40 cigars.' },
+      { id: 'pack-go-4-finger-limited', name: '4 Finger Pack & Go Limited Edition', basePrice: 25415, images: ['/imagecompressor/finger04-pack-n-go.png', '/imagecompressor/pack-and-go.png', '/imagecompressor/pack-n-go-new.png'], availability: 'Usually ships in 1-2 weeks', description: "Andre Garcia's 11th Anniversary Edition." },
+      { id: 'pack-go-40-finger-briefcase', name: '40 Finger Cigar Briefcase', basePrice: 72250, images: ['/imagecompressor/cigar-40-pack-n-go.png', '/imagecompressor/pack-and-go.png', '/imagecompressor/pack-and-go-another.png'], availability: 'Usually ships in 1-2 weeks', description: 'Completely cedar-lined, this patent pending case can help you carry 40 cigars.' },
     ],
     features: ['Patent pending design', 'Cedar-lined interior', 'Collapsible wooden dividers', 'Adjustable handle', 'Removable shoulder strap', 'Multiple compartments', 'Featured in Robb Report & Cigar Aficionado'],
     leatherOptions: [
@@ -193,22 +193,23 @@ export const hardcodedCollections = {
   'golf': {
     name: 'Golf Collection',
     tagline: 'On The Course Excellence',
-    description: 'Designed specifically for the cigar-loving golfer.',
-    heroImage: '/imagecompressor/website-product-img36-min.jpg',
+    description: 'Designed specifically for the cigar-loving golfer. The case features smooth brown leather for the comfort of your hand. The case is Spanish cedar lined at the inside. Ideal for a short trip or rendezvous with friends and family. The case is Patent pending and featured in Cigar Aficionado.',
+    heroImage: '/imagecompressor/golf-collection-main.png',
     products: [
-      { id: 'golf-3', name: 'Golf 3 Finger Case', basePrice: 11475, images: ['/imagecompressor/website-product-img36-min.jpg', '/imagecompressor/website-product-img37-min.jpg'], availability: 'Usually ships in 4-6 weeks' },
-      { id: 'golf-5', name: 'Golf 5 Finger Case', basePrice: 14025, images: ['/imagecompressor/website-product-img37-min.jpg', '/imagecompressor/website-product-img36-min.jpg'], availability: 'Usually ships in 4-6 weeks' },
+      { id: 'golf-10-smooth-brown', name: 'Andre Garcia 10 Finger Golf Smooth Brown', basePrice: 18275, images: ['/imagecompressor/golf-collection-main.png', '/imagecompressor/golf-collection-1.png', '/imagecompressor/golf-collection-2.png', '/imagecompressor/golf-collection-3.png'], availability: 'Usually ships in 1-2 weeks', description: 'From our Golf collection, the case features smooth brown leather for the comfort of your hand. The case is Spanish cedar lined at the inside. Ideal for a short trip or rendezvous with friends and family. Holds up to 10 cigars. The case is Patent pending and featured in Cigar Aficionado.' },
+      { id: 'golf-3', name: 'Golf 3 Finger Case', basePrice: 11475, images: ['/imagecompressor/golf-collection-1.png', '/imagecompressor/golf-collection-main.png', '/imagecompressor/golf-collection-2.png'], availability: 'Usually ships in 4-6 weeks', description: 'Compact 3-finger golf case designed for the course. Features smooth leather exterior and cedar wood lining.' },
+      { id: 'golf-5', name: 'Golf 5 Finger Case', basePrice: 14025, images: ['/imagecompressor/golf-collection-2.png', '/imagecompressor/golf-collection-main.png', '/imagecompressor/golf-collection-3.png'], availability: 'Usually ships in 4-6 weeks', description: 'Mid-size 5-finger golf case perfect for a round on the course. Premium leather with cedar wood lining.' },
     ],
-    features: ['Golf bag compatible design', 'Crush-resistant shell', 'Weather resistant', 'Cedar wood lining', 'Easy access closure'],
+    features: ['Golf bag compatible design', 'Crush-resistant shell', 'Weather resistant', 'Spanish cedar wood lining', 'Easy access closure', 'Patent pending design', 'Featured in Cigar Aficionado'],
     leatherOptions: [
+      { value: 'smooth-brown', label: 'Smooth Brown', price: 0 },
       { value: 'black-leather', label: 'Black Leather', price: 0 },
-      { value: 'brown-leather', label: 'Brown Leather', price: 0 },
       { value: 'green-leather', label: 'Forest Green', price: 850 },
       { value: 'navy-leather', label: 'Navy Blue', price: 850 },
     ],
     sizeOptions: [
-      { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
+      { value: 'grande', label: 'Grande', description: 'Standard size' },
+      { value: 'venti', label: 'Venti', description: 'Large size', price: 850 },
     ],
     zodiacOptions: false,
     boneCarvingOptions: false,
@@ -247,8 +248,8 @@ export const hardcodedCollections = {
     description: 'The Zippered Collection offers premium cigar cases with secure zip-around closures.',
     heroImage: '/imagecompressor/website-product-img33-min.jpg',
     products: [
-      { id: 'zippered-3', name: 'Zippered 3 Finger Case', basePrice: 10625, images: ['/imagecompressor/website-product-img33-min.jpg', '/imagecompressor/website-product-img34-min.jpg'], availability: 'Usually ships in 2-3 weeks', description: 'Three-finger zippered case with smooth leather exterior.' },
-      { id: 'zippered-5', name: 'Zippered 5 Finger Case', basePrice: 13175, images: ['/imagecompressor/website-product-img34-min.jpg', '/imagecompressor/website-product-img33-min.jpg'], availability: 'Usually ships in 2-3 weeks', description: 'Five-finger zippered case.' },
+      { id: 'zippered-3', name: 'Zippered 3 Finger Case', basePrice: 10625, images: ['/imagecompressor/website-product-img33-min.jpg', '/imagecompressor/cigar-cases-preview-below-founder-page.png'], availability: 'Usually ships in 2-3 weeks', description: 'Three-finger zippered case with smooth leather exterior.' },
+      { id: 'zippered-5', name: 'Zippered 5 Finger Case', basePrice: 13175, images: ['/imagecompressor/cigar-cases-preview-below-founder-page.png', '/imagecompressor/website-product-img33-min.jpg'], availability: 'Usually ships in 2-3 weeks', description: 'Five-finger zippered case.' },
     ],
     features: ['Secure zip-around closure', 'Premium YKK zipper', 'Cedar wood lining', 'Crush-resistant design', 'Travel-friendly'],
     leatherOptions: [
@@ -268,11 +269,11 @@ export const hardcodedCollections = {
     name: 'Custom Collection',
     tagline: 'Your Vision, Our Craftsmanship',
     description: 'Create your own unique cigar case with our Custom Collection.',
-    heroImage: '/imagecompressor/website-product-img39-min.jpg',
+    heroImage: '/imagecompressor/cigar-cases-preview-below-founder-page.png',
     products: [
-      { id: 'custom-2', name: 'Custom 2 Finger Case', basePrice: 14025, images: ['/imagecompressor/website-product-img39-min.jpg', '/imagecompressor/website-product-img41-min.jpg'], availability: 'Usually ships in 6-8 weeks', description: 'Fully customizable two-finger case.' },
-      { id: 'custom-3', name: 'Custom 3 Finger Case', basePrice: 16575, images: ['/imagecompressor/website-product-img41-min.jpg', '/imagecompressor/website-product-img39-min.jpg'], availability: 'Usually ships in 6-8 weeks', description: 'Fully customizable three-finger case.' },
-      { id: 'custom-5', name: 'Custom 5 Finger Case', basePrice: 20825, images: ['/imagecompressor/website-product-img42-min.jpg', '/imagecompressor/website-product-img39-min.jpg'], availability: 'Usually ships in 6-8 weeks', description: 'Larger custom case for the serious collector.' },
+      { id: 'custom-2', name: 'Custom 2 Finger Case', basePrice: 14025, images: ['/imagecompressor/cigar-cases-preview-below-founder-page.png', '/imagecompressor/cigar-cases-preview-below-founder-page-2.png'], availability: 'Usually ships in 6-8 weeks', description: 'Fully customizable two-finger case.' },
+      { id: 'custom-3', name: 'Custom 3 Finger Case', basePrice: 16575, images: ['/imagecompressor/cigar-cases-preview-below-founder-page-2.png', '/imagecompressor/cigar-cases-preview-below-founder-page.png'], availability: 'Usually ships in 6-8 weeks', description: 'Fully customizable three-finger case.' },
+      { id: 'custom-5', name: 'Custom 5 Finger Case', basePrice: 20825, images: ['/imagecompressor/cigar-cases-preview-below-founder-page.png', '/imagecompressor/cigar-cases-preview-below-founder-page-2.png'], availability: 'Usually ships in 6-8 weeks', description: 'Larger custom case for the serious collector.' },
     ],
     features: ['Fully customizable', 'Choice of 20+ leathers', 'Custom embossing available', 'Cedar wood lining', 'Gift packaging included'],
     leatherOptions: [
@@ -347,10 +348,10 @@ export const hardcodedCollections = {
     name: "What's New",
     tagline: 'Latest Arrivals',
     description: 'Discover our newest additions to the Andre Garcia collection.',
-    heroImage: '/imagecompressor/website-product-img47-min.jpg',
+    heroImage: '/imagecompressor/carbon-fiber-another.png',
     products: [
-      { id: 'new-carbon-hybrid', name: 'Carbon Hybrid 3 Finger Case', basePrice: 19125, images: ['/imagecompressor/website-product-img47-min.jpg', '/imagecompressor/website-product-img48-min.jpg'], availability: 'New Arrival - Ships in 2-3 weeks', description: 'Our newest design combining carbon fiber accents with premium leather.' },
-      { id: 'new-executive-series', name: 'Executive Series 5 Finger', basePrice: 23375, images: ['/imagecompressor/website-product-img48-min.jpg', '/imagecompressor/website-product-img47-min.jpg'], availability: 'New Arrival - Ships in 2-3 weeks', description: 'The pinnacle of our new Executive Series.' },
+      { id: 'new-carbon-hybrid', name: 'Carbon Hybrid 3 Finger Case', basePrice: 19125, images: ['/imagecompressor/carbon-fiber-another.png', '/imagecompressor/carbon-fibre-collection.png'], availability: 'New Arrival - Ships in 2-3 weeks', description: 'Our newest design combining carbon fiber accents with premium leather.' },
+      { id: 'new-executive-series', name: 'Executive Series 5 Finger', basePrice: 23375, images: ['/imagecompressor/carbon-fibre-collection.png', '/imagecompressor/carbon-fiber-another.png'], availability: 'New Arrival - Ships in 2-3 weeks', description: 'The pinnacle of our new Executive Series.' },
     ],
     features: ['Latest designs', 'Innovative materials', 'Limited availability', 'Premium craftsmanship', 'Collector worthy'],
     leatherOptions: [

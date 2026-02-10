@@ -306,7 +306,7 @@ function Spread7({ data }) {
       <PageFrame>
         <div className="absolute inset-0 bg-[#0a0a0b]" />
         <div className="absolute top-[6%] left-[6%] right-[52%] lg:right-[42%] z-10">
-          <img src={data?.right?.topImg || '/imagecompressor/website-product-img28-min.jpg'} alt="" className="w-full aspect-square object-cover" />
+          <img src={data?.right?.topImg || '/imagecompressor/pack-and-go-another.png'} alt="" className="w-full aspect-square object-cover" />
         </div>
         <div className="absolute top-[6%] right-[6%] left-[52%] lg:left-[62%] z-10">
           <p className="text-[11px] leading-[1.7] text-white/70">
@@ -321,10 +321,10 @@ function Spread7({ data }) {
           </p>
         </div>
         <div className="absolute top-[58%] left-[10%] w-[20%] z-10">
-          <img src={data?.right?.textureImg || '/imagecompressor/website-product-img35-min.jpg'} alt="" className="w-full aspect-[2/3] object-cover" />
+          <img src={data?.right?.textureImg || '/imagecompressor/pack-n-go-new.png'} alt="" className="w-full aspect-[2/3] object-cover" />
         </div>
         <div className="absolute bottom-[8%] right-[6%] w-[54%] z-10">
-          <img src={data?.right?.bottomImg || '/imagecompressor/website-product-img40-min.jpg'} alt="" className="w-full aspect-[4/3] object-cover" />
+          <img src={data?.right?.bottomImg || '/imagecompressor/cigar-40-pack-n-go.png'} alt="" className="w-full aspect-[4/3] object-cover" />
         </div>
       </PageFrame>
     </div>
@@ -398,7 +398,7 @@ function SpreadHarrisTweed({ data }) {
           </div>
           {/* Main product image */}
           <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <img src={data?.left?.mainImg || '/imagecompressor/harris-tweed-collection-main.png'} alt="" className="w-full h-full object-cover" />
+            <img src={data?.left?.mainImg || '/imagecompressor/harris-tweed-main.png'} alt="" className="w-full h-full object-cover" />
           </div>
         </Link>
       </PageFrame>

@@ -95,13 +95,13 @@ export const defaultLookbookContent = {
         mainImg: '/imagecompressor/pack-and-go.png',
       },
       right: {
-        topImg: '/imagecompressor/website-product-img28-min.jpg',
+        topImg: '/imagecompressor/pack-and-go-another.png',
         body:
           "From the first glance, it can't be differentiated from an upscale executive tote with an adjustable handle and removable shoulder strap. But the inside reveals cedar-lining and organized collapsible wooden dividers plus additional compartments for cigar storage. Both the understated plain black leather case and the crocodile-embossed leather case are crafted to last generations of discerning aficionados.",
         boldText:
           "The most impressive and unique product of Garcia's crafts is the Pack & Go satchel that easily stows astonishing 40 sticks of your favorite smokes.",
-        textureImg: '/imagecompressor/website-product-img35-min.jpg',
-        bottomImg: '/imagecompressor/website-product-img40-min.jpg',
+        textureImg: '/imagecompressor/pack-n-go-new.png',
+        bottomImg: '/imagecompressor/cigar-40-pack-n-go.png',
       },
     },
     {
