@@ -2,8 +2,19 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { register as apiRegister, login as apiLogin, adminLogin as apiAdminLogin, fetchUserProfile } from '../lib/auth';
+import api from '@/lib/utils';
 
 const AuthContext = createContext();
+
+function isTokenExpired(token) {
+  if (!token) return true;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -16,8 +27,14 @@ export function AuthProvider({ children }) {
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('user');
       const storedToken = localStorage.getItem('token');
-      if (storedUser) setUser(JSON.parse(storedUser));
-      if (storedToken) setToken(storedToken);
+      if (storedToken && !isTokenExpired(storedToken)) {
+        if (storedUser) setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      } else if (storedToken) {
+        // Token expired — clear it
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
       setRestored(true);
     }
   }, []);
@@ -51,8 +68,12 @@ export function AuthProvider({ children }) {
       return;
     }
     
-    // Skip backend verification for super admin tokens
+    // For super admin tokens, just check expiry client-side
     if (user?.is_super_admin) {
+      if (isTokenExpired(token)) {
+        setUser(null);
+        setToken(null);
+      }
       setIsLoading(false);
       return;
     }
@@ -104,6 +125,21 @@ export function AuthProvider({ children }) {
     setToken(null);
     setUser(null);
   };
+
+  // Global 401 interceptor — auto-logout on expired/invalid tokens
+  useEffect(() => {
+    const id = api.interceptors.response.use(
+      (res) => res,
+      (err) => {
+        if (err?.response?.status === 401 && token) {
+          setToken(null);
+          setUser(null);
+        }
+        return Promise.reject(err);
+      }
+    );
+    return () => api.interceptors.response.eject(id);
+  }, [token]);
 
   const register = async (userData) => {
     try {

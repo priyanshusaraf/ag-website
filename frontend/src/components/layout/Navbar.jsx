@@ -17,6 +17,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -199,13 +200,13 @@ const Navbar = () => {
               <CartSheet />
               
               {/* Mobile Menu */}
-              <Sheet>
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon" className="border-white/20 bg-transparent text-foreground hover:bg-white/10">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[320px] sm:w-[400px] overflow-y-auto bg-background border-white/10">
+                <SheetContent side="right" className="w-[320px] sm:w-[400px] overflow-y-auto bg-background border-white/10" onOpenAutoFocus={(e) => e.preventDefault()}>
                   <div className="flex flex-col space-y-6 mt-6">
                     {/* Brand Logo in Mobile Menu */}
                     <div className="text-center border-b pb-4">
@@ -214,29 +215,29 @@ const Navbar = () => {
                     
                     {/* Navigation Links */}
                     <div className="flex flex-col space-y-4">
-                      <Link href="/" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                      <Link href="/" onClick={() => setMobileMenuOpen(false)} className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Home
                       </Link>
-                      <Link href="/collections" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                      <Link href="/collections" onClick={() => setMobileMenuOpen(false)} className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Collections
                       </Link>
-                      <Link href="/products" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                      <Link href="/products" onClick={() => setMobileMenuOpen(false)} className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Products
                       </Link>
-                      <Link href="/about" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                      <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         About
                       </Link>
-                      <Link href="/contact" className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
+                      <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="lookbook-kicker py-2 px-3 rounded-sm hover:bg-white/5 transition-colors">
                         Contact
                       </Link>
                     </div>
                     
                     <Separator />
-                    
+
                     {/* Mobile Search */}
                     <div className="space-y-3">
                       <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Search</h4>
-                      <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
+                      <form onSubmit={(e) => { handleSearchSubmit(e); setMobileMenuOpen(false); }} className="flex items-center space-x-2">
                         <div className="relative flex-1">
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
                           <input
@@ -261,29 +262,29 @@ const Navbar = () => {
                       <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Account</h4>
                       {isAuthenticated ? (
                         <div className="flex flex-col space-y-2">
-                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10">
+                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10" onClick={() => setMobileMenuOpen(false)}>
                             <Link href="/orders">
                               <Package className="h-4 w-4 mr-3" />
                               My Orders
                             </Link>
                           </Button>
-                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10">
+                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10" onClick={() => setMobileMenuOpen(false)}>
                             <Link href="/account">
                               <User className="h-4 w-4 mr-3" />
                               {user?.name || user?.email}
                             </Link>
                           </Button>
-                          <Button variant="ghost" onClick={handleLogout} className="justify-start py-2 px-3 text-destructive hover:text-destructive hover:bg-destructive/10">
+                          <Button variant="ghost" onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="justify-start py-2 px-3 text-destructive hover:text-destructive hover:bg-destructive/10">
                             <LogOut className="h-4 w-4 mr-3" />
                             Sign Out
                           </Button>
                         </div>
                       ) : (
                         <div className="flex flex-col space-y-2">
-                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10">
+                          <Button variant="ghost" asChild className="justify-start py-2 px-3 hover:bg-white/10" onClick={() => setMobileMenuOpen(false)}>
                             <Link href="/auth/signin">Sign In</Link>
                           </Button>
-                          <Button variant="outline" asChild className="justify-start py-2 px-3 border-white/20 bg-transparent text-foreground hover:bg-white/10">
+                          <Button variant="outline" asChild className="justify-start py-2 px-3 border-white/20 bg-transparent text-foreground hover:bg-white/10" onClick={() => setMobileMenuOpen(false)}>
                             <Link href="/auth/signup">Sign Up</Link>
                           </Button>
                         </div>

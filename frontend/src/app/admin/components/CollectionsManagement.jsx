@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImageUpload } from '@/components/ui/image-upload';
-import api from '@/lib/utils';
+import api, { resolveImageUrl } from '@/lib/utils';
 import { hardcodedCollections } from '@/app/collections/[slug]/collectionDefaults';
 import {
   Plus, Trash2, Edit2, Save, X, ArrowUp, ArrowDown, Image as ImageIcon,
@@ -66,6 +66,7 @@ function convertDefaultsToAdminFormat(defaults) {
       leatherLabel: col.leatherLabel || 'Leather',
       zodiacOptions: col.zodiacOptions || false,
       boneCarvingOptions: col.boneCarvingOptions || false,
+      initialsEmbossing: col.initialsEmbossing !== false,
       carouselImages: (col.carouselImages || []).map((img) => ({
         id: img.id || uid('carousel'),
         src: img.src || '',
@@ -139,6 +140,7 @@ const emptyCollection = () => ({
   leatherLabel: 'Leather',
   zodiacOptions: false,
   boneCarvingOptions: false,
+  initialsEmbossing: true,
   carouselImages: [],
 });
 
@@ -605,8 +607,8 @@ function CollectionEditor({ collection, onChange, onSave, onCancel, saving }) {
 
         <div className="border-t border-border my-4" />
 
-        {/* Zodiac & Bone Carving Toggles */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Zodiac, Bone Carving & Embossing Toggles */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
@@ -631,6 +633,19 @@ function CollectionEditor({ collection, onChange, onSave, onCancel, saving }) {
             <div>
               <Label htmlFor={`bone-${collection.id}`}>Bone Carving Options</Label>
               <p className="text-xs text-muted-foreground">Enable bone carving customization</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id={`embossing-${collection.id}`}
+              checked={collection.initialsEmbossing !== false}
+              onChange={(e) => update('initialsEmbossing', e.target.checked)}
+              className="rounded"
+            />
+            <div>
+              <Label htmlFor={`embossing-${collection.id}`}>Initials Embossing</Label>
+              <p className="text-xs text-muted-foreground">Allow customers to add initials embossing (+₹2,975)</p>
             </div>
           </div>
         </div>
@@ -669,7 +684,7 @@ function CollectionCard({ collection, onSelect, onDuplicate, onDelete }) {
         <div className="flex gap-4">
           {collection.heroImage ? (
             <div className="w-20 h-20 rounded border border-border overflow-hidden bg-muted flex-shrink-0">
-              <img src={collection.heroImage} alt={collection.name} className="w-full h-full object-cover" onError={(e) => e.target.style.display = 'none'} />
+              <img src={resolveImageUrl(collection.heroImage)} alt={collection.name} className="w-full h-full object-cover" onError={(e) => e.target.style.display = 'none'} />
             </div>
           ) : (
             <div className="w-20 h-20 rounded border border-border bg-muted flex items-center justify-center flex-shrink-0">

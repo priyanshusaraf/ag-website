@@ -1,9 +1,13 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Mail, Phone } from 'lucide-react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const CTA = () => {
+  const { formatPrice } = useCurrency();
   return (
     <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5 leather-texture">
       <div className="container mx-auto px-4 lg:px-8">
@@ -73,7 +77,7 @@ const CTA = () => {
               <div className="space-y-2">
                 <div className="text-sm font-semibold text-primary">FREE SHIPPING</div>
                 <div className="text-xs text-muted-foreground">
-                  On orders over ₹42,500
+                  On orders over {formatPrice(42500)}
                 </div>
               </div>
               <div className="space-y-2">

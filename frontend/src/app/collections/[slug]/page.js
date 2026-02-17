@@ -19,6 +19,9 @@ import { Minus, Plus, ShoppingCart, ArrowLeft, Truck, Shield, RotateCcw, Chevron
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { hardcodedCollections, zodiacSigns, boneCarvingOptions as defaultBoneCarvingOptions } from './collectionDefaults';
+import { resolveImageUrl } from '@/lib/utils';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { CurrencySelector } from '@/components/CurrencyPrice';
 
 export default function CollectionPage() {
   const params = useParams();
@@ -26,6 +29,7 @@ export default function CollectionPage() {
   const slug = params.slug;
   const { addItem } = useCart();
   const { toast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const [collection, setCollection] = useState(null);
   const [allCollections, setAllCollections] = useState({});
@@ -177,8 +181,8 @@ export default function CollectionPage() {
       if (capacity) total += (capacity.price || 0) * quantity;
     }
     
-    // Add initials embossing price
-    if (initialsText.trim()) {
+    // Add initials embossing price (only if enabled for this collection)
+    if (collection.initialsEmbossing !== false && initialsText.trim()) {
       total += 2975 * quantity;
     }
     
@@ -232,7 +236,7 @@ export default function CollectionPage() {
       id: `${currentProduct.id}-${Date.now()}`,
       name: `${currentProduct.name}${leatherLabel ? ` - ${leatherLabel}` : ''}`,
       price: calculateTotalPrice() / quantity,
-      image_url: currentProduct.images?.[0] || collection.heroImage || '',
+      image_url: resolveImageUrl(currentProduct.images?.[0] || collection.heroImage || ''),
       quantity: quantity,
       customization: {
         leather: leatherLabel || 'N/A',
@@ -303,7 +307,7 @@ export default function CollectionPage() {
             <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
               {collection.carouselImages.map((img, idx) => (
                 <div key={img.id || idx} className="flex-shrink-0 w-48 h-32 rounded-lg overflow-hidden border border-white/10">
-                  <img src={img.src} alt={img.alt || img.title || ''} className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(img.src)} alt={img.alt || img.title || ''} className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>
@@ -333,7 +337,7 @@ export default function CollectionPage() {
                     >
                       <div className="flex items-center justify-between gap-4">
                         <span>{product.name}</span>
-                        <span className="text-primary font-medium">₹{product.basePrice}</span>
+                        <span className="text-primary font-medium">{formatPrice(product.basePrice)}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -353,7 +357,7 @@ export default function CollectionPage() {
             <div className="relative aspect-square bg-[#111112] rounded-lg overflow-hidden group">
               {currentProduct.images?.length > 0 ? (
                 <img
-                  src={currentProduct.images[selectedImage] || currentProduct.images[0]}
+                  src={resolveImageUrl(currentProduct.images[selectedImage] || currentProduct.images[0])}
                   alt={currentProduct.name}
                   className="w-full h-full object-cover"
                 />
@@ -396,7 +400,7 @@ export default function CollectionPage() {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={resolveImageUrl(image)}
                       alt={`${currentProduct.name} view ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -414,13 +418,14 @@ export default function CollectionPage() {
                 {currentProduct.name}
               </h2>
               <p className="text-sm text-white/50 mb-4">{currentProduct.availability}</p>
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-primary">₹{calculateTotalPrice().toFixed(2)}</span>
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <span className="text-3xl font-bold text-primary">{formatPrice(calculateTotalPrice())}</span>
                 {calculateTotalPrice() !== currentProduct.basePrice * quantity && (
                   <span className="text-sm text-white/40">
-                    (Base: ₹{currentProduct.basePrice.toFixed(2)})
+                    (Base: {formatPrice(currentProduct.basePrice)})
                   </span>
                 )}
+                <CurrencySelector className="ml-auto" />
               </div>
             </div>
 
@@ -453,7 +458,7 @@ export default function CollectionPage() {
                           value={option.value}
                           className="text-white hover:bg-white/10"
                         >
-                          {option.label} {option.price > 0 ? `(+₹${option.price})` : ''}
+                          {option.label} {option.price > 0 ? `(+${formatPrice(option.price)})` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -501,7 +506,7 @@ export default function CollectionPage() {
                           value={option.value}
                           className="text-white hover:bg-white/10"
                         >
-                          {option.label} {option.price > 0 ? `(+₹${option.price})` : ''}
+                          {option.label} {option.price > 0 ? `(+${formatPrice(option.price)})` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -526,7 +531,7 @@ export default function CollectionPage() {
                           value={option.value}
                           className="text-white hover:bg-white/10"
                         >
-                          {option.label} {option.description ? `- ${option.description}` : ''} {option.price > 0 ? `(+₹${option.price})` : ''}
+                          {option.label} {option.description ? `- ${option.description}` : ''} {option.price > 0 ? `(+${formatPrice(option.price)})` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -551,7 +556,7 @@ export default function CollectionPage() {
                           value={option.value}
                           className="text-white hover:bg-white/10"
                         >
-                          {option.label} {option.price > 0 ? `(+₹${option.price})` : option.price < 0 ? `(-₹${Math.abs(option.price)})` : ''}
+                          {option.label} {option.price > 0 ? `(+${formatPrice(option.price)})` : option.price < 0 ? `(-${formatPrice(Math.abs(option.price))})` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -559,36 +564,38 @@ export default function CollectionPage() {
                 </div>
               )}
 
-              {/* Initials Embossing */}
-              <div className="space-y-2">
-                <Label className="text-white/80 text-sm font-medium">
-                  Initials Embossing <span className="text-white/40">(+₹2,975)</span>
-                </Label>
-                <div className="flex gap-2">
-                  {[0, 1, 2].map((index) => (
-                    <Input
-                      key={index}
-                      maxLength={1}
-                      value={initialsText[index] || ''}
-                      onChange={(e) => {
-                        const newInitials = initialsText.split('');
-                        newInitials[index] = e.target.value.toUpperCase();
-                        setInitialsText(newInitials.join(''));
-                        if (e.target.value && index < 2) {
-                          const nextInput = document.querySelector(`input[data-initial-index="${index + 1}"]`);
-                          if (nextInput) nextInput.focus();
-                        }
-                      }}
-                      data-initial-index={index}
-                      className="w-12 h-12 text-center text-xl uppercase bg-[#111112] border-white/10 text-white"
-                      placeholder="_"
-                    />
-                  ))}
+              {/* Initials Embossing — only show if enabled for this collection */}
+              {collection.initialsEmbossing !== false && (
+                <div className="space-y-2">
+                  <Label className="text-white/80 text-sm font-medium">
+                    Initials Embossing <span className="text-white/40">(+{formatPrice(2975)})</span>
+                  </Label>
+                  <div className="flex gap-2">
+                    {[0, 1, 2].map((index) => (
+                      <Input
+                        key={index}
+                        maxLength={1}
+                        value={initialsText[index] || ''}
+                        onChange={(e) => {
+                          const newInitials = initialsText.split('');
+                          newInitials[index] = e.target.value.toUpperCase();
+                          setInitialsText(newInitials.join(''));
+                          if (e.target.value && index < 2) {
+                            const nextInput = document.querySelector(`input[data-initial-index="${index + 1}"]`);
+                            if (nextInput) nextInput.focus();
+                          }
+                        }}
+                        data-initial-index={index}
+                        className="w-12 h-12 text-center text-xl uppercase bg-[#111112] border-white/10 text-white"
+                        placeholder="_"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs text-white/40">
+                    Optional: Add up to 3 characters for personalization
+                  </p>
                 </div>
-                <p className="text-xs text-white/40">
-                  Optional: Add up to 3 characters for personalization
-                </p>
-              </div>
+              )}
 
               {/* Quantity */}
               <div className="space-y-2">
@@ -623,7 +630,7 @@ export default function CollectionPage() {
               onClick={handleAddToCart}
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
-              ADD TO BAG - ₹{calculateTotalPrice().toFixed(2)}
+              ADD TO BAG - {formatPrice(calculateTotalPrice())}
             </Button>
 
             {/* Trust Badges */}
@@ -687,7 +694,7 @@ export default function CollectionPage() {
                 >
                   <div className="aspect-square bg-[#0a0a0b] rounded overflow-hidden mb-3">
                     <img
-                      src={col.heroImage}
+                      src={resolveImageUrl(col.heroImage)}
                       alt={col.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

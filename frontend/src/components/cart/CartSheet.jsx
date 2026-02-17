@@ -7,11 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ShoppingBag, Plus, Minus, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { resolveImageUrl } from '@/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const CartSheet = () => {
   const { items, itemCount, totalPrice, addItem, removeItem, updateQuantity, clearCart } = useCart();
+  const { formatPrice } = useCurrency();
   const [isShaking, setIsShaking] = useState(false);
   const [prevItemCount, setPrevItemCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +24,6 @@ const CartSheet = () => {
   useEffect(() => {
     if (itemCount > prevItemCount && prevItemCount > 0) {
       setIsShaking(true);
-      // Remove shake class after animation completes
       const timer = setTimeout(() => {
         setIsShaking(false);
       }, 600);
@@ -29,15 +31,6 @@ const CartSheet = () => {
     }
     setPrevItemCount(itemCount);
   }, [itemCount, prevItemCount]);
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
 
   const handleCheckout = () => {
     setIsOpen(false);
@@ -106,7 +99,7 @@ const CartSheet = () => {
                       {/* Product Image */}
                       <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden">
                         {product.image_url ? (
-                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-md" />
+                          <img src={resolveImageUrl(product.image_url)} alt={product.name} className="w-full h-full object-cover rounded-md" />
                         ) : (
                           <div className="w-8 h-8 bg-primary/20 rounded"></div>
                         )}

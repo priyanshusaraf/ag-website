@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import api from '@/lib/utils';
 import Link from 'next/link';
 
@@ -37,6 +38,7 @@ const OrdersPage = () => {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -284,7 +286,7 @@ const OrdersPage = () => {
                     
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="font-bold text-lg">₹{parseFloat(order.total_amount).toLocaleString()}</p>
+                        <p className="font-bold text-lg">{formatPrice(order.total_amount)}</p>
                         <div className="flex gap-2">
                           <Badge className={getStatusColor(order.status)}>
                             <span className="flex items-center gap-1">
@@ -340,7 +342,7 @@ const OrdersPage = () => {
                             <div className="flex items-center justify-between mt-1">
                               <span className="text-xs">Qty: {item.quantity}</span>
                               <span className="text-sm font-medium">
-                                ₹{parseFloat(item.price_at_purchase).toLocaleString()}
+                                {formatPrice(item.price_at_purchase)}
                               </span>
                             </div>
                             {order.status === 'completed' && (
@@ -504,7 +506,7 @@ const OrdersPage = () => {
                       
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-primary">
-                          ₹{parseFloat(product.sale_price || product.price).toLocaleString()}
+                          {formatPrice(product.sale_price || product.price)}
                         </span>
                         {product.rating > 0 && (
                           <div className="flex items-center gap-1">

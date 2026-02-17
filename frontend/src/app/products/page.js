@@ -3,6 +3,9 @@
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { resolveImageUrl } from '@/lib/utils';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { CurrencySelector } from '@/components/CurrencyPrice';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -63,6 +66,7 @@ function filterProducts(products, searchTerm, category, sortBy) {
 
 const ProductsContent = () => {
   const { addItem } = useCart();
+  const { formatPrice: formatCurrency } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [products, setProducts] = useState([]);
@@ -167,13 +171,13 @@ const ProductsContent = () => {
     if (salePriceNum && salePriceNum < basePrice) {
       return (
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-bold text-green-600">₹{salePriceNum.toLocaleString()}</span>
-          <span className="text-lg text-muted-foreground line-through">₹{basePrice.toLocaleString()}</span>
+          <span className="text-2xl font-bold text-green-600">{formatCurrency(salePriceNum)}</span>
+          <span className="text-lg text-muted-foreground line-through">{formatCurrency(basePrice)}</span>
         </div>
       );
     }
     
-    return <span className="text-2xl font-bold text-primary">₹{basePrice.toLocaleString()}</span>;
+    return <span className="text-2xl font-bold text-primary">{formatCurrency(basePrice)}</span>;
   };
 
   if (loading) return <div className="p-8 text-center">Loading products...</div>;
@@ -189,9 +193,12 @@ const ProductsContent = () => {
               <div className="text-white/35 font-light tracking-wide">02</div>
               <div className="text-white/35 font-light tracking-wide">ANDRE GARCIA</div>
             </div>
-            <h1 className="lookbook-h1 text-[clamp(2.6rem,5.6vw,5.2rem)]">
-              Premium collection
-            </h1>
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="lookbook-h1 text-[clamp(2.6rem,5.6vw,5.2rem)]">
+                Premium collection
+              </h1>
+              <CurrencySelector />
+            </div>
             <p className="text-base lg:text-lg text-muted-foreground leading-relaxed max-w-3xl">
               Discover our complete range of handcrafted cigar containers, humidors, 
               and accessories. Each piece represents decades of refinement and 
@@ -304,7 +311,7 @@ const ProductsContent = () => {
                     {/* Product Image */}
                     <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center overflow-hidden">
                       {product.image_url ? (
-                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={resolveImageUrl(product.image_url)} alt={product.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-32 h-32 bg-primary/20 rounded-lg flex items-center justify-center">
                           <div className="w-20 h-20 bg-primary/30 rounded"></div>
@@ -450,7 +457,7 @@ const ProductsContent = () => {
               </div>
               <h3 className="text-xl">Free Shipping</h3>
               <p className="text-muted-foreground text-sm">
-                Complimentary shipping on orders over ₹42,500
+                Complimentary shipping on orders over {formatCurrency(42500)}
               </p>
             </div>
             <div className="space-y-4">

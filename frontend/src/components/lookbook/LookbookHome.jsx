@@ -3,6 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { resolveImageUrl } from '@/lib/utils';
+
+function Img({ src, ...props }) {
+  return <img src={resolveImageUrl(src)} {...props} />;
+}
 
 function PageFrame({ children }) {
   return (
@@ -130,7 +135,7 @@ function Spread3({ data }) {
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
         <Link href="/collections/all-cases" className="absolute inset-0 group cursor-pointer">
-          <img src={data?.left?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Img src={data?.left?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           <div className="absolute bottom-[8%] left-[6%] z-10">
             <h2 className="text-[clamp(48px,8vw,96px)] font-light leading-[0.95] tracking-tight text-white group-hover:text-primary transition-colors">{data?.left?.title || 'Cigar Cases'}</h2>
@@ -153,7 +158,7 @@ function Spread3({ data }) {
           </p>
         </div>
         <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-0">
-          <img src={data?.right?.textureImg || '/imagecompressor/cigar-case-fabric.png'} alt="" className="h-full w-full object-cover" />
+          <Img src={data?.right?.textureImg || '/imagecompressor/cigar-case-fabric.png'} alt="" className="h-full w-full object-cover" />
         </div>
       </PageFrame>
     </div>
@@ -165,7 +170,7 @@ function Spread4({ data }) {
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <PageFrame>
         <Link href="/collections/st-james" className="absolute inset-0 group cursor-pointer">
-          <img src={data?.left?.img || '/imagecompressor/st-james-collection-cigar-case.png'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Img src={data?.left?.img || '/imagecompressor/st-james-collection-cigar-case.png'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           <div className="absolute bottom-[8%] right-[6%] z-10 text-right">
             <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[0.95] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
@@ -187,10 +192,10 @@ function Spread4({ data }) {
           </p>
         </div>
         <div className="absolute left-[6%] top-[44%] w-[60%] z-10">
-          <img src={data?.right?.productImg || '/imagecompressor/st-james-collection.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          <Img src={data?.right?.productImg || '/imagecompressor/st-james-collection.png'} alt="" className="w-full aspect-[4/3] object-cover" />
         </div>
         <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-0">
-          <img src={data?.right?.textureImg || '/imagecompressor/st-james-collection-leather.png'} alt="" className="h-full w-full object-cover" />
+          <Img src={data?.right?.textureImg || '/imagecompressor/st-james-collection-leather.png'} alt="" className="h-full w-full object-cover" />
         </div>
       </PageFrame>
     </div>
@@ -211,11 +216,11 @@ function Spread5({ data }) {
           </div>
           {/* Case image - upper right */}
           <div className="absolute top-[8%] right-[8%] w-[40%] z-10 group-hover:scale-105 transition-transform duration-500">
-            <img src={data?.left?.caseImg || '/imagecompressor/buffalo-horn-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
+            <Img src={data?.left?.caseImg || '/imagecompressor/buffalo-horn-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
           </div>
           {/* Cigar image - bottom */}
           <div className="absolute bottom-[8%] left-[6%] w-[70%] z-10">
-            <img src={data?.left?.cigarImg || '/imagecompressor/buffalo-horn-cigar.png'} alt="" className="w-full object-contain" />
+            <Img src={data?.left?.cigarImg || '/imagecompressor/buffalo-horn-cigar.png'} alt="" className="w-full object-contain" />
           </div>
         </Link>
       </PageFrame>
@@ -229,7 +234,7 @@ function Spread5({ data }) {
         </div>
         {/* Product image - right side */}
         <div className="absolute top-[28%] right-[6%] w-[50%] z-10">
-          <img src={data?.right?.productImg || '/imagecompressor/buffalo-horn-collection-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
+          <Img src={data?.right?.productImg || '/imagecompressor/buffalo-horn-collection-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
         </div>
         {/* Bottom text */}
         <div className="absolute bottom-[12%] left-[6%] right-[56%] z-10 text-center">
@@ -256,7 +261,7 @@ function Spread6({ data }) {
           </div>
           {/* Main product image - closer to title */}
           <div className="absolute top-[32%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <img src={data?.left?.productImg || '/imagecompressor/carbon-fiber-collection-main.png'} alt="" className="w-full h-full object-cover" />
+            <Img src={data?.left?.productImg || '/imagecompressor/carbon-fiber-collection-main.png'} alt="" className="w-full h-full object-cover" />
           </div>
         </Link>
       </PageFrame>
@@ -270,7 +275,7 @@ function Spread6({ data }) {
         </div>
         {/* Second product image */}
         <div className="absolute bottom-[6%] left-[6%] right-[32%] z-10">
-          <img src={data?.right?.productImg || '/imagecompressor/carbon-fiber-collection-second.png'} alt="" className="w-full aspect-[16/9] object-cover" />
+          <Img src={data?.right?.productImg || '/imagecompressor/carbon-fiber-collection-second.png'} alt="" className="w-full aspect-[16/9] object-cover" />
         </div>
         {/* Bold text - bottom right */}
         <div className="absolute bottom-[20%] right-[8%] w-[20%] z-10 text-right">
@@ -280,7 +285,7 @@ function Spread6({ data }) {
         </div>
         {/* Carbon fibre texture strip */}
         <div className="absolute right-[6%] top-[6%] bottom-[40%] w-[20%] z-0">
-          <img src={data?.right?.textureImg || '/imagecompressor/carbon-fibre-material.png'} alt="" className="h-full w-full object-cover" />
+          <Img src={data?.right?.textureImg || '/imagecompressor/carbon-fibre-material.png'} alt="" className="h-full w-full object-cover" />
         </div>
       </PageFrame>
     </div>
@@ -299,14 +304,14 @@ function Spread7({ data }) {
             </h2>
           </div>
           <div className="absolute top-[18%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <img src={data?.left?.mainImg || '/imagecompressor/pack-and-go.png'} alt="" className="w-full h-full object-cover" />
+            <Img src={data?.left?.mainImg || '/imagecompressor/pack-and-go.png'} alt="" className="w-full h-full object-cover" />
           </div>
         </Link>
       </PageFrame>
       <PageFrame>
         <div className="absolute inset-0 bg-[#0a0a0b]" />
         <div className="absolute top-[6%] left-[6%] right-[52%] lg:right-[42%] z-10">
-          <img src={data?.right?.topImg || '/imagecompressor/pack-and-go-another.png'} alt="" className="w-full aspect-square object-cover" />
+          <Img src={data?.right?.topImg || '/imagecompressor/pack-and-go-another.png'} alt="" className="w-full aspect-square object-cover" />
         </div>
         <div className="absolute top-[6%] right-[6%] left-[52%] lg:left-[62%] z-10">
           <p className="text-[11px] leading-[1.7] text-white/70">
@@ -321,10 +326,10 @@ function Spread7({ data }) {
           </p>
         </div>
         <div className="absolute top-[58%] left-[10%] w-[20%] z-10">
-          <img src={data?.right?.textureImg || '/imagecompressor/pack-n-go-new.png'} alt="" className="w-full aspect-[2/3] object-cover" />
+          <Img src={data?.right?.textureImg || '/imagecompressor/pack-n-go-new.png'} alt="" className="w-full aspect-[2/3] object-cover" />
         </div>
         <div className="absolute bottom-[8%] right-[6%] w-[54%] z-10">
-          <img src={data?.right?.bottomImg || '/imagecompressor/cigar-40-pack-n-go.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          <Img src={data?.right?.bottomImg || '/imagecompressor/cigar-40-pack-n-go.png'} alt="" className="w-full aspect-[4/3] object-cover" />
         </div>
       </PageFrame>
     </div>
@@ -345,7 +350,7 @@ function SpreadManhattan({ data }) {
           </div>
           {/* Main product image */}
           <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <img src={data?.left?.mainImg || '/imagecompressor/manhattan-collection-1.png'} alt="" className="w-full h-full object-cover" />
+            <Img src={data?.left?.mainImg || '/imagecompressor/manhattan-collection-1.png'} alt="" className="w-full h-full object-cover" />
           </div>
         </Link>
       </PageFrame>
@@ -364,7 +369,7 @@ function SpreadManhattan({ data }) {
         </div>
         {/* Product image */}
         <div className="absolute left-[6%] top-[38%] w-[60%] z-10">
-          <img src={data?.right?.productImg || '/imagecompressor/manhattan-collection02.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          <Img src={data?.right?.productImg || '/imagecompressor/manhattan-collection02.png'} alt="" className="w-full aspect-[4/3] object-cover" />
         </div>
         {/* Features */}
         <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-10 flex flex-col justify-center">
@@ -396,9 +401,9 @@ function SpreadHarrisTweed({ data }) {
               {data?.left?.title || 'Harris\nTweed\nCollection'}
             </h2>
           </div>
-          {/* Main product image */}
+          {/* Main cover image */}
           <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <img src={data?.left?.mainImg || '/imagecompressor/harris-tweed-main.png'} alt="" className="w-full h-full object-cover" />
+            <Img src={data?.left?.mainImg || '/harris-tweed-collection/ht-main-cover.jpeg'} alt="Harris Tweed Collection" className="w-full h-full object-cover" />
           </div>
         </Link>
       </PageFrame>
@@ -412,15 +417,19 @@ function SpreadHarrisTweed({ data }) {
         </div>
         <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
           <p className="text-[12px] leading-[1.7] text-white/70">
-            {data?.right?.body || 'The Harris Tweed Collection brings together timeless Scottish heritage with Andre Garcia\'s signature craftsmanship. Each case features genuine Harris Tweed fabric paired with premium leather trim and full cedar wood lining. Available in a range of iconic tartan patterns and herringbone weaves, these cases offer a distinctive alternative to traditional leather.'}
+            {data?.right?.body || 'The Harris Tweed Collection brings together timeless Scottish heritage with Andre Garcia\'s signature craftsmanship. Featuring 3 Finger Robusto, Limited Edition Horn Top, Torpedo, and Pack & Go models — each wrapped in genuine Harris Tweed fabric paired with premium leather trim and full cedar wood lining.'}
           </p>
         </div>
         {/* Product image */}
         <div className="absolute left-[6%] top-[40%] w-[60%] z-10">
-          <img src={data?.right?.productImg || '/imagecompressor/harris-tweed-10f-1.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          <Img src={data?.right?.productImg || '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top.jpeg'} alt="Harris Tweed Limited Edition Horn Top" className="w-full aspect-[4/3] object-cover" />
+        </div>
+        {/* Texture / secondary image */}
+        <div className="absolute right-[6%] bottom-[6%] w-[28%] z-10">
+          <Img src={data?.right?.textureImg || '/harris-tweed-collection/ht-torpedo-1.jpeg'} alt="Harris Tweed Torpedo" className="w-full aspect-square object-cover" />
         </div>
         {/* Features */}
-        <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-10 flex flex-col justify-center">
+        <div className="absolute right-[6%] top-[8%] bottom-[38%] w-[22%] z-10 flex flex-col justify-center">
           <div className="space-y-3">
             <div className="text-[10px] tracking-[0.2em] text-white/50 uppercase">Features</div>
             <ul className="space-y-2 text-[11px] text-white/70">
@@ -429,6 +438,7 @@ function SpreadHarrisTweed({ data }) {
               <li>• Premium leather trim</li>
               <li>• Cedar wood lining</li>
               <li>• Multiple tartan patterns</li>
+              <li>• Horn Top limited edition</li>
             </ul>
           </div>
         </div>

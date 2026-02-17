@@ -25,6 +25,7 @@ import {
   Phone
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import api from '@/lib/utils';
 import Link from 'next/link';
 
@@ -32,6 +33,7 @@ const OrderReceiptPage = () => {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { formatPrice } = useCurrency();
   
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -236,7 +238,7 @@ const OrderReceiptPage = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Amount</p>
                   <p className="font-bold text-lg text-primary">
-                    ₹{parseFloat(order.total_amount).toLocaleString()}
+                    {formatPrice(order.total_amount)}
                   </p>
                 </div>
               </div>
@@ -329,8 +331,8 @@ const OrderReceiptPage = () => {
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-sm">Quantity: {item.quantity}</span>
                           <div className="text-right">
-                            <p className="text-sm text-muted-foreground">Unit Price: ₹{parseFloat(item.price_at_purchase).toLocaleString()}</p>
-                            <p className="font-semibold">Total: ₹{(parseFloat(item.price_at_purchase) * item.quantity).toLocaleString()}</p>
+                            <p className="text-sm text-muted-foreground">Unit Price: {formatPrice(item.price_at_purchase)}</p>
+                            <p className="font-semibold">Total: {formatPrice(parseFloat(item.price_at_purchase) * item.quantity)}</p>
                           </div>
                         </div>
                       </div>
@@ -344,7 +346,7 @@ const OrderReceiptPage = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal:</span>
-                    <span>₹{parseFloat(order.total_amount).toLocaleString()}</span>
+                    <span>{formatPrice(order.total_amount)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Shipping:</span>
@@ -357,7 +359,7 @@ const OrderReceiptPage = () => {
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total Paid:</span>
-                    <span className="text-primary">₹{parseFloat(order.total_amount).toLocaleString()}</span>
+                    <span className="text-primary">{formatPrice(order.total_amount)}</span>
                   </div>
                 </div>
               </div>

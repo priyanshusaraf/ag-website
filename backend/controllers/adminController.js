@@ -438,7 +438,7 @@ async function uploadProductImage(req, res) {
       return res.status(400).json({ message: 'No image file provided' });
     }
     
-    const imageUrl = `${process.env.SERVER_URL || 'http://localhost:5000'}/uploads/products/${req.file.filename}`;
+    const imageUrl = `/uploads/products/${req.file.filename}`;
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -451,7 +451,7 @@ async function uploadBannerImage(req, res) {
       return res.status(400).json({ message: 'No image file provided' });
     }
     
-    const imageUrl = `${process.env.SERVER_URL || 'http://localhost:5000'}/uploads/banners/${req.file.filename}`;
+    const imageUrl = `/uploads/banners/${req.file.filename}`;
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -464,7 +464,7 @@ async function uploadHeroImage(req, res) {
       return res.status(400).json({ message: 'No image file provided' });
     }
     
-    const imageUrl = `${process.env.SERVER_URL || 'http://localhost:5000'}/uploads/hero/${req.file.filename}`;
+    const imageUrl = `/uploads/hero/${req.file.filename}`;
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -477,7 +477,7 @@ async function uploadHomepageImage(req, res) {
       return res.status(400).json({ message: 'No image file provided' });
     }
 
-    const imageUrl = `${process.env.SERVER_URL || 'http://localhost:5000'}/uploads/homepage/${req.file.filename}`;
+    const imageUrl = `/uploads/homepage/${req.file.filename}`;
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -490,7 +490,7 @@ async function uploadCollectionImage(req, res) {
       return res.status(400).json({ message: 'No image file provided' });
     }
     
-    const imageUrl = `${process.env.SERVER_URL || 'http://localhost:5000'}/uploads/collections/${req.file.filename}`;
+    const imageUrl = `/uploads/collections/${req.file.filename}`;
     res.json({ imageUrl });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

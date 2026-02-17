@@ -298,16 +298,18 @@ const hardcodedCollections = {
     name: 'Harris Tweed Collection',
     tagline: 'Scottish Heritage Meets Premium Craft',
     description: 'The Harris Tweed Collection brings together the timeless heritage of authentic Harris Tweed from the Outer Hebrides of Scotland with Andre Garcia\'s signature craftsmanship. Each case features genuine Harris Tweed fabric — handwoven by islanders in their homes — paired with premium leather trim and cedar wood lining.',
-    heroImage: '/imagecompressor/harris-tweed-collection-main.png',
+    heroImage: '/harris-tweed-collection/ht-main-cover.jpeg',
     products: [
-      { id: 'harris-tweed-10', name: 'Harris Tweed 10 Finger Cigar Case', basePrice: 18700, images: ['/imagecompressor/harris-tweed-collection-main.png', '/imagecompressor/harris-tweed-10f-1.png', '/imagecompressor/harris-tweed-10f-2.png', '/imagecompressor/harris-tweed-10f-3.png', '/imagecompressor/harris-tweed-10f-4.png', '/imagecompressor/harris-tweed-10f-5.png'], availability: 'Usually ships in 4-6 weeks', description: 'Our flagship Harris Tweed case accommodates 10 cigars in authentic Scottish tartan fabric with premium leather trim and full cedar lining.' },
-      { id: 'harris-tweed-5', name: 'Harris Tweed 5 Finger Cigar Case', basePrice: 14450, images: ['/imagecompressor/harris-tweed-5f-1.png', '/imagecompressor/harris-tweed-5f-2.png', '/imagecompressor/harris-tweed-5f-3.png', '/imagecompressor/harris-tweed-5f-4.png', '/imagecompressor/harris-tweed-collection-main.png'], availability: 'Usually ships in 4-6 weeks', description: 'A compact Harris Tweed case for 5 cigars, featuring the same iconic tartan fabric and premium leather accents.' },
+      { id: 'ht-3-finger-robusto', name: 'Harris Tweed 3 Finger Robusto', basePrice: 14450, images: ['/harris-tweed-collection/ht-3-finger-robusto.jpeg', '/harris-tweed-collection/ht-3-finger-robusto-2.jpeg', '/harris-tweed-collection/ht-3-finger-robusto-3.jpeg', '/harris-tweed-collection/ht-3-finger-robusto-4.jpeg'], availability: 'Usually ships in 4-6 weeks', description: 'A compact 3-finger robusto case in authentic Harris Tweed with premium leather trim and Spanish cedar lining.' },
+      { id: 'ht-3-finger-limited-edition-horn-top', name: 'Harris Tweed 3 Finger Limited Edition Horn Top', basePrice: 16575, images: ['/harris-tweed-collection/ht-3-finger-limited-edition-horn-top.jpeg', '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top-2.jpeg', '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top-3.jpeg', '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top-4.jpeg'], availability: 'Limited Edition - Ships in 4-6 weeks', description: 'A limited edition 3-finger sliding case combining genuine Harris Tweed fabric with a handcrafted buffalo horn top.' },
+      { id: 'ht-torpedo', name: 'Harris Tweed Torpedo', basePrice: 15215, images: ['/harris-tweed-collection/ht-torpedo-1.jpeg', '/harris-tweed-collection/ht-torpedo-2.jpeg', '/harris-tweed-collection/ht-torpedo-3.jpeg', '/harris-tweed-collection/ht-torpedo-4.jpeg'], availability: 'Usually ships in 4-6 weeks', description: 'Designed specifically for torpedo-shaped cigars, this Harris Tweed case features a tapered interior and premium leather trim.' },
+      { id: 'ht-pack-and-go', name: 'Harris Tweed Pack & Go', basePrice: 28050, images: ['/harris-tweed-collection/ht-pack-and-go-robusto-main.jpeg', '/harris-tweed-collection/ht-pack-and-go-churchill.jpeg', '/harris-tweed-collection/ht-pack-and-go-robusto-size.jpeg', '/harris-tweed-collection/ht-pack-and-go-churchill-size.jpeg', '/harris-tweed-collection/ht-pack-and-go-robusto-size-2.jpeg', '/harris-tweed-collection/ht-pack-and-go-robusto-size-3.jpeg', '/harris-tweed-collection/ht-pack-and-go-robusto-size-4.jpeg', '/harris-tweed-collection/ht-pack-and-go-robusto-size-5.jpeg'], availability: 'Usually ships in 4-6 weeks', description: 'The iconic Pack & Go travel humidor wrapped in genuine Harris Tweed. Available in Robusto and Churchill sizes.' },
     ],
-    features: ['Genuine Harris Tweed fabric', 'Handwoven in the Outer Hebrides', 'Premium leather trim', 'Cedar wood lining', 'Multiple tartan patterns', 'Crush-resistant construction'],
+    features: ['Genuine Harris Tweed fabric', 'Handwoven in the Outer Hebrides', 'Premium leather trim', 'Spanish cedar wood lining', 'Multiple tartan patterns', 'Crush-resistant construction', 'Zippered closure on Pack & Go models', 'Buffalo horn top on Limited Edition'],
     leatherOptions: [
       { value: 'blue-tartan', label: 'Blue Tartan', price: 0 },
-      { value: 'green-tartan', label: 'Green Tartan', price: 0 },
       { value: 'herringbone-grey', label: 'Herringbone Grey', price: 0 },
+      { value: 'green-tartan', label: 'Green Tartan', price: 425 },
       { value: 'brown-tartan', label: 'Brown Tartan', price: 425 },
     ],
     sizeOptions: [
@@ -394,6 +396,7 @@ function toAdminFormat(defaults) {
       leatherLabel: col.leatherLabel || 'Leather',
       zodiacOptions: col.zodiacOptions || false,
       boneCarvingOptions: col.boneCarvingOptions || false,
+      initialsEmbossing: col.initialsEmbossing !== false,
       carouselImages: [],
     }));
 }

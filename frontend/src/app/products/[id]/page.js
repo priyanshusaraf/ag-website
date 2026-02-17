@@ -6,13 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ArrowLeft, Minus, Plus, Shield, Truck, RotateCcw, Heart, MessageSquare, User } from 'lucide-react';
-import api from '@/lib/utils';
+import api, { resolveImageUrl } from '@/lib/utils';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { CurrencySelector } from '@/components/CurrencyPrice';
 import Link from 'next/link';
 
 const ProductDetail = () => {
   const params = useParams();
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -100,7 +103,7 @@ const ProductDetail = () => {
               <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center shadow-luxury overflow-hidden">
                 {product.image_url ? (
                   <img 
-                    src={product.image_url} 
+                    src={resolveImageUrl(product.image_url)} 
                     alt={product.name} 
                     className="w-full h-full object-cover rounded-lg"
                   />
@@ -150,15 +153,16 @@ const ProductDetail = () => {
                   <span className="text-sm text-muted-foreground">({product.reviews} reviews)</span>
                 </div>
 
-                <div className="flex items-center space-x-3 mb-6">
+                <div className="flex items-center space-x-3 mb-6 flex-wrap gap-y-2">
                   {product.sale_price && parseFloat(product.sale_price) < parseFloat(product.price) ? (
                     <>
-                      <span className="text-3xl font-bold text-green-600">₹{parseFloat(product.sale_price).toLocaleString()}</span>
-                      <span className="text-xl text-muted-foreground line-through">₹{parseFloat(product.price).toLocaleString()}</span>
+                      <span className="text-3xl font-bold text-green-600">{formatPrice(product.sale_price)}</span>
+                      <span className="text-xl text-muted-foreground line-through">{formatPrice(product.price)}</span>
                     </>
                   ) : (
-                    <span className="text-3xl font-bold text-primary">₹{parseFloat(product.price).toLocaleString()}</span>
+                    <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}</span>
                   )}
+                  <CurrencySelector className="ml-auto" />
                 </div>
               </div>
 

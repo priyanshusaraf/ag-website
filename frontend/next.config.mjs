@@ -21,11 +21,26 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**.railway.app',
-        pathname: '/uploads/**',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: '**.vercel.app',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.render.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'andregarciacases.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.andregarciacases.com',
         pathname: '/**',
       },
     ],

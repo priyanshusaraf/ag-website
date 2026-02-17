@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer';
 import SaleBanner from '@/components/sections/SaleBanner';
 import { CartProvider } from '@/contexts/CartContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import Link from 'next/link';
 import AdminNavLink from '@/components/layout/AdminNavLink';
 import { Toaster } from '@/components/ui/toaster';
@@ -202,16 +203,18 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
-          <CartProvider>
-            <SaleBanner />
-            <Navbar />
-            <main className="flex-grow">
-              <AdminNavLink />
-              {children}
-            </main>
-            <Footer />
-            <Toaster />
-          </CartProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              <SaleBanner />
+              <Navbar />
+              <main className="flex-grow">
+                <AdminNavLink />
+                {children}
+              </main>
+              <Footer />
+              <Toaster />
+            </CartProvider>
+          </CurrencyProvider>
         </AuthProvider>
       </body>
     </html>

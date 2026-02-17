@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import api from '@/lib/utils';
+import api, { resolveImageUrl } from '@/lib/utils';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const FeaturedProducts = () => {
   const { addItem } = useCart();
+  const { formatPrice: formatCurrency } = useCurrency();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [fallbackProducts, setFallbackProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,13 +83,13 @@ const FeaturedProducts = () => {
     if (salePriceNum && salePriceNum < basePrice) {
       return (
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-medium text-foreground">₹{salePriceNum.toLocaleString()}</span>
-          <span className="text-sm text-muted-foreground line-through">₹{basePrice.toLocaleString()}</span>
+          <span className="text-lg font-medium text-foreground">{formatCurrency(salePriceNum)}</span>
+          <span className="text-sm text-muted-foreground line-through">{formatCurrency(basePrice)}</span>
         </div>
       );
     }
     
-    return <span className="text-lg font-medium text-foreground">₹{basePrice.toLocaleString()}</span>;
+    return <span className="text-lg font-medium text-foreground">{formatCurrency(basePrice)}</span>;
   };
 
   const ProductCard = ({ product }) => (
@@ -96,7 +98,7 @@ const FeaturedProducts = () => {
         <div className="lookbook-frame p-3">
           <div className="aspect-[4/5] w-full bg-white/5 flex items-end">
             {product.image_url ? (
-              <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+              <img src={resolveImageUrl(product.image_url)} alt={product.name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="lookbook-kicker">Image placeholder</div>

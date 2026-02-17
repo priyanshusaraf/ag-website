@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, CreditCard, Package, User, MapPin, CheckCircle } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import api from '@/lib/utils';
 import Link from 'next/link';
 
@@ -19,6 +20,7 @@ const CheckoutPage = () => {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
+  const { formatPrice } = useCurrency();
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -361,7 +363,7 @@ const CheckoutPage = () => {
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-sm">Qty: {item.quantity}</span>
                           <span className="font-bold text-primary">
-                            ₹{(parseFloat(product.sale_price || product.price) * item.quantity).toLocaleString()}
+                            {formatPrice(parseFloat(product.sale_price || product.price) * item.quantity)}
                           </span>
                         </div>
                       </div>
@@ -374,7 +376,7 @@ const CheckoutPage = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal:</span>
-                    <span>₹{totalPrice.toLocaleString()}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Shipping:</span>
@@ -387,7 +389,7 @@ const CheckoutPage = () => {
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total:</span>
-                    <span className="text-primary">₹{totalPrice.toLocaleString()}</span>
+                    <span className="text-primary">{formatPrice(totalPrice)}</span>
                   </div>
                 </div>
 
@@ -404,7 +406,7 @@ const CheckoutPage = () => {
                   disabled={isLoading}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
-                  {isLoading ? 'Processing...' : `Pay ₹${totalPrice.toLocaleString()}`}
+                  {isLoading ? 'Processing...' : `Pay ${formatPrice(totalPrice)}`}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">

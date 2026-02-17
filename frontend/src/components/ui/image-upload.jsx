@@ -6,7 +6,7 @@ import { Input } from './input';
 import { Label } from './label';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '@/lib/utils';
+import api, { resolveImageUrl } from '@/lib/utils';
 
 export function ImageUpload({ 
   label = "Image", 
@@ -97,7 +97,7 @@ export function ImageUpload({
         {previewUrl ? (
           <div className="relative group">
             <img
-              src={previewUrl}
+              src={previewUrl?.startsWith('data:') ? previewUrl : resolveImageUrl(previewUrl)}
               alt="Preview"
               className="w-full h-48 object-cover rounded-md border"
             />
