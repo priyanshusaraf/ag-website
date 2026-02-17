@@ -94,288 +94,412 @@ function Spread1({ data }) {
 
 function Spread2({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        <div className="absolute top-[6%] left-[6%] right-[8%] lg:right-[50%] z-10">
-          <h2 className="text-[clamp(36px,5.5vw,64px)] font-light leading-[1.08] tracking-tight text-white whitespace-pre-line">
-            {data?.left?.headline || 'The man\nand his\npassion'}
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b] px-6 py-16">
+        <div className="max-w-lg mx-auto space-y-8">
+          <h2 className="text-[36px] font-light leading-[1.08] tracking-tight text-white">
+            {data?.left?.headline || 'The man and his passion'}
           </h2>
-        </div>
-        <div className="absolute top-[30%] left-[6%] right-[8%] z-10">
-          <p className="text-[13px] md:text-[14px] leading-[1.7] text-white/80 mb-5">
+          <img
+            src={data?.right?.image || '/imagecompressor/buffalo-horn-main.png'}
+            alt=""
+            className="w-full aspect-[4/3] object-cover rounded"
+          />
+          <p className="text-[13px] leading-[1.7] text-white/80">
             {data?.left?.body1 ||
               "Brought up in a family of academicians, it was during Abhik Roy's tenure with a multinational company that a chance meeting with Robert Franzblau in 2000 at the Ambiente Trade Fair in Frankfurt, Germany, turned out to be a decisive moment."}
           </p>
-          <p className="text-[13px] md:text-[14px] leading-[1.7] text-white/80 mb-5">
+          <p className="text-[13px] leading-[1.7] text-white/80">
             {data?.left?.body2 ||
               "Franzblau, founder-president of America's oldest mail order cigar company, Thompson Cigar, promised to place the first order for cigar cases once Roy launched his own company."}
           </p>
-          <p className="text-[13px] md:text-[14px] leading-[1.7] text-white font-semibold">
+          <p className="text-[13px] leading-[1.7] text-white font-semibold">
             {data?.left?.body3 ||
               "Roy returned with a renewed gusto and quit his salaried job and became a full-fledged entrepreneur. He always believed that if you know the functionality of a product, the design becomes more or less apparent. This turned out to be his raison de succès."}
           </p>
         </div>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0">
-          <img
-            src={data?.right?.image || '/imagecompressor/buffalo-horn-main.png'}
-            alt=""
-            className="h-full w-full object-cover"
-          />
-        </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[50%] z-10">
+            <h2 className="text-[clamp(36px,5.5vw,64px)] font-light leading-[1.08] tracking-tight text-white whitespace-pre-line">
+              {data?.left?.headline || 'The man\nand his\npassion'}
+            </h2>
+          </div>
+          <div className="absolute top-[30%] left-[6%] right-[8%] z-10">
+            <p className="text-[13px] md:text-[14px] leading-[1.7] text-white/80 mb-5">
+              {data?.left?.body1 ||
+                "Brought up in a family of academicians, it was during Abhik Roy's tenure with a multinational company that a chance meeting with Robert Franzblau in 2000 at the Ambiente Trade Fair in Frankfurt, Germany, turned out to be a decisive moment."}
+            </p>
+            <p className="text-[13px] md:text-[14px] leading-[1.7] text-white/80 mb-5">
+              {data?.left?.body2 ||
+                "Franzblau, founder-president of America's oldest mail order cigar company, Thompson Cigar, promised to place the first order for cigar cases once Roy launched his own company."}
+            </p>
+            <p className="text-[13px] md:text-[14px] leading-[1.7] text-white font-semibold">
+              {data?.left?.body3 ||
+                "Roy returned with a renewed gusto and quit his salaried job and became a full-fledged entrepreneur. He always believed that if you know the functionality of a product, the design becomes more or less apparent. This turned out to be his raison de succès."}
+            </p>
+          </div>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0">
+            <img
+              src={data?.right?.image || '/imagecompressor/buffalo-horn-main.png'}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function Spread3({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/all-cases" className="absolute inset-0 group cursor-pointer">
-          <Img src={data?.left?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-          <div className="absolute bottom-[8%] left-[6%] z-10">
-            <h2 className="text-[clamp(48px,8vw,96px)] font-light leading-[0.95] tracking-tight text-white group-hover:text-primary transition-colors">{data?.left?.title || 'Cigar Cases'}</h2>
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/all-cases" className="block relative aspect-[4/3] overflow-hidden group">
+          <Img src={data?.left?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-6 left-6 z-10">
+            <h2 className="text-[40px] font-light leading-[0.95] tracking-tight text-white">{data?.left?.title || 'Cigar Cases'}</h2>
           </div>
         </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        <div className="absolute top-[8%] left-[6%] right-[32%] z-10">
-          <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold text-right">
+        <div className="px-6 py-12 space-y-6">
+          <p className="text-[14px] leading-[1.6] text-white font-semibold">
             {data?.right?.boldText || 'Andre Garcia revolutionised the world of cigar cases with its St James Collection, Pack & Go, Manhattan, the Golf and Buffalo Horn Collection, for which Roy has a patent.'}
           </p>
-        </div>
-        <div className="absolute top-[38%] left-[6%] right-[32%] z-10">
-          <p className="text-[13px] leading-[1.7] text-white/70 mb-4">
+          <p className="text-[13px] leading-[1.7] text-white/70">
             {data?.right?.body1 || "Andre Garcia brand's guiding principle is one size does not fit all. Roy pioneered a spectrum of sizes to accommodate anything from a short trip, for which one might like a solo smoke, to a party, at which one intends to offer cigars to all the guys."}
           </p>
           <p className="text-[13px] leading-[1.7] text-white/70">
             {data?.right?.body2 || 'Striving for multiplicity, Andre Garcia crafted 1–, 2–, 4–, 5–, 6–, 8–, 10–, 16– and 20–finger cases in various designs, leather grains, dimensions, and colors, as well as widths and lengths.'}
           </p>
         </div>
-        <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-0">
-          <Img src={data?.right?.textureImg || '/imagecompressor/cigar-case-fabric.png'} alt="" className="h-full w-full object-cover" />
-        </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/all-cases" className="absolute inset-0 group cursor-pointer">
+            <Img src={data?.left?.img || '/imagecompressor/website-product-img33-min.jpg'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+            <div className="absolute bottom-[8%] left-[6%] z-10">
+              <h2 className="text-[clamp(48px,8vw,96px)] font-light leading-[0.95] tracking-tight text-white group-hover:text-primary transition-colors">{data?.left?.title || 'Cigar Cases'}</h2>
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[8%] left-[6%] right-[32%] z-10">
+            <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold text-right">
+              {data?.right?.boldText || 'Andre Garcia revolutionised the world of cigar cases with its St James Collection, Pack & Go, Manhattan, the Golf and Buffalo Horn Collection, for which Roy has a patent.'}
+            </p>
+          </div>
+          <div className="absolute top-[38%] left-[6%] right-[32%] z-10">
+            <p className="text-[13px] leading-[1.7] text-white/70 mb-4">
+              {data?.right?.body1 || "Andre Garcia brand's guiding principle is one size does not fit all. Roy pioneered a spectrum of sizes to accommodate anything from a short trip, for which one might like a solo smoke, to a party, at which one intends to offer cigars to all the guys."}
+            </p>
+            <p className="text-[13px] leading-[1.7] text-white/70">
+              {data?.right?.body2 || 'Striving for multiplicity, Andre Garcia crafted 1–, 2–, 4–, 5–, 6–, 8–, 10–, 16– and 20–finger cases in various designs, leather grains, dimensions, and colors, as well as widths and lengths.'}
+            </p>
+          </div>
+          <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-0">
+            <Img src={data?.right?.textureImg || '/imagecompressor/cigar-case-fabric.png'} alt="" className="h-full w-full object-cover" />
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function Spread4({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/st-james" className="absolute inset-0 group cursor-pointer">
-          <Img src={data?.left?.img || '/imagecompressor/st-james-collection-cigar-case.png'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-          <div className="absolute bottom-[8%] right-[6%] z-10 text-right">
-            <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[0.95] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
-              {data?.left?.title || 'St.\nJames\nCollection'}
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/st-james" className="block relative aspect-[4/3] overflow-hidden group">
+          <Img src={data?.left?.img || '/imagecompressor/st-james-collection-cigar-case.png'} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-6 right-6 z-10 text-right">
+            <h2 className="text-[36px] font-light leading-[0.95] tracking-tight text-white">
+              St. James Collection
             </h2>
           </div>
         </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
-          <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
+        <div className="px-6 py-12 space-y-6">
+          <p className="text-[14px] leading-[1.6] text-white font-semibold">
             {data?.right?.boldText || 'The St. James Collection accommodates a cutter, a lighter and a humidification.'}
           </p>
-        </div>
-        <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
-          <p className="text-[12px] leading-[1.7] text-white/70">
+          <p className="text-[13px] leading-[1.7] text-white/70">
             {data?.right?.body || 'Perhaps the most innovative case on the market, here is a case that combined not only space for cigars, but also for accessories! The cigar section is a telescoping case with space for 6-16 cigars, depending on model, with a zip-around section on the top to keep your lighter, cutter and other accessories handy and in one place. You can choose from both smooth leather finishes, a weaved style and a crocodile-style finish, all in multiple colors.'}
           </p>
+          <Img src={data?.right?.productImg || '/imagecompressor/st-james-collection.png'} alt="" className="w-full aspect-[4/3] object-cover rounded" />
         </div>
-        <div className="absolute left-[6%] top-[44%] w-[60%] z-10">
-          <Img src={data?.right?.productImg || '/imagecompressor/st-james-collection.png'} alt="" className="w-full aspect-[4/3] object-cover" />
-        </div>
-        <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-0">
-          <Img src={data?.right?.textureImg || '/imagecompressor/st-james-collection-leather.png'} alt="" className="h-full w-full object-cover" />
-        </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/st-james" className="absolute inset-0 group cursor-pointer">
+            <Img src={data?.left?.img || '/imagecompressor/st-james-collection-cigar-case.png'} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+            <div className="absolute bottom-[8%] right-[6%] z-10 text-right">
+              <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[0.95] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
+                {data?.left?.title || 'St.\nJames\nCollection'}
+              </h2>
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
+            <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
+              {data?.right?.boldText || 'The St. James Collection accommodates a cutter, a lighter and a humidification.'}
+            </p>
+          </div>
+          <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
+            <p className="text-[12px] leading-[1.7] text-white/70">
+              {data?.right?.body || 'Perhaps the most innovative case on the market, here is a case that combined not only space for cigars, but also for accessories! The cigar section is a telescoping case with space for 6-16 cigars, depending on model, with a zip-around section on the top to keep your lighter, cutter and other accessories handy and in one place. You can choose from both smooth leather finishes, a weaved style and a crocodile-style finish, all in multiple colors.'}
+            </p>
+          </div>
+          <div className="absolute left-[6%] top-[44%] w-[60%] z-10">
+            <Img src={data?.right?.productImg || '/imagecompressor/st-james-collection.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          </div>
+          <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-0">
+            <Img src={data?.right?.textureImg || '/imagecompressor/st-james-collection-leather.png'} alt="" className="h-full w-full object-cover" />
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function Spread5({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/horn" className="absolute inset-0 group cursor-pointer">
-          <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
-          {/* Title */}
-          <div className="absolute top-[28%] left-[6%] z-10">
-            <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
-              {data?.left?.title || 'Buffalo\nHorn\nCollection'}
-            </h2>
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/horn" className="block px-6 py-12 space-y-6 group">
+          <h2 className="text-[36px] font-light leading-[1] tracking-tight text-white group-hover:text-primary transition-colors">
+            Buffalo Horn Collection
+          </h2>
+          <div className="flex gap-4">
+            <Img src={data?.left?.caseImg || '/imagecompressor/buffalo-horn-main.png'} alt="" className="w-1/2 aspect-[3/4] object-cover rounded" />
+            <Img src={data?.right?.productImg || '/imagecompressor/buffalo-horn-collection-main.png'} alt="" className="w-1/2 aspect-[3/4] object-cover rounded" />
           </div>
-          {/* Case image - upper right */}
-          <div className="absolute top-[8%] right-[8%] w-[40%] z-10 group-hover:scale-105 transition-transform duration-500">
-            <Img src={data?.left?.caseImg || '/imagecompressor/buffalo-horn-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
-          </div>
-          {/* Cigar image - bottom */}
-          <div className="absolute bottom-[8%] left-[6%] w-[70%] z-10">
-            <Img src={data?.left?.cigarImg || '/imagecompressor/buffalo-horn-cigar.png'} alt="" className="w-full object-contain" />
-          </div>
-        </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        {/* Top text */}
-        <div className="absolute top-[6%] left-[6%] right-[8%] lg:right-[50%] z-10">
-          <p className="text-[11px] leading-[1.7] text-white/70">
-            {data?.right?.body1 || "Here's a series of hard-leather, two or three-finger cases in a variety of finishes: smooth leather in multiple colors, woven leather, Croco or Ostrich patterns. Each sliding case can accommodate cigars of various lengths in hard-shell protection, including the most densely packed suitcase. And the top of each telescoping case has a hard, Buffalo horn top in a marvelous, glossy finish that makes each one unique."}
+          <p className="text-[13px] leading-[1.7] text-white/70">
+            {data?.right?.body1 || "Here's a series of hard-leather, two or three-finger cases in a variety of finishes: smooth leather in multiple colors, woven leather, Croco or Ostrich patterns. Each sliding case can accommodate cigars of various lengths in hard-shell protection. The top of each telescoping case has a hard, Buffalo horn top in a marvelous, glossy finish that makes each one unique."}
           </p>
-        </div>
-        {/* Product image - right side */}
-        <div className="absolute top-[28%] right-[6%] w-[50%] z-10">
-          <Img src={data?.right?.productImg || '/imagecompressor/buffalo-horn-collection-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
-        </div>
-        {/* Bottom text */}
-        <div className="absolute bottom-[12%] left-[6%] right-[56%] z-10 text-center">
-          <p className="text-[12px] leading-[1.6] text-white font-semibold">
+          <p className="text-[13px] leading-[1.6] text-white font-semibold">
             {data?.right?.boldText || 'The Buffalo Horn showcase multi-hued, sinewy caps made from the horny appendages of the buffalo.'}
           </p>
-        </div>
-      </PageFrame>
-    </div>
+        </Link>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/horn" className="absolute inset-0 group cursor-pointer">
+            <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
+            <div className="absolute top-[28%] left-[6%] z-10">
+              <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
+                {data?.left?.title || 'Buffalo\nHorn\nCollection'}
+              </h2>
+            </div>
+            <div className="absolute top-[8%] right-[8%] w-[40%] z-10 group-hover:scale-105 transition-transform duration-500">
+              <Img src={data?.left?.caseImg || '/imagecompressor/buffalo-horn-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
+            </div>
+            <div className="absolute bottom-[8%] left-[6%] w-[70%] z-10">
+              <Img src={data?.left?.cigarImg || '/imagecompressor/buffalo-horn-cigar.png'} alt="" className="w-full object-contain" />
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[50%] z-10">
+            <p className="text-[11px] leading-[1.7] text-white/70">
+              {data?.right?.body1 || "Here's a series of hard-leather, two or three-finger cases in a variety of finishes: smooth leather in multiple colors, woven leather, Croco or Ostrich patterns. Each sliding case can accommodate cigars of various lengths in hard-shell protection, including the most densely packed suitcase. And the top of each telescoping case has a hard, Buffalo horn top in a marvelous, glossy finish that makes each one unique."}
+            </p>
+          </div>
+          <div className="absolute top-[28%] right-[6%] w-[50%] z-10">
+            <Img src={data?.right?.productImg || '/imagecompressor/buffalo-horn-collection-main.png'} alt="" className="w-full aspect-[3/4] object-cover" />
+          </div>
+          <div className="absolute bottom-[12%] left-[6%] right-[56%] z-10 text-center">
+            <p className="text-[12px] leading-[1.6] text-white font-semibold">
+              {data?.right?.boldText || 'The Buffalo Horn showcase multi-hued, sinewy caps made from the horny appendages of the buffalo.'}
+            </p>
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function Spread6({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/carbon-fibre" className="absolute inset-0 group cursor-pointer">
-          <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
-          {/* Title */}
-          <div className="absolute top-[6%] left-[6%] z-10">
-            <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
-              {data?.left?.title || 'Carbon\nFibre\nCollection'}
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/carbon-fibre" className="block relative aspect-[4/3] overflow-hidden group">
+          <Img src={data?.left?.productImg || '/imagecompressor/carbon-fiber-collection-main.png'} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-6 left-6 z-10">
+            <h2 className="text-[36px] font-light leading-[1] tracking-tight text-white">
+              Carbon Fibre Collection
             </h2>
           </div>
-          {/* Main product image - closer to title */}
-          <div className="absolute top-[32%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <Img src={data?.left?.productImg || '/imagecompressor/carbon-fiber-collection-main.png'} alt="" className="w-full h-full object-cover" />
-          </div>
         </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        {/* Top text */}
-        <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
-          <p className="text-[11px] leading-[1.7] text-white/70">
-            {data?.right?.body || "Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case. Each piece is hand made with a crush-resistant aluminum shell, genuine cedar wood inner lining, and an exterior of leather and genuine carbon fiber. This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size. Several thousand carbon fibers are twisted together to form a yarn that's woven into a fabric, combined with epoxy, and molded to form composite reinforced sheets that are tough but very lightweight. The cases are available in two- and three-finger capacity models."}
+        <div className="px-6 py-12 space-y-6">
+          <p className="text-[13px] leading-[1.7] text-white/70">
+            {data?.right?.body || "Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case. Each piece is hand made with a crush-resistant aluminum shell, genuine cedar wood inner lining, and an exterior of leather and genuine carbon fiber. This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size."}
           </p>
+          <Img src={data?.right?.productImg || '/imagecompressor/carbon-fiber-collection-second.png'} alt="" className="w-full aspect-[16/9] object-cover rounded" />
         </div>
-        {/* Second product image */}
-        <div className="absolute bottom-[6%] left-[6%] right-[32%] z-10">
-          <Img src={data?.right?.productImg || '/imagecompressor/carbon-fiber-collection-second.png'} alt="" className="w-full aspect-[16/9] object-cover" />
-        </div>
-        {/* Bold text - bottom right */}
-        <div className="absolute bottom-[20%] right-[8%] w-[20%] z-10 text-right">
-          <p className="text-[11px] leading-[1.6] text-white font-semibold">
-            {data?.right?.boldText || 'This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size.'}
-          </p>
-        </div>
-        {/* Carbon fibre texture strip */}
-        <div className="absolute right-[6%] top-[6%] bottom-[40%] w-[20%] z-0">
-          <Img src={data?.right?.textureImg || '/imagecompressor/carbon-fibre-material.png'} alt="" className="h-full w-full object-cover" />
-        </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/carbon-fibre" className="absolute inset-0 group cursor-pointer">
+            <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
+            <div className="absolute top-[6%] left-[6%] z-10">
+              <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
+                {data?.left?.title || 'Carbon\nFibre\nCollection'}
+              </h2>
+            </div>
+            <div className="absolute top-[32%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+              <Img src={data?.left?.productImg || '/imagecompressor/carbon-fiber-collection-main.png'} alt="" className="w-full h-full object-cover" />
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
+            <p className="text-[11px] leading-[1.7] text-white/70">
+              {data?.right?.body || "Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case. Each piece is hand made with a crush-resistant aluminum shell, genuine cedar wood inner lining, and an exterior of leather and genuine carbon fiber. This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size. Several thousand carbon fibers are twisted together to form a yarn that's woven into a fabric, combined with epoxy, and molded to form composite reinforced sheets that are tough but very lightweight. The cases are available in two- and three-finger capacity models."}
+            </p>
+          </div>
+          <div className="absolute bottom-[6%] left-[6%] right-[32%] z-10">
+            <Img src={data?.right?.productImg || '/imagecompressor/carbon-fiber-collection-second.png'} alt="" className="w-full aspect-[16/9] object-cover" />
+          </div>
+          <div className="absolute bottom-[20%] right-[8%] w-[20%] z-10 text-right">
+            <p className="text-[11px] leading-[1.6] text-white font-semibold">
+              {data?.right?.boldText || 'This high-tech material consists of extremely thin fibers bonded together in hexagonal aromatic rings, which are incredibly strong for their size.'}
+            </p>
+          </div>
+          <div className="absolute right-[6%] top-[6%] bottom-[40%] w-[20%] z-0">
+            <Img src={data?.right?.textureImg || '/imagecompressor/carbon-fibre-material.png'} alt="" className="h-full w-full object-cover" />
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function Spread7({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/pack-and-go" className="absolute inset-0 group cursor-pointer">
-          <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
-          <div className="absolute top-[6%] left-[6%] z-10">
-            <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[1] tracking-tight text-white group-hover:text-primary transition-colors">
-              {data?.left?.title || 'Pack & Go'}
-            </h2>
-          </div>
-          <div className="absolute top-[18%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <Img src={data?.left?.mainImg || '/imagecompressor/pack-and-go.png'} alt="" className="w-full h-full object-cover" />
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/pack-and-go" className="block relative aspect-[4/3] overflow-hidden group">
+          <Img src={data?.left?.mainImg || '/imagecompressor/pack-and-go.png'} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-6 left-6 z-10">
+            <h2 className="text-[36px] font-light leading-[1] tracking-tight text-white">Pack &amp; Go</h2>
           </div>
         </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        <div className="absolute top-[6%] left-[6%] right-[52%] lg:right-[42%] z-10">
-          <Img src={data?.right?.topImg || '/imagecompressor/pack-and-go-another.png'} alt="" className="w-full aspect-square object-cover" />
-        </div>
-        <div className="absolute top-[6%] right-[6%] left-[52%] lg:left-[62%] z-10">
-          <p className="text-[11px] leading-[1.7] text-white/70">
+        <div className="px-6 py-12 space-y-6">
+          <p className="text-[13px] leading-[1.7] text-white/70">
             {data?.right?.body ||
               "From the first glance, it can't be differentiated from an upscale executive tote with an adjustable handle and removable shoulder strap. But the inside reveals cedar-lining and organized collapsible wooden dividers plus additional compartments for cigar storage. Both the understated plain black leather case and the crocodile-embossed leather case are crafted to last generations of discerning aficionados."}
           </p>
-        </div>
-        <div className="absolute top-[40%] left-[6%] right-[56%] z-10 text-center">
-          <p className="text-[12px] leading-[1.6] text-white font-semibold">
+          <p className="text-[14px] leading-[1.6] text-white font-semibold">
             {data?.right?.boldText ||
               "The most impressive and unique product of Garcia's crafts is the Pack & Go satchel that easily stows astonishing 40 sticks of your favorite smokes."}
           </p>
+          <div className="flex gap-4">
+            <Img src={data?.right?.topImg || '/imagecompressor/pack-and-go-another.png'} alt="" className="w-1/2 aspect-square object-cover rounded" />
+            <Img src={data?.right?.bottomImg || '/imagecompressor/cigar-40-pack-n-go.png'} alt="" className="w-1/2 aspect-square object-cover rounded" />
+          </div>
         </div>
-        <div className="absolute top-[58%] left-[10%] w-[20%] z-10">
-          <Img src={data?.right?.textureImg || '/imagecompressor/pack-n-go-new.png'} alt="" className="w-full aspect-[2/3] object-cover" />
-        </div>
-        <div className="absolute bottom-[8%] right-[6%] w-[54%] z-10">
-          <Img src={data?.right?.bottomImg || '/imagecompressor/cigar-40-pack-n-go.png'} alt="" className="w-full aspect-[4/3] object-cover" />
-        </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/pack-and-go" className="absolute inset-0 group cursor-pointer">
+            <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
+            <div className="absolute top-[6%] left-[6%] z-10">
+              <h2 className="text-[clamp(40px,7vw,80px)] font-light leading-[1] tracking-tight text-white group-hover:text-primary transition-colors">
+                {data?.left?.title || 'Pack & Go'}
+              </h2>
+            </div>
+            <div className="absolute top-[18%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+              <Img src={data?.left?.mainImg || '/imagecompressor/pack-and-go.png'} alt="" className="w-full h-full object-cover" />
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[42%] z-10">
+            <Img src={data?.right?.topImg || '/imagecompressor/pack-and-go-another.png'} alt="" className="w-full aspect-square object-cover" />
+          </div>
+          <div className="absolute top-[6%] right-[6%] left-[62%] z-10">
+            <p className="text-[11px] leading-[1.7] text-white/70">
+              {data?.right?.body ||
+                "From the first glance, it can't be differentiated from an upscale executive tote with an adjustable handle and removable shoulder strap. But the inside reveals cedar-lining and organized collapsible wooden dividers plus additional compartments for cigar storage. Both the understated plain black leather case and the crocodile-embossed leather case are crafted to last generations of discerning aficionados."}
+            </p>
+          </div>
+          <div className="absolute top-[40%] left-[6%] right-[56%] z-10 text-center">
+            <p className="text-[12px] leading-[1.6] text-white font-semibold">
+              {data?.right?.boldText ||
+                "The most impressive and unique product of Garcia's crafts is the Pack & Go satchel that easily stows astonishing 40 sticks of your favorite smokes."}
+            </p>
+          </div>
+          <div className="absolute top-[58%] left-[10%] w-[20%] z-10">
+            <Img src={data?.right?.textureImg || '/imagecompressor/pack-n-go-new.png'} alt="" className="w-full aspect-[2/3] object-cover" />
+          </div>
+          <div className="absolute bottom-[8%] right-[6%] w-[54%] z-10">
+            <Img src={data?.right?.bottomImg || '/imagecompressor/cigar-40-pack-n-go.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function SpreadManhattan({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/manhattan" className="absolute inset-0 group cursor-pointer">
-          <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
-          {/* Title */}
-          <div className="absolute top-[6%] left-[6%] z-10">
-            <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
-              {data?.left?.title || 'Manhattan\nCollection'}
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/manhattan" className="block relative aspect-[4/3] overflow-hidden group">
+          <Img src={data?.left?.mainImg || '/imagecompressor/manhattan-collection-1.png'} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-6 left-6 z-10">
+            <h2 className="text-[36px] font-light leading-[1] tracking-tight text-white">
+              Manhattan Collection
             </h2>
           </div>
-          {/* Main product image */}
-          <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <Img src={data?.left?.mainImg || '/imagecompressor/manhattan-collection-1.png'} alt="" className="w-full h-full object-cover" />
-          </div>
         </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        {/* Top text */}
-        <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
-          <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
+        <div className="px-6 py-12 space-y-6">
+          <p className="text-[14px] leading-[1.6] text-white font-semibold">
             {data?.right?.boldText || 'The Manhattan Collection represents the pinnacle of urban luxury.'}
           </p>
-        </div>
-        <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
-          <p className="text-[12px] leading-[1.7] text-white/70">
+          <p className="text-[13px] leading-[1.7] text-white/70">
             {data?.right?.body || 'Crafted for the discerning aficionado who appreciates both form and function, these cases feature sleek designs with premium materials. Perfect for the modern gentleman who demands excellence. Choose from a variety of leather finishes and sizes to match your personal style.'}
           </p>
-        </div>
-        {/* Product image */}
-        <div className="absolute left-[6%] top-[38%] w-[60%] z-10">
-          <Img src={data?.right?.productImg || '/imagecompressor/manhattan-collection02.png'} alt="" className="w-full aspect-[4/3] object-cover" />
-        </div>
-        {/* Features */}
-        <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-10 flex flex-col justify-center">
-          <div className="space-y-3">
+          <Img src={data?.right?.productImg || '/imagecompressor/manhattan-collection02.png'} alt="" className="w-full aspect-[4/3] object-cover rounded" />
+          <div className="space-y-2">
             <div className="text-[10px] tracking-[0.2em] text-white/50 uppercase">Features</div>
-            <ul className="space-y-2 text-[11px] text-white/70">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[12px] text-white/70">
               <li>• Sleek urban design</li>
               <li>• Premium leather finish</li>
               <li>• Cedar wood lining</li>
@@ -384,55 +508,84 @@ function SpreadManhattan({ data }) {
             </ul>
           </div>
         </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/manhattan" className="absolute inset-0 group cursor-pointer">
+            <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
+            <div className="absolute top-[6%] left-[6%] z-10">
+              <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
+                {data?.left?.title || 'Manhattan\nCollection'}
+              </h2>
+            </div>
+            <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+              <Img src={data?.left?.mainImg || '/imagecompressor/manhattan-collection-1.png'} alt="" className="w-full h-full object-cover" />
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
+            <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
+              {data?.right?.boldText || 'The Manhattan Collection represents the pinnacle of urban luxury.'}
+            </p>
+          </div>
+          <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
+            <p className="text-[12px] leading-[1.7] text-white/70">
+              {data?.right?.body || 'Crafted for the discerning aficionado who appreciates both form and function, these cases feature sleek designs with premium materials. Perfect for the modern gentleman who demands excellence. Choose from a variety of leather finishes and sizes to match your personal style.'}
+            </p>
+          </div>
+          <div className="absolute left-[6%] top-[38%] w-[60%] z-10">
+            <Img src={data?.right?.productImg || '/imagecompressor/manhattan-collection02.png'} alt="" className="w-full aspect-[4/3] object-cover" />
+          </div>
+          <div className="absolute right-[6%] top-[8%] bottom-[8%] w-[22%] z-10 flex flex-col justify-center">
+            <div className="space-y-3">
+              <div className="text-[10px] tracking-[0.2em] text-white/50 uppercase">Features</div>
+              <ul className="space-y-2 text-[11px] text-white/70">
+                <li>• Sleek urban design</li>
+                <li>• Premium leather finish</li>
+                <li>• Cedar wood lining</li>
+                <li>• Secure closure</li>
+                <li>• Custom personalization</li>
+              </ul>
+            </div>
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 
 function SpreadHarrisTweed({ data }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <PageFrame>
-        <Link href="/collections/harris-tweed" className="absolute inset-0 group cursor-pointer">
-          <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
-          {/* Title */}
-          <div className="absolute top-[6%] left-[6%] z-10">
-            <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
-              {data?.left?.title || 'Cuero\ny Tweed'}
+    <>
+      {/* Mobile */}
+      <div className="lg:hidden bg-[#0a0a0b]">
+        <Link href="/collections/harris-tweed" className="block relative aspect-[4/3] overflow-hidden group">
+          <Img src={data?.left?.mainImg || '/harris-tweed-collection/ht-main-cover.jpeg'} alt="Harris Tweed Collection" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute bottom-6 left-6 z-10">
+            <h2 className="text-[36px] font-light leading-[1] tracking-tight text-white">
+              Cuero y Tweed
             </h2>
           </div>
-          {/* Main cover image */}
-          <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <Img src={data?.left?.mainImg || '/harris-tweed-collection/ht-main-cover.jpeg'} alt="Harris Tweed Collection" className="w-full h-full object-cover" />
-          </div>
         </Link>
-      </PageFrame>
-      <PageFrame>
-        <div className="absolute inset-0 bg-[#0a0a0b]" />
-        {/* Top text */}
-        <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
-          <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
+        <div className="px-6 py-12 space-y-6">
+          <p className="text-[14px] leading-[1.6] text-white font-semibold">
             {data?.right?.boldText || 'Authentic Harris Tweed from the Outer Hebrides of Scotland, paired with premium leather — Cuero y Tweed.'}
           </p>
-        </div>
-        <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
-          <p className="text-[12px] leading-[1.7] text-white/70">
+          <p className="text-[13px] leading-[1.7] text-white/70">
             {data?.right?.body || 'The Cuero y Tweed collection brings together timeless Scottish heritage with Andre Garcia\'s signature craftsmanship. Featuring Sliding Case, Torpedo, and Pack & Go models — each wrapped in genuine Harris Tweed fabric paired with premium leather trim and full cedar wood lining.'}
           </p>
-        </div>
-        {/* Product image */}
-        <div className="absolute left-[6%] top-[40%] w-[60%] z-10">
-          <Img src={data?.right?.productImg || '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top.jpeg'} alt="Harris Tweed Limited Edition Horn Top" className="w-full aspect-[4/3] object-cover" />
-        </div>
-        {/* Texture / secondary image */}
-        <div className="absolute right-[6%] bottom-[6%] w-[28%] z-10">
-          <Img src={data?.right?.textureImg || '/harris-tweed-collection/ht-torpedo-1.jpeg'} alt="Harris Tweed Torpedo" className="w-full aspect-square object-cover" />
-        </div>
-        {/* Features */}
-        <div className="absolute right-[6%] top-[8%] bottom-[38%] w-[22%] z-10 flex flex-col justify-center">
-          <div className="space-y-3">
+          <div className="flex gap-4">
+            <Img src={data?.right?.productImg || '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top.jpeg'} alt="Harris Tweed Limited Edition" className="w-1/2 aspect-[3/4] object-cover rounded" />
+            <Img src={data?.right?.textureImg || '/harris-tweed-collection/ht-torpedo-1.jpeg'} alt="Harris Tweed Torpedo" className="w-1/2 aspect-[3/4] object-cover rounded" />
+          </div>
+          <div className="space-y-2">
             <div className="text-[10px] tracking-[0.2em] text-white/50 uppercase">Features</div>
-            <ul className="space-y-2 text-[11px] text-white/70">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[12px] text-white/70">
               <li>• Genuine Harris Tweed</li>
               <li>• Handwoven in Scotland</li>
               <li>• Premium leather trim</li>
@@ -442,8 +595,57 @@ function SpreadHarrisTweed({ data }) {
             </ul>
           </div>
         </div>
-      </PageFrame>
-    </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:grid grid-cols-2">
+        <PageFrame>
+          <Link href="/collections/harris-tweed" className="absolute inset-0 group cursor-pointer">
+            <div className="absolute inset-0 bg-[#0a0a0b] group-hover:bg-[#151516] transition-colors duration-300" />
+            <div className="absolute top-[6%] left-[6%] z-10">
+              <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
+                {data?.left?.title || 'Cuero\ny Tweed'}
+              </h2>
+            </div>
+            <div className="absolute top-[28%] left-[6%] right-[6%] bottom-[6%] z-10 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+              <Img src={data?.left?.mainImg || '/harris-tweed-collection/ht-main-cover.jpeg'} alt="Harris Tweed Collection" className="w-full h-full object-cover" />
+            </div>
+          </Link>
+        </PageFrame>
+        <PageFrame>
+          <div className="absolute inset-0 bg-[#0a0a0b]" />
+          <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
+            <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
+              {data?.right?.boldText || 'Authentic Harris Tweed from the Outer Hebrides of Scotland, paired with premium leather — Cuero y Tweed.'}
+            </p>
+          </div>
+          <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
+            <p className="text-[12px] leading-[1.7] text-white/70">
+              {data?.right?.body || 'The Cuero y Tweed collection brings together timeless Scottish heritage with Andre Garcia\'s signature craftsmanship. Featuring Sliding Case, Torpedo, and Pack & Go models — each wrapped in genuine Harris Tweed fabric paired with premium leather trim and full cedar wood lining.'}
+            </p>
+          </div>
+          <div className="absolute left-[6%] top-[40%] w-[60%] z-10">
+            <Img src={data?.right?.productImg || '/harris-tweed-collection/ht-3-finger-limited-edition-horn-top.jpeg'} alt="Harris Tweed Limited Edition Horn Top" className="w-full aspect-[4/3] object-cover" />
+          </div>
+          <div className="absolute right-[6%] bottom-[6%] w-[28%] z-10">
+            <Img src={data?.right?.textureImg || '/harris-tweed-collection/ht-torpedo-1.jpeg'} alt="Harris Tweed Torpedo" className="w-full aspect-square object-cover" />
+          </div>
+          <div className="absolute right-[6%] top-[8%] bottom-[38%] w-[22%] z-10 flex flex-col justify-center">
+            <div className="space-y-3">
+              <div className="text-[10px] tracking-[0.2em] text-white/50 uppercase">Features</div>
+              <ul className="space-y-2 text-[11px] text-white/70">
+                <li>• Genuine Harris Tweed</li>
+                <li>• Handwoven in Scotland</li>
+                <li>• Premium leather trim</li>
+                <li>• Cedar wood lining</li>
+                <li>• Multiple tartan patterns</li>
+                <li>• Horn Top limited edition</li>
+              </ul>
+            </div>
+          </div>
+        </PageFrame>
+      </div>
+    </>
   );
 }
 

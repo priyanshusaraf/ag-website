@@ -224,7 +224,7 @@ export default async function CollectionsPage() {
                   className="group"
                 >
                   <div className={`relative overflow-hidden bg-[#111112] rounded-lg ${index === 0 ? 'md:col-span-2' : ''}`}>
-                    <div className={`${index === 0 ? 'aspect-[2/1]' : 'aspect-[4/3]'} overflow-hidden`}>
+                    <div className={`${index === 0 ? 'aspect-[3/2] md:aspect-[2/1]' : 'aspect-[4/3]'} overflow-hidden`}>
                       <img
                         src={resolveImageUrl(collection.heroImage || collection.image)}
                         alt={collection.name}
@@ -232,16 +232,16 @@ export default async function CollectionsPage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                      <h3 className="text-2xl md:text-3xl font-light text-white mb-2 group-hover:text-primary transition-colors">
+                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+                      <h3 className="text-xl md:text-3xl font-light text-white mb-1 md:mb-2 group-hover:text-primary transition-colors">
                         {collection.name}
                       </h3>
-                      <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-lg">
+                      <p className="text-white/60 text-xs md:text-sm leading-relaxed mb-3 md:mb-4 max-w-lg line-clamp-2 md:line-clamp-none">
                         {collection.description}
                       </p>
                       <div className="flex items-center justify-between">
-                        <CurrencyPriceFrom amount={collection.startingPrice} className="text-white/40 text-sm" />
-                        <span className="text-primary font-medium text-sm flex items-center group-hover:gap-2 transition-all">
+                        <CurrencyPriceFrom amount={collection.startingPrice} className="text-white/40 text-xs md:text-sm" />
+                        <span className="text-primary font-medium text-xs md:text-sm flex items-center group-hover:gap-2 transition-all">
                           Shop Now
                           <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </span>
