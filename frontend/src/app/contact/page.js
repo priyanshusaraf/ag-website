@@ -133,77 +133,67 @@ const Contact = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card className="p-6">
-                  <CardContent className="p-0">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MapPin className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-2">Registered Address</h3>
-                        <p className="text-muted-foreground text-sm">
-                          Andre Garcia Cases<br />
-                          Kolkata, West Bengal<br />
-                          India
-                        </p>
-                      </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-muted/30 rounded-xl p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="h-5 w-5 text-primary" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <div>
+                      <h3 className="font-semibold mb-1.5 text-sm">Registered Address</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Andre Garcia Cases<br />
+                        Kolkata, West Bengal<br />
+                        India
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-                <Card className="p-6">
-                  <CardContent className="p-0">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Mail className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-2">Email</h3>
-                        <p className="text-muted-foreground text-sm">
-                          <a href="mailto:abhik@andregarciacases.com" className="hover:text-primary transition-colors">
-                            abhik@andregarciacases.com
-                          </a>
-                        </p>
-                      </div>
+                <div className="bg-muted/30 rounded-xl p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Mail className="h-5 w-5 text-primary" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <div>
+                      <h3 className="font-semibold mb-1.5 text-sm">Email</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed break-all">
+                        <a href="mailto:abhik@andregarciacases.com" className="hover:text-primary transition-colors">
+                          abhik@andregarciacases.com
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-                <Card className="p-6">
-                  <CardContent className="p-0">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Clock className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-2">Business Hours</h3>
-                        <p className="text-muted-foreground text-sm">
-                          Mon – Sat: 10:00 AM – 6:00 PM IST<br />
-                          Sun: Closed
-                        </p>
-                      </div>
+                <div className="bg-muted/30 rounded-xl p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Clock className="h-5 w-5 text-primary" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <div>
+                      <h3 className="font-semibold mb-1.5 text-sm">Business Hours</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Mon – Sat: 10:00 AM – 6:00 PM IST<br />
+                        Sun: Closed
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-                <Card className="p-6">
-                  <CardContent className="p-0">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MessageSquare className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-2">Response Time</h3>
-                        <p className="text-muted-foreground text-sm">
-                          We aim to respond to all<br />
-                          enquiries within 24–48 hours<br />
-                          on business days.
-                        </p>
-                      </div>
+                <div className="bg-muted/30 rounded-xl p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MessageSquare className="h-5 w-5 text-primary" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <div>
+                      <h3 className="font-semibold mb-1.5 text-sm">Response Time</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        We aim to respond to all enquiries within 24–48 hours on business days.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

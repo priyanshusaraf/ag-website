@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 import { resolveImageUrl } from '@/lib/utils';
@@ -21,6 +20,15 @@ export const metadata = {
 
 // Default hardcoded collections as fallback
 const defaultCollections = [
+  {
+    slug: 'harris-tweed',
+    name: 'Cuero y Tweed',
+    tagline: 'Premium Leather Meets Harris Tweed',
+    description: 'Authentic Harris Tweed fabric handwoven in the Outer Hebrides, paired with premium leather trim and cedar wood lining. Featuring Sliding Case, Torpedo and Pack & Go models.',
+    heroImage: '/harris-tweed-collection/ht-main-cover.jpeg',
+    featured: true,
+    startingPrice: 18333,
+  },
   {
     slug: 'st-james',
     name: 'St. James Collection',
@@ -76,15 +84,6 @@ const defaultCollections = [
     startingPrice: 13175,
   },
   {
-    slug: 'harris-tweed',
-    name: 'Cuero y Tweed',
-    tagline: 'Premium Leather Meets Harris Tweed',
-    description: 'Authentic Harris Tweed fabric handwoven in the Outer Hebrides, paired with premium leather trim and cedar wood lining. Featuring Sliding Case, Torpedo and Pack & Go models.',
-    heroImage: '/harris-tweed-collection/ht-main-cover.jpeg',
-    featured: true,
-    startingPrice: 18333,
-  },
-  {
     slug: 'custom',
     name: 'Custom Collection',
     tagline: 'Your Vision, Our Craft',
@@ -132,16 +131,17 @@ const defaultCollections = [
 ];
 
 async function getCollections() {
+  let collections = defaultCollections;
+
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:5000/api';
     const res = await fetch(`${apiUrl}/collections`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+      next: { revalidate: 60 },
     });
     if (res.ok) {
       const data = await res.json();
       if (data?.collections && data.collections.length > 0) {
-        // Map API collections to the list view format
-        return data.collections.map((c) => ({
+        collections = data.collections.map((c) => ({
           slug: c.slug,
           name: c.name,
           tagline: c.tagline || '',
@@ -156,7 +156,25 @@ async function getCollections() {
   } catch (e) {
     console.log('Could not fetch collections from API, using defaults');
   }
-  return defaultCollections;
+
+  // Ensure Harris Tweed (Cuero y Tweed) is always present and first
+  const harrisTweedDefault = defaultCollections.find(c => c.slug === 'harris-tweed');
+  const hasHarrisTweed = collections.some(c => c.slug === 'harris-tweed');
+  if (!hasHarrisTweed && harrisTweedDefault) {
+    collections = [harrisTweedDefault, ...collections];
+  } else {
+    // Move Harris Tweed to first position
+    const htIndex = collections.findIndex(c => c.slug === 'harris-tweed');
+    if (htIndex > 0) {
+      const ht = collections[htIndex];
+      ht.featured = true;
+      collections = [ht, ...collections.slice(0, htIndex), ...collections.slice(htIndex + 1)];
+    } else if (htIndex === 0) {
+      collections[0].featured = true;
+    }
+  }
+
+  return collections;
 }
 
 export default async function CollectionsPage() {
@@ -215,9 +233,6 @@ export default async function CollectionsPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                      <Badge className="mb-3 bg-primary/20 text-primary border-primary/20 text-[10px] uppercase tracking-widest">
-                        {collection.tagline}
-                      </Badge>
                       <h3 className="text-2xl md:text-3xl font-light text-white mb-2 group-hover:text-primary transition-colors">
                         {collection.name}
                       </h3>
@@ -266,9 +281,6 @@ export default async function CollectionsPage() {
                       />
                     </div>
                     <div className="p-6">
-                      <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 text-[10px] uppercase tracking-widest">
-                        {collection.tagline}
-                      </Badge>
                       <h3 className="text-xl font-light text-white mb-2 group-hover:text-primary transition-colors">
                         {collection.name}
                       </h3>

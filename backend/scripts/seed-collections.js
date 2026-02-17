@@ -21,6 +21,7 @@ const hardcodedCollections = {
   'st-james': {
     name: 'St. James Collection',
     tagline: 'Innovative Design Meets Functionality',
+    featured: true,
     description: 'The St. James Collection accommodates a cutter, a lighter and a humidification. Perhaps the most innovative case on the market, here is a case that combined not only space for cigars, but also for accessories! The cigar section is a telescoping case with space for 6-16 cigars, depending on model, with a zip-around section on the top to keep your lighter, cutter and other accessories handy and in one place.',
     heroImage: '/imagecompressor/st-james-collection-cigar-case.png',
     products: [
@@ -48,6 +49,7 @@ const hardcodedCollections = {
   'horn': {
     name: 'Horn Collection',
     tagline: 'Nature Meets Craftsmanship',
+    featured: true,
     description: "Here's a series of hard-leather, two or three-finger cases in a variety of finishes: smooth leather in multiple colors, woven leather, Croco or Ostrich patterns. Each sliding case can accommodate cigars of various lengths in hard-shell protection. The top of each telescoping case has a hard, Buffalo horn top in a marvelous, glossy finish that makes each one unique.",
     heroImage: '/imagecompressor/buffalo-horn-main.png',
     products: [
@@ -76,6 +78,7 @@ const hardcodedCollections = {
   'carbon-fibre': {
     name: 'Carbon Fibre Collection',
     tagline: 'High-Tech Luxury',
+    featured: true,
     description: 'Carry your cigars in style with the Andre Garcia Limited Edition Carbon Fiber cigar case.',
     heroImage: '/imagecompressor/carbon-fiber-collection-main.png',
     products: [
@@ -97,6 +100,7 @@ const hardcodedCollections = {
   'manhattan': {
     name: 'Manhattan Collection',
     tagline: 'Urban Sophistication',
+    featured: true,
     description: 'The Manhattan Collection represents the pinnacle of urban luxury.',
     heroImage: '/imagecompressor/manhattan-collection-1.png',
     products: [
@@ -220,6 +224,7 @@ const hardcodedCollections = {
   'zippered': {
     name: 'Zippered Collection',
     tagline: 'Secure & Stylish',
+    featured: true,
     description: 'The Zippered Collection offers premium cigar cases with secure zip-around closures.',
     heroImage: '/imagecompressor/website-product-img33-min.jpg',
     products: [
@@ -322,6 +327,7 @@ const hardcodedCollections = {
   'whats-new': {
     name: "What's New",
     tagline: 'Latest Arrivals',
+    featured: true,
     description: 'Discover our newest additions to the Andre Garcia collection.',
     heroImage: '/imagecompressor/website-product-img47-min.jpg',
     products: [
@@ -352,9 +358,14 @@ function uid(prefix) {
 }
 
 function toAdminFormat(defaults) {
-  return Object.entries(defaults)
-    .filter(([, col]) => !col.redirect)
-    .map(([slug, col]) => ({
+  // Sort so harris-tweed appears first
+  const entries = Object.entries(defaults).filter(([, col]) => !col.redirect);
+  entries.sort((a, b) => {
+    if (a[0] === 'harris-tweed') return -1;
+    if (b[0] === 'harris-tweed') return 1;
+    return 0;
+  });
+  return entries.map(([slug, col]) => ({
       id: uid('col'),
       slug,
       name: col.name || '',
