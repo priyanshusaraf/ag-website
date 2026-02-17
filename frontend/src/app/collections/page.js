@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 import { resolveImageUrl } from '@/lib/utils';
-import { CurrencyPriceFrom, CurrencySelector } from '@/components/CurrencyPrice';
+import { CurrencyPriceFrom } from '@/components/CurrencyPrice';
 
 export const metadata = {
   title: 'Collections – Luxury Cigar Case Collections',
@@ -77,12 +77,12 @@ const defaultCollections = [
   },
   {
     slug: 'harris-tweed',
-    name: 'Harris Tweed Collection',
-    tagline: 'Scottish Heritage Meets Premium Craft',
-    description: 'Authentic Harris Tweed fabric handwoven in the Outer Hebrides, paired with premium leather trim and cedar wood lining. Featuring Torpedo, 3 Finger Robusto, Limited Edition Horn Top and Pack & Go models.',
+    name: 'Cuero y Tweed',
+    tagline: 'Premium Leather Meets Harris Tweed',
+    description: 'Authentic Harris Tweed fabric handwoven in the Outer Hebrides, paired with premium leather trim and cedar wood lining. Featuring Sliding Case, Torpedo and Pack & Go models.',
     heroImage: '/harris-tweed-collection/ht-main-cover.jpeg',
     featured: true,
-    startingPrice: 14450,
+    startingPrice: 18333,
   },
   {
     slug: 'custom',
@@ -173,12 +173,9 @@ export default async function CollectionsPage() {
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 uppercase tracking-widest text-[10px]">
               Handcrafted Excellence
             </Badge>
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white tracking-tight">
-                Our Collections
-              </h1>
-              <CurrencySelector />
-            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-6 tracking-tight">
+              Our Collections
+            </h1>
             <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
               Discover our range of handcrafted luxury cigar cases, each designed with meticulous
               attention to detail and premium materials. From innovative designs to timeless classics,

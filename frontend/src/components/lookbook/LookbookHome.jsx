@@ -398,7 +398,7 @@ function SpreadHarrisTweed({ data }) {
           {/* Title */}
           <div className="absolute top-[6%] left-[6%] z-10">
             <h2 className="text-[clamp(36px,6vw,72px)] font-light leading-[1] tracking-tight text-white whitespace-pre-line group-hover:text-primary transition-colors">
-              {data?.left?.title || 'Harris\nTweed\nCollection'}
+              {data?.left?.title || 'Cuero\ny Tweed'}
             </h2>
           </div>
           {/* Main cover image */}
@@ -412,12 +412,12 @@ function SpreadHarrisTweed({ data }) {
         {/* Top text */}
         <div className="absolute top-[6%] left-[6%] right-[32%] z-10">
           <p className="text-[14px] md:text-[15px] leading-[1.6] text-white font-semibold">
-            {data?.right?.boldText || 'Authentic Harris Tweed from the Outer Hebrides of Scotland, handwoven by islanders in their homes.'}
+            {data?.right?.boldText || 'Authentic Harris Tweed from the Outer Hebrides of Scotland, paired with premium leather — Cuero y Tweed.'}
           </p>
         </div>
         <div className="absolute top-[18%] left-[6%] right-[32%] z-10">
           <p className="text-[12px] leading-[1.7] text-white/70">
-            {data?.right?.body || 'The Harris Tweed Collection brings together timeless Scottish heritage with Andre Garcia\'s signature craftsmanship. Featuring 3 Finger Robusto, Limited Edition Horn Top, Torpedo, and Pack & Go models — each wrapped in genuine Harris Tweed fabric paired with premium leather trim and full cedar wood lining.'}
+            {data?.right?.body || 'The Cuero y Tweed collection brings together timeless Scottish heritage with Andre Garcia\'s signature craftsmanship. Featuring Sliding Case, Torpedo, and Pack & Go models — each wrapped in genuine Harris Tweed fabric paired with premium leather trim and full cedar wood lining.'}
           </p>
         </div>
         {/* Product image */}

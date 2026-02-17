@@ -193,11 +193,11 @@ const ProductsContent = () => {
               <div className="text-white/35 font-light tracking-wide">02</div>
               <div className="text-white/35 font-light tracking-wide">ANDRE GARCIA</div>
             </div>
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
               <h1 className="lookbook-h1 text-[clamp(2.6rem,5.6vw,5.2rem)]">
                 Premium collection
               </h1>
-              <CurrencySelector />
+              <CurrencySelector className="flex-shrink-0" />
             </div>
             <p className="text-base lg:text-lg text-muted-foreground leading-relaxed max-w-3xl">
               Discover our complete range of handcrafted cigar containers, humidors, 
@@ -212,16 +212,30 @@ const ProductsContent = () => {
       <section className="py-6 lg:py-8 bg-background border-b">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="space-y-6">
-            {/* Categories - Mobile First */}
+            {/* Categories - Dropdown on mobile, buttons on desktop */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide lg:hidden">Categories</h3>
-              <div className="flex flex-wrap gap-2">
+              {/* Mobile: dropdown */}
+              <div className="lg:hidden">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  className="w-full px-3 py-2.5 border rounded-md text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  {categories.map((category, index) => (
+                    <option key={index} value={category.name}>
+                      {category.name} ({category.count})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* Desktop: buttons */}
+              <div className="hidden lg:flex flex-wrap gap-2">
                 {categories.map((category, index) => (
                   <Button
                     key={index}
                     variant={selectedCategory === category.name ? "default" : "outline"}
                     size="sm"
-                    className="text-xs lg:text-sm flex-shrink-0"
+                    className="text-sm flex-shrink-0"
                     onClick={() => handleCategoryChange(category.name)}
                   >
                     {category.name} ({category.count})
