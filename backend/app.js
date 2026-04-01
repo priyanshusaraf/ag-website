@@ -18,17 +18,33 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: function (origin, callback) {
+    const allowed = (process.env.FRONTEND_URL || 'http://localhost:3000')
+      .split(',')
+      .map(u => u.trim());
+
+    // Allow requests with no origin (mobile apps, Postman, server-to-server, health checks)
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin} (allowed: ${allowed.join(', ')})`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
 app.use(express.json());
 
 // Serve static files for uploaded images
 app.use('/uploads', express.static('uploads'));
 
-// Health check route
 app.get('/', (req, res) => {
   res.json({ message: 'API is running' });
+});
+
+// Lightweight endpoint for uptime monitors (UptimeRobot, cron-job.org, etc.)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: Date.now() });
 });
 
 app.use('/api/auth', authRoutes);

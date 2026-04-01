@@ -8,6 +8,7 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import Link from 'next/link';
 import AdminNavLink from '@/components/layout/AdminNavLink';
 import { Toaster } from '@/components/ui/toaster';
+import BackendWarmup from '@/components/layout/BackendWarmup';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://andregarciacases.com';
 
@@ -205,6 +206,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <CurrencyProvider>
             <CartProvider>
+              <BackendWarmup />
               <SaleBanner />
               <Navbar />
               <main className="flex-grow">
