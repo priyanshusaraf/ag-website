@@ -15,17 +15,15 @@ export async function adminLogin({ username, password }) {
   return res.data;
 }
 
-// Example: fetch user profile (requires token in headers)
 export async function fetchUserProfile(token) {
-  const res = await api.get('/user/profile', {
+  const res = await api.get('/auth/profile', {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 }
 
-// Example: update user profile (requires token in headers)
 export async function updateUserProfile(token, data) {
-  const res = await api.put('/user/profile', data, {
+  const res = await api.put('/auth/profile', data, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;

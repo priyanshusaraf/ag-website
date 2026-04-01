@@ -4,6 +4,10 @@ const prisma = new PrismaClient();
 
 const getCart = async (req, res) => {
   try {
+    const userExists = await prisma.users.findUnique({ where: { id: Number(req.user.id) } });
+    if (!userExists) {
+      return res.status(401).json({ message: 'Your session has expired. Please sign in again.', code: 'USER_NOT_FOUND' });
+    }
     let cart = await Cart.getOrCreateByUserId(req.user.id);
     cart = await Cart.getById(cart.id);
     res.json(cart);
@@ -16,6 +20,15 @@ const addToCart = async (req, res) => {
   try {
     const { product_id, quantity, product_name, product_category, customization, price_override } = req.body;
     if (!quantity) return res.status(400).json({ message: 'Quantity is required' });
+
+    // Verify the user actually exists in the database (JWT may outlive the account)
+    const userExists = await prisma.users.findUnique({ where: { id: Number(req.user.id) } });
+    if (!userExists) {
+      return res.status(401).json({
+        message: 'Your session has expired. Please sign in again.',
+        code: 'USER_NOT_FOUND',
+      });
+    }
 
     let resolvedProductId = null;
 
@@ -38,6 +51,14 @@ const addToCart = async (req, res) => {
       return res.status(400).json({
         message: 'Product not found. Please try again or contact support.',
         details: 'Could not resolve the product. The item may not be available yet.',
+      });
+    }
+
+    // Verify product exists before attempting to add
+    const productExists = await prisma.products.findUnique({ where: { id: resolvedProductId } });
+    if (!productExists) {
+      return res.status(400).json({
+        message: 'This product is no longer available.',
       });
     }
 

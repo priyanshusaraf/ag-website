@@ -98,6 +98,24 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.getById(req.user.id);
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || null,
+      is_admin: user.is_admin || false,
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
 const updateProfile = async (req, res) => {
   const { name, email, phone, currentPassword, newPassword } = req.body;
   const userId = req.user.id;
@@ -257,4 +275,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, adminLogin, updateProfile, changePassword, resetPassword }; 
+module.exports = { register, login, adminLogin, getProfile, updateProfile, changePassword, resetPassword }; 
