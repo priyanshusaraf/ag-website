@@ -31,7 +31,7 @@ Since Railway is paid, we will use the **"Golden Free Stack"** for 2025:
     *   **Name**: `ag-website-backend`
     *   **Root Directory**: `backend` (Important!)
     *   **Runtime**: Node
-    *   **Build Command**: `npm install && npx prisma generate`
+    *   **Build Command**: `npm install && npx prisma generate && npx prisma db push --accept-data-loss`
     *   **Start Command**: `node server.js`
     *   **Instance Type**: Free
 6.  **Environment Variables** (Scroll down to "Advanced"):

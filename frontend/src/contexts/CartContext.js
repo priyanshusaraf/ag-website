@@ -81,7 +81,7 @@ export const CartProvider = ({ children }) => {
         payload.product_id = numericId;
       } else {
         payload.product_id = product.id;
-        if (product.name) payload.product_name = product.name.split(' - ')[0].trim();
+        if (product.name) payload.product_name = product.name;
         if (product.category) payload.product_category = product.category;
       }
 

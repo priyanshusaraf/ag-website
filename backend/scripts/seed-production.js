@@ -48,11 +48,19 @@ async function main() {
     await prisma.$connect();
     console.log('✅ Connected to database\n');
 
-    // Run the actual seed script
     const { execSync } = require('child_process');
+
+    // First, fix any mismatched product names from previous seeds
+    const fixPath = path.join(__dirname, 'fix-product-names.js');
+    console.log('🔧 Running fix-product-names.js (rename mismatches & add missing)...\n');
+    execSync(`node "${fixPath}"`, {
+      stdio: 'inherit',
+      env: process.env,
+    });
+
+    // Then, run the full seed script
     const scriptPath = path.join(__dirname, 'seed-collections.js');
-    
-    console.log('📦 Running seed-collections.js...\n');
+    console.log('\n📦 Running seed-collections.js...\n');
     execSync(`node "${scriptPath}"`, {
       stdio: 'inherit',
       env: process.env,

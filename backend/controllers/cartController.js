@@ -35,19 +35,45 @@ const addToCart = async (req, res) => {
     if (product_id && !isNaN(Number(product_id))) {
       resolvedProductId = Number(product_id);
     } else if (product_name && product_category) {
-      const product = await prisma.products.findFirst({
+      // 1) Exact name + category match
+      let product = await prisma.products.findFirst({
         where: {
           name: product_name,
           category: product_category,
           NOT: { name: { startsWith: '[DELETED]' } },
         },
       });
+
+      // Fallback: load all products in this category once for looser matching
+      if (!product) {
+        const categoryProducts = await prisma.products.findMany({
+          where: {
+            category: product_category,
+            NOT: { name: { startsWith: '[DELETED]' } },
+          },
+        });
+        const sentLower = product_name.toLowerCase();
+
+        // 2) Case-insensitive exact match
+        product = categoryProducts.find(
+          (p) => p.name.toLowerCase() === sentLower
+        );
+
+        // 3) Partial/contains match — the DB name is a substring of the sent name, or vice-versa
+        if (!product) {
+          product = categoryProducts.find(
+            (p) => sentLower.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(sentLower)
+          );
+        }
+      }
+
       if (product) {
         resolvedProductId = product.id;
       }
     }
 
     if (!resolvedProductId) {
+      console.error('Product not found for cart add:', { product_id, product_name, product_category });
       return res.status(400).json({
         message: 'Product not found. Please try again or contact support.',
         details: 'Could not resolve the product. The item may not be available yet.',
