@@ -106,11 +106,17 @@ const CheckoutPage = () => {
       // Prepare order items for backend
       const orderItems = items.map(item => {
         const product = item.products || item;
-        return {
+        const override = item.price_override != null ? parseFloat(item.price_override) : null;
+        const unitPrice = override || parseFloat(product.sale_price || product.price);
+        const orderItem = {
           product_id: product.id,
           quantity: item.quantity,
-          price: parseFloat(product.sale_price || product.price),
+          price: unitPrice,
         };
+        if (item.customization_details) {
+          try { orderItem.customization = JSON.parse(item.customization_details); } catch {}
+        }
+        return orderItem;
       });
 
       // Create order in backend
@@ -348,6 +354,12 @@ const CheckoutPage = () => {
               <CardContent className="space-y-4">
                 {items.map((item) => {
                   const product = item.products || item;
+                  const override = item.price_override != null ? parseFloat(item.price_override) : null;
+                  const unitPrice = override || parseFloat(product.sale_price || product.price);
+                  let customization = null;
+                  if (item.customization_details) {
+                    try { customization = JSON.parse(item.customization_details); } catch {}
+                  }
                   return (
                     <div key={item.id} className="flex gap-4 p-4 border rounded-lg">
                       <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden">
@@ -360,10 +372,17 @@ const CheckoutPage = () => {
                       <div className="flex-1">
                         <h4 className="font-semibold text-sm">{product.name}</h4>
                         <p className="text-xs text-muted-foreground">{product.category}</p>
+                        {customization && (
+                          <div className="text-[11px] text-muted-foreground mt-1 space-y-0.5">
+                            {Object.entries(customization).filter(([, v]) => v && v !== 'N/A').map(([k, v]) => (
+                              <span key={k} className="block capitalize">{k}: {v}</span>
+                            ))}
+                          </div>
+                        )}
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-sm">Qty: {item.quantity}</span>
                           <span className="font-bold text-primary">
-                            {formatPrice(parseFloat(product.sale_price || product.price) * item.quantity)}
+                            {formatPrice(unitPrice * item.quantity)}
                           </span>
                         </div>
                       </div>

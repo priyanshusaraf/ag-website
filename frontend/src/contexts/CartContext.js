@@ -74,10 +74,28 @@ export const CartProvider = ({ children }) => {
     }
     dispatch({ type: CART_ACTIONS.SET_LOADING });
     try {
-      const res = await api.post('/cart/add', { product_id: product.id, quantity }, { headers: { Authorization: `Bearer ${token}` } });
+      const payload = { quantity };
+
+      const numericId = Number(product.id);
+      if (!isNaN(numericId) && Number.isInteger(numericId) && numericId > 0) {
+        payload.product_id = numericId;
+      } else {
+        payload.product_id = product.id;
+        if (product.name) payload.product_name = product.name.split(' - ')[0].trim();
+        if (product.category) payload.product_category = product.category;
+      }
+
+      if (product.customization) {
+        payload.customization = product.customization;
+      }
+
+      if (product.price != null) {
+        payload.price_override = parseFloat(product.price);
+      }
+
+      const res = await api.post('/cart/add', payload, { headers: { Authorization: `Bearer ${token}` } });
       dispatch({ type: CART_ACTIONS.SET_CART, payload: res.data.cart_items || [] });
       
-      // Show success toast with product details
       toast({
         variant: "success",
         title: "Added to Cart!",
@@ -87,11 +105,11 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       dispatch({ type: CART_ACTIONS.SET_ERROR, payload: 'Failed to add item' });
       
-      // Show error toast
+      const errorMsg = err.response?.data?.message || "There was an error adding the item to your cart. Please try again.";
       toast({
         variant: "destructive",
         title: "Failed to add item",
-        description: "There was an error adding the item to your cart. Please try again.",
+        description: errorMsg,
         duration: 3000,
       });
     }
@@ -140,7 +158,8 @@ export const CartProvider = ({ children }) => {
   // Computed values
   const itemCount = state.items.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = state.items.reduce((total, item) => {
-    const price = parseFloat(item.products?.price || item.price || 0);
+    const override = item.price_override != null ? parseFloat(item.price_override) : null;
+    const price = override || parseFloat(item.products?.sale_price || item.products?.price || item.price || 0);
     return total + (price * item.quantity);
   }, 0);
 

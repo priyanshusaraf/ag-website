@@ -109,8 +109,24 @@ const CartSheet = () => {
                       <div className="flex-1 space-y-2">
                         <h4 className="font-semibold text-sm">{product.name}</h4>
                         <p className="text-xs text-muted-foreground">{product.category}</p>
+                        {item.customization_details && (() => {
+                          try {
+                            const cust = JSON.parse(item.customization_details);
+                            const entries = Object.entries(cust).filter(([, v]) => v && v !== 'N/A');
+                            if (entries.length === 0) return null;
+                            return (
+                              <div className="text-[11px] text-muted-foreground space-y-0.5">
+                                {entries.map(([k, v]) => (
+                                  <span key={k} className="block">{k}: {v}</span>
+                                ))}
+                              </div>
+                            );
+                          } catch { return null; }
+                        })()}
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-primary">{product.price}</span>
+                          <span className="font-bold text-primary">
+                            {formatPrice(parseFloat(item.price_override || product.sale_price || product.price || 0) * item.quantity)}
+                          </span>
                           {/* Quantity Controls */}
                           <div className="flex items-center gap-2">
                             <Button

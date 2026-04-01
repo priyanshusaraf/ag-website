@@ -21,6 +21,7 @@ import SaleBannersManagement from './components/SaleBannersManagement';
 import GalleryManagement from './components/GalleryManagement';
 import ReviewsManagement from './components/ReviewsManagement';
 import CollectionsManagement from './components/CollectionsManagement';
+import MessagesManagement from './components/MessagesManagement';
 
 export default function AdminPanel() {
   const { isLoading, isSuperAdmin, token } = useAuth();
@@ -66,6 +67,7 @@ export default function AdminPanel() {
             <TabsTrigger value="collections">Collections</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="banners">Sale Banners</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="gallery">Carousel Images</TabsTrigger>
           </TabsList>
           
@@ -97,6 +99,11 @@ export default function AdminPanel() {
               <TabsList className="grid grid-cols-1">
                 <TabsTrigger value="banners" className="text-xs">Banners</TabsTrigger>
               </TabsList>
+              <TabsList className="grid grid-cols-1">
+                <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
+              </TabsList>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <TabsList className="grid grid-cols-1">
                 <TabsTrigger value="gallery" className="text-xs">Carousel</TabsTrigger>
               </TabsList>
@@ -131,6 +138,10 @@ export default function AdminPanel() {
             <SaleBannersManagement token={token} />
           </TabsContent>
           
+          <TabsContent value="messages" className="mt-6">
+            <MessagesManagement token={token} />
+          </TabsContent>
+
           <TabsContent value="gallery" className="mt-6">
             <GalleryManagement token={token} />
           </TabsContent>

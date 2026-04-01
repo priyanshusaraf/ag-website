@@ -218,11 +218,12 @@ export default function CollectionProductPage() {
     const carvingLabel = boneCarvingOpts.find(c => c.value === selectedBoneCarving)?.label || '';
 
     const product = {
-      id: `${currentProduct.id}-${Date.now()}`,
-      name: `${currentProduct.name}${leatherLabel ? ` - ${leatherLabel}` : ''}`,
+      id: currentProduct.id,
+      name: currentProduct.name,
       price: calculateTotalPrice() / quantity,
       image_url: resolveImageUrl(currentProduct.images?.[0] || collection.heroImage || ''),
       quantity: quantity,
+      category: slug,
       customization: {
         leather: leatherLabel || 'N/A',
         size: sizeLabel || 'N/A',

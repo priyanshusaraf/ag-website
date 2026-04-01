@@ -8,12 +8,14 @@ datasource db {
 }
 
 model cart_items {
-  id         Int      @id @default(autoincrement())
-  cart_id    Int
-  product_id Int
-  quantity   Int
-  carts      carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_ibfk_1")
-  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_ibfk_2")
+  id                    Int      @id @default(autoincrement())
+  cart_id               Int
+  product_id            Int
+  quantity              Int
+  price_override        Decimal? @db.Decimal(10, 2)
+  customization_details String?  @db.Text
+  carts                 carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_ibfk_1")
+  products              products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_ibfk_2")
 
   @@index([cart_id], map: "cart_id")
   @@index([product_id], map: "product_id")
@@ -30,13 +32,14 @@ model carts {
 }
 
 model order_items {
-  id                Int      @id @default(autoincrement())
-  order_id          Int
-  product_id        Int
-  quantity          Int
-  price_at_purchase Decimal  @db.Decimal(10, 2)
-  orders            orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_items_ibfk_1")
-  products          products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_ibfk_2")
+  id                    Int      @id @default(autoincrement())
+  order_id              Int
+  product_id            Int
+  quantity              Int
+  price_at_purchase     Decimal  @db.Decimal(10, 2)
+  customization_details String?  @db.Text
+  orders                orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_items_ibfk_1")
+  products              products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_ibfk_2")
 
   @@index([order_id], map: "order_id")
   @@index([product_id], map: "product_id")
@@ -106,6 +109,7 @@ model users {
   orders        orders[]
   notifications notifications[]
   user_reviews  reviews[]
+  messages      messages[]
 }
 
 model notifications {
@@ -149,6 +153,26 @@ model reviews {
   @@index([user_id], map: "reviews_user_id")
   @@index([product_id], map: "reviews_product_id")
   @@index([order_id], map: "reviews_order_id")
+}
+
+model messages {
+  id           Int       @id @default(autoincrement())
+  user_id      Int?
+  order_id     Int?
+  sender_name  String    @db.VarChar(200)
+  sender_email String    @db.VarChar(200)
+  sender_phone String?   @db.VarChar(50)
+  subject      String    @db.VarChar(200)
+  body         String    @db.Text
+  type         String    @default("contact") @db.VarChar(50)
+  is_read      Boolean   @default(false)
+  is_admin     Boolean   @default(false)
+  created_at   DateTime  @default(now()) @db.Timestamp(0)
+  users        users?    @relation(fields: [user_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([user_id])
+  @@index([order_id])
+  @@index([type])
 }
 
 model admin_settings {

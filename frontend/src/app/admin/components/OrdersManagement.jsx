@@ -66,7 +66,10 @@ const OrdersManagement = () => {
   const [updateForm, setUpdateForm] = useState({
     status: 'pending',
     trackingNumber: '',
-    notes: ''
+    notes: '',
+    shippingDetails: '',
+    carrier: '',
+    estimatedDelivery: '',
   });
 
   useEffect(() => {
@@ -126,9 +129,20 @@ const OrdersManagement = () => {
         status: updateForm.status
       };
       
-      // Only include tracking number if it's not empty
       if (updateForm.trackingNumber && updateForm.trackingNumber.trim() !== '') {
         requestData.trackingNumber = updateForm.trackingNumber;
+      }
+      if (updateForm.shippingDetails && updateForm.shippingDetails.trim() !== '') {
+        requestData.shippingDetails = updateForm.shippingDetails;
+      }
+      if (updateForm.carrier && updateForm.carrier.trim() !== '') {
+        requestData.carrier = updateForm.carrier;
+      }
+      if (updateForm.estimatedDelivery && updateForm.estimatedDelivery.trim() !== '') {
+        requestData.estimatedDelivery = updateForm.estimatedDelivery;
+      }
+      if (updateForm.notes && updateForm.notes.trim() !== '') {
+        requestData.notes = updateForm.notes;
       }
       
       console.log('Sending request data:', requestData);
@@ -145,7 +159,7 @@ const OrdersManagement = () => {
         order.id === selectedOrder.id ? response.data.order : order
       ));
       setSelectedOrder(null);
-      setUpdateForm({ status: 'pending', trackingNumber: '', notes: '' });
+      setUpdateForm({ status: 'pending', trackingNumber: '', notes: '', shippingDetails: '', carrier: '', estimatedDelivery: '' });
       setError(''); // Clear any previous errors
     } catch (error) {
       console.error('Update order error:', error);
@@ -368,7 +382,10 @@ const OrdersManagement = () => {
                                 setUpdateForm({
                                   status: order.status || 'pending',
                                   trackingNumber: order.tracking_number || '',
-                                  notes: order.notes || ''
+                                  notes: order.notes || '',
+                                  shippingDetails: '',
+                                  carrier: '',
+                                  estimatedDelivery: '',
                                 });
                               }}
                             >
@@ -399,26 +416,61 @@ const OrdersManagement = () => {
                                 </Select>
                               </div>
                               
-                              {updateForm.status === 'in_transit' && (
-                                <div>
-                                  <Label htmlFor="trackingNumber">Tracking Number *</Label>
-                                  <Input
-                                    id="trackingNumber"
-                                    value={updateForm.trackingNumber}
-                                    onChange={(e) => setUpdateForm(prev => ({ ...prev, trackingNumber: e.target.value }))}
-                                    placeholder="Enter tracking number"
-                                    required
-                                  />
-                                </div>
+                              {(updateForm.status === 'in_transit' || updateForm.status === 'confirmed') && (
+                                <>
+                                  <div>
+                                    <Label htmlFor="trackingNumber">
+                                      Tracking Number {updateForm.status === 'in_transit' ? '*' : ''}
+                                    </Label>
+                                    <Input
+                                      id="trackingNumber"
+                                      value={updateForm.trackingNumber}
+                                      onChange={(e) => setUpdateForm(prev => ({ ...prev, trackingNumber: e.target.value }))}
+                                      placeholder="Enter tracking number"
+                                      required={updateForm.status === 'in_transit'}
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <Label htmlFor="carrier">Carrier / Courier</Label>
+                                    <Input
+                                      id="carrier"
+                                      value={updateForm.carrier}
+                                      onChange={(e) => setUpdateForm(prev => ({ ...prev, carrier: e.target.value }))}
+                                      placeholder="e.g. FedEx, DHL, India Post"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <Label htmlFor="estimatedDelivery">Estimated Delivery</Label>
+                                    <Input
+                                      id="estimatedDelivery"
+                                      value={updateForm.estimatedDelivery}
+                                      onChange={(e) => setUpdateForm(prev => ({ ...prev, estimatedDelivery: e.target.value }))}
+                                      placeholder="e.g. 5-7 business days"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <Label htmlFor="shippingDetails">Shipping Details (sent to customer)</Label>
+                                    <Textarea
+                                      id="shippingDetails"
+                                      value={updateForm.shippingDetails}
+                                      onChange={(e) => setUpdateForm(prev => ({ ...prev, shippingDetails: e.target.value }))}
+                                      placeholder="Enter shipping details that will be visible to the customer in their Messages tab..."
+                                      rows={3}
+                                    />
+                                  </div>
+                                </>
                               )}
                               
                               <div>
-                                <Label htmlFor="notes">Order Notes</Label>
+                                <Label htmlFor="notes">Order Notes (internal)</Label>
                                 <Textarea
                                   id="notes"
                                   value={updateForm.notes}
                                   onChange={(e) => setUpdateForm(prev => ({ ...prev, notes: e.target.value }))}
-                                  placeholder="Add notes for the customer..."
+                                  placeholder="Internal notes about this order..."
                                   rows={3}
                                 />
                               </div>

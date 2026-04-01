@@ -1,4 +1,6 @@
 const Cart = require('../models/cart');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const getCart = async (req, res) => {
   try {
@@ -12,13 +14,42 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    const { product_id, quantity } = req.body;
-    if (!product_id || !quantity) return res.status(400).json({ message: 'Product and quantity required' });
+    const { product_id, quantity, product_name, product_category, customization, price_override } = req.body;
+    if (!quantity) return res.status(400).json({ message: 'Quantity is required' });
+
+    let resolvedProductId = null;
+
+    if (product_id && !isNaN(Number(product_id))) {
+      resolvedProductId = Number(product_id);
+    } else if (product_name && product_category) {
+      const product = await prisma.products.findFirst({
+        where: {
+          name: product_name,
+          category: product_category,
+          NOT: { name: { startsWith: '[DELETED]' } },
+        },
+      });
+      if (product) {
+        resolvedProductId = product.id;
+      }
+    }
+
+    if (!resolvedProductId) {
+      return res.status(400).json({
+        message: 'Product not found. Please try again or contact support.',
+        details: 'Could not resolve the product. The item may not be available yet.',
+      });
+    }
+
+    const priceVal = price_override != null ? parseFloat(price_override) : null;
+    const custJson = customization ? JSON.stringify(customization) : null;
+
     let cart = await Cart.getOrCreateByUserId(req.user.id);
-    await Cart.addItem(cart.id, product_id, quantity);
+    await Cart.addItem(cart.id, resolvedProductId, quantity, priceVal, custJson);
     cart = await Cart.getById(cart.id);
     res.json(cart);
   } catch (err) {
+    console.error('Add to cart error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -60,4 +91,4 @@ const clearCart = async (req, res) => {
   }
 };
 
-module.exports = { getCart, addToCart, updateCartItem, removeCartItem, clearCart }; 
+module.exports = { getCart, addToCart, updateCartItem, removeCartItem, clearCart };

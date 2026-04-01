@@ -1,6 +1,7 @@
 import LookbookHome from '@/components/lookbook/LookbookHome';
 import { defaultLookbookContent } from '@/components/lookbook/defaultLookbookContent';
 import HeroLanding from '@/components/sections/HeroLanding';
+import RecentlyFeatured from '@/components/sections/RecentlyFeatured';
 
 async function fetchHomepageContent() {
   const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -111,6 +112,9 @@ export default function Home() {
 
       {/* Full-screen landing hero with brand logo */}
       <HeroLanding />
+
+      {/* Featured press coverage */}
+      <RecentlyFeatured />
       
       <HomeContent />
     </>

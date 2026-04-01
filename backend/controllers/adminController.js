@@ -76,33 +76,58 @@ async function getAllOrders(req, res) {
 
 async function updateOrderStatus(req, res) {
   const { id } = req.params;
-  const { status, trackingNumber } = req.body;
+  const { status, trackingNumber, shippingDetails, carrier, estimatedDelivery, notes } = req.body;
   
-  console.log('Admin controller - Received update request:', { id, status, trackingNumber, body: req.body });
-  console.log('Admin controller - Status type:', typeof status);
-  console.log('Admin controller - Status value:', status);
-  console.log('Admin controller - Status JSON:', JSON.stringify(status));
-  console.log('Admin controller - Status length:', status?.length);
-  
-  // Validate status
   const validStatuses = ['pending', 'rejected', 'in_transit', 'completed', 'confirmed'];
   if (!status || !validStatuses.includes(status.trim())) {
-    console.log('Invalid status:', status);
-    console.log('Valid statuses:', validStatuses);
-    console.log('Status includes check:', validStatuses.map(s => ({ status: s, matches: s === status })));
     return res.status(400).json({ message: 'Invalid status. Must be: pending, rejected, in_transit, completed, or confirmed' });
   }
   
-  // Validate tracking number for in_transit status
   if (status === 'in_transit' && (!trackingNumber || trackingNumber.trim() === '')) {
-    console.log('Missing tracking number for in_transit status');
     return res.status(400).json({ message: 'Tracking number is required when status is in_transit' });
   }
   
   try {
     const order = await Order.updateStatus(id, status, trackingNumber);
-    res.json({ success: true, order });
+
+    if (shippingDetails && shippingDetails.trim()) {
+      let shippingBody = shippingDetails.trim();
+      if (trackingNumber) shippingBody += `\nTracking Number: ${trackingNumber}`;
+      if (carrier) shippingBody += `\nCarrier: ${carrier}`;
+      if (estimatedDelivery) shippingBody += `\nEstimated Delivery: ${estimatedDelivery}`;
+
+      await prisma.messages.create({
+        data: {
+          sender_name: 'Andre Garcia Cases',
+          sender_email: 'abhik@andregarciacases.com',
+          subject: `Shipping Update - Order #${id}`,
+          body: shippingBody,
+          type: 'shipping-update',
+          is_admin: true,
+          user_id: order.users?.id || order.user_id || null,
+          order_id: Number(id),
+        },
+      });
+    }
+
+    if (notes && notes.trim()) {
+      await prisma.orders.update({
+        where: { id: Number(id) },
+        data: { notes: notes.trim() },
+      });
+    }
+
+    const updatedOrder = await prisma.orders.findUnique({
+      where: { id: Number(id) },
+      include: {
+        users: true,
+        order_items: { include: { products: true } },
+      },
+    });
+
+    res.json({ success: true, order: updatedOrder });
   } catch (err) {
+    console.error('Update order status error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 }

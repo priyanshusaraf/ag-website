@@ -32,19 +32,17 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
 
-    // Basic validation
     if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
       setError('Please fill in all required fields.');
       setIsSubmitting(false);
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError('Please enter a valid email address.');
@@ -52,41 +50,49 @@ const Contact = () => {
       return;
     }
 
-    // Message length validation
     if (formData.message.trim().length < 10) {
       setError('Message must be at least 10 characters long.');
       setIsSubmitting(false);
       return;
     }
 
-    // Construct mailto link
-    const recipient = 'abhik@andregarciacases.com';
-    const subjectLine = `Contact Form: ${formData.subject.trim()} - from ${formData.firstName.trim()} ${formData.lastName.trim()}`;
-    const body = [
-      `Name: ${formData.firstName.trim()} ${formData.lastName.trim()}`,
-      `Email: ${formData.email.trim()}`,
-      formData.phone.trim() ? `Phone: ${formData.phone.trim()}` : '',
-      `Subject: ${formData.subject.trim()}`,
-      '',
-      'Message:',
-      formData.message.trim(),
-    ].filter(Boolean).join('\n');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const res = await fetch(`${apiUrl}/contact/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+        }),
+      });
 
-    const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subjectLine)}&body=${encodeURIComponent(body)}`;
+      const data = await res.json();
 
-    // Open the user's email client
-    window.location.href = mailtoLink;
+      if (!res.ok || !data.success) {
+        setError(data.message || 'Failed to send your message. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
 
-    setIsSubmitted(true);
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
-    setIsSubmitting(false);
+      setIsSubmitted(true);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    } catch (err) {
+      setError('Unable to reach our server. Please try again later or email us directly at abhik@andregarciacases.com.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <div className="min-h-screen">
@@ -213,10 +219,10 @@ const Contact = () => {
                 {isSubmitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-2xl font-semibold mb-2">Email Client Opened!</h3>
+                    <h3 className="text-2xl font-semibold mb-2">Message Sent Successfully!</h3>
                     <p className="text-muted-foreground mb-4">
-                      Your email client should have opened with the message pre-filled. 
-                      Simply hit send and we'll get back to you within 24 hours.
+                      Thank you for reaching out. Your message has been received and 
+                      we will get back to you within 24 hours.
                     </p>
                     <Button onClick={() => setIsSubmitted(false)} variant="outline">
                       Send Another Message

@@ -36,7 +36,15 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Amount and items are required' });
     }
 
-    // Check if Razorpay is configured
+    for (const item of items) {
+      const exists = await prisma.products.findUnique({ where: { id: item.product_id } });
+      if (!exists) {
+        return res.status(400).json({
+          message: `Product #${item.product_id} not found. Please refresh your cart and try again.`,
+        });
+      }
+    }
+
     if (!razorpay) {
       return res.status(503).json({ 
         message: 'Payment gateway not configured. Please contact administrator.',
@@ -71,6 +79,7 @@ const createOrder = async (req, res) => {
             product_id: item.product_id,
             quantity: item.quantity,
             price_at_purchase: item.price,
+            customization_details: item.customization ? JSON.stringify(item.customization) : null,
           })),
         },
       },

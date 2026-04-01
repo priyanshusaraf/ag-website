@@ -11,10 +11,11 @@ const Cart = {
   async create(user_id) {
     return await prisma.carts.create({ data: { user_id: Number(user_id) } });
   },
-  async addItem(cart_id, product_id, quantity) {
-    return await prisma.cart_items.create({
-      data: { cart_id: Number(cart_id), product_id: Number(product_id), quantity }
-    });
+  async addItem(cart_id, product_id, quantity, price_override = null, customization_details = null) {
+    const data = { cart_id: Number(cart_id), product_id: Number(product_id), quantity };
+    if (price_override != null) data.price_override = price_override;
+    if (customization_details) data.customization_details = customization_details;
+    return await prisma.cart_items.create({ data });
   },
   async updateItem(item_id, quantity) {
     return await prisma.cart_items.update({
