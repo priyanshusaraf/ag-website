@@ -3,6 +3,7 @@ const Product = require('../models/product');
 const User = require('../models/user');
 const SaleBanner = require('../models/saleBanner');
 const AdminSettings = require('../models/adminSettings');
+const emailService = require('../services/emailService');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -61,7 +62,11 @@ async function deleteAdminGalleryImage(req, res) {
 // ORDERS MANAGEMENT
 async function getAllOrders(req, res) {
   try {
+    const status = req.query.status;
+    const where = status && status !== 'all' ? { status } : {};
+
     const orders = await prisma.orders.findMany({
+      where,
       include: {
         users: true,
         order_items: { include: { products: true } }
@@ -125,6 +130,19 @@ async function updateOrderStatus(req, res) {
       },
     });
 
+    // Send shipping update email when order moves to in_transit
+    if (status === 'in_transit' && updatedOrder?.users?.email) {
+      emailService.sendShippingUpdate(
+        updatedOrder.users.email,
+        updatedOrder.users.name || 'Customer',
+        id,
+        trackingNumber || '',
+        carrier || '',
+        estimatedDelivery || '',
+        shippingDetails || ''
+      ).catch((e) => console.error('Shipping email failed:', e.message));
+    }
+
     res.json({ success: true, order: updatedOrder });
   } catch (err) {
     console.error('Update order status error:', err);
@@ -137,6 +155,7 @@ async function getStats(req, res) {
   try {
     const totalOrders = await prisma.orders.count();
     const totalRevenue = await prisma.orders.aggregate({
+      where: { payment_status: 'completed' },
       _sum: { total_amount: true }
     });
     
@@ -152,6 +171,7 @@ async function getStats(req, res) {
     
     const recentRevenue = await prisma.orders.aggregate({
       where: {
+        payment_status: 'completed',
         created_at: { gte: sevenDaysAgo }
       },
       _sum: { total_amount: true }

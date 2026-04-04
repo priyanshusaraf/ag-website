@@ -160,6 +160,8 @@ const OrdersPage = () => {
     switch (status) {
       case 'pending':
         return <Clock className="h-4 w-4 text-yellow-500" />;
+      case 'confirmed':
+        return <CheckCircle className="h-4 w-4 text-blue-500" />;
       case 'rejected':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'in_transit':
@@ -175,6 +177,8 @@ const OrdersPage = () => {
     switch (status) {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
       case 'in_transit':
@@ -345,7 +349,7 @@ const OrdersPage = () => {
                                 {formatPrice(item.price_at_purchase)}
                               </span>
                             </div>
-                            {order.status === 'completed' && (
+                            {(order.status === 'completed' || order.status === 'delivered') && (
                               <div className="mt-2">
                                 <Button 
                                   variant="outline" 
@@ -409,7 +413,19 @@ const OrdersPage = () => {
                         </Link>
                       </Button>
                       {order.status === 'completed' && (
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            order.order_items.forEach((item) => {
+                              if (item.products && item.products.stock > 0) {
+                                addItem(item.products, item.quantity);
+                              }
+                            });
+                            router.push('/cart');
+                          }}
+                        >
+                          <ShoppingBag className="h-3 w-3 mr-1" />
                           Reorder
                         </Button>
                       )}

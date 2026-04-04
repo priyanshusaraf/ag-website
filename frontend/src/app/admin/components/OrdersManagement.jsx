@@ -310,6 +310,7 @@ const OrdersManagement = () => {
                 <SelectContent>
                   <SelectItem value="all">All Orders</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
                   <SelectItem value="in_transit">In Transit</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>

@@ -5,11 +5,15 @@ const {
   getUserOrders, 
   getOrderDetails,
   getAllOrders,
-  getDashboardStats
+  getDashboardStats,
+  handleWebhook
 } = require('../controllers/paymentController');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Razorpay webhook (no auth — verified via signature)
+router.post('/webhook', handleWebhook);
 
 // User routes (protected)
 router.post('/create-order', authenticateToken, createOrder);

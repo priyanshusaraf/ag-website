@@ -182,6 +182,14 @@ const CheckoutPage = () => {
       };
 
       const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error);
+        setError(
+          response.error?.description ||
+          'Payment failed. Please try again or use a different payment method.'
+        );
+        setIsLoading(false);
+      });
       rzp.open();
 
     } catch (error) {

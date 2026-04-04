@@ -1,6 +1,7 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const { PrismaClient } = require('@prisma/client');
+const emailService = require('../services/emailService');
 
 const prisma = new PrismaClient();
 
@@ -29,21 +30,33 @@ if (isRazorpayConfigured()) {
 // Create Razorpay order
 const createOrder = async (req, res) => {
   try {
-    const { amount, currency = 'INR', items, shipping_address } = req.body;
+    const { currency = 'INR', items, shipping_address } = req.body;
     const userId = req.user.id;
 
-    if (!amount || !items || items.length === 0) {
-      return res.status(400).json({ message: 'Amount and items are required' });
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: 'Items are required' });
     }
 
+    // Server-side price recalculation and stock check
+    let verifiedTotal = 0;
+    const verifiedItems = [];
     for (const item of items) {
-      const exists = await prisma.products.findUnique({ where: { id: item.product_id } });
-      if (!exists) {
+      const product = await prisma.products.findUnique({ where: { id: item.product_id } });
+      if (!product) {
         return res.status(400).json({
           message: `Product #${item.product_id} not found. Please refresh your cart and try again.`,
         });
       }
+      if (product.stock !== null && product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `"${product.name}" is out of stock or has insufficient quantity (available: ${product.stock}).`,
+        });
+      }
+      const unitPrice = parseFloat(product.sale_price || product.price);
+      verifiedTotal += unitPrice * item.quantity;
+      verifiedItems.push({ ...item, verifiedPrice: unitPrice });
     }
+    verifiedTotal = Math.round(verifiedTotal * 100) / 100;
 
     if (!razorpay) {
       return res.status(503).json({ 
@@ -52,14 +65,22 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Create Razorpay order
+    const user = await prisma.users.findUnique({
+      where: { id: userId },
+      select: { name: true, email: true, phone: true },
+    });
+
     const options = {
-      amount: Math.round(amount * 100), // Razorpay expects amount in paisa
+      amount: Math.round(verifiedTotal * 100), // Razorpay expects amount in paise (integer)
       currency,
       receipt: `order_${Date.now()}_${userId}`,
       notes: {
         user_id: userId.toString(),
+        customer_name: user?.name || '',
+        customer_email: user?.email || '',
+        customer_phone: user?.phone || '',
         item_count: items.length.toString(),
+        shipping_address: (shipping_address || '').substring(0, 256),
       },
     };
 
@@ -69,16 +90,16 @@ const createOrder = async (req, res) => {
     const order = await prisma.orders.create({
       data: {
         user_id: userId,
-        total_amount: amount,
+        total_amount: verifiedTotal,
         status: 'pending',
         payment_status: 'pending',
         order_id_razorpay: razorpayOrder.id,
         shipping_address: shipping_address || null,
         order_items: {
-          create: items.map(item => ({
+          create: verifiedItems.map(item => ({
             product_id: item.product_id,
             quantity: item.quantity,
-            price_at_purchase: item.price,
+            price_at_purchase: item.verifiedPrice,
             customization_details: item.customization ? JSON.stringify(item.customization) : null,
           })),
         },
@@ -183,6 +204,31 @@ const verifyPayment = async (req, res) => {
         },
       },
     });
+
+    // Create in-app notification for the customer
+    try {
+      await prisma.notifications.create({
+        data: {
+          user_id: order.user_id,
+          message: `Your payment for Order #${order.id} has been confirmed! We're preparing your order.`,
+          read: false,
+        },
+      });
+    } catch (notifErr) {
+      console.error('Failed to create payment notification:', notifErr);
+    }
+
+    // Send emails (non-blocking — don't fail the response if email fails)
+    const customerName = order.users?.name || 'Customer';
+    const customerEmail = order.users?.email;
+    if (customerEmail) {
+      emailService.sendOrderConfirmation(customerEmail, customerName, order).catch((e) =>
+        console.error('Order confirmation email failed:', e.message)
+      );
+      emailService.sendNewOrderAdminAlert(order, customerName, customerEmail).catch((e) =>
+        console.error('Admin new-order alert email failed:', e.message)
+      );
+    }
 
     res.json({
       success: true,
@@ -416,6 +462,98 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+// Razorpay Webhook handler (payment.captured, payment.failed, etc.)
+const handleWebhook = async (req, res) => {
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+  if (!webhookSecret) {
+    console.error('Webhook received but RAZORPAY_WEBHOOK_SECRET is not configured');
+    return res.status(500).json({ message: 'Webhook secret not configured' });
+  }
+
+  const signature = req.headers['x-razorpay-signature'];
+  if (!signature) {
+    return res.status(400).json({ message: 'Missing webhook signature' });
+  }
+
+  const expectedSignature = crypto
+    .createHmac('sha256', webhookSecret)
+    .update(JSON.stringify(req.body))
+    .digest('hex');
+
+  if (expectedSignature !== signature) {
+    console.error('Webhook signature verification failed');
+    return res.status(400).json({ message: 'Invalid webhook signature' });
+  }
+
+  const event = req.body.event;
+  const payment = req.body.payload?.payment?.entity;
+
+  if (!payment) {
+    return res.status(200).json({ status: 'ok', message: 'No payment entity in payload' });
+  }
+
+  try {
+    const razorpayOrderId = payment.order_id;
+
+    if (event === 'payment.captured') {
+      const existingOrder = await prisma.orders.findFirst({
+        where: { order_id_razorpay: razorpayOrderId },
+      });
+
+      if (existingOrder && existingOrder.payment_status !== 'completed') {
+        await prisma.orders.update({
+          where: { id: existingOrder.id },
+          data: {
+            payment_id: payment.id,
+            payment_status: 'completed',
+            status: 'confirmed',
+            updated_at: new Date(),
+          },
+        });
+
+        const order = await prisma.orders.findUnique({
+          where: { id: existingOrder.id },
+          include: { order_items: true },
+        });
+
+        if (order) {
+          for (const item of order.order_items) {
+            await prisma.products.update({
+              where: { id: item.product_id },
+              data: { stock: { decrement: item.quantity } },
+            });
+          }
+        }
+
+        console.log(`Webhook: payment.captured — order ${existingOrder.id} confirmed via webhook`);
+      }
+    } else if (event === 'payment.failed') {
+      const existingOrder = await prisma.orders.findFirst({
+        where: { order_id_razorpay: razorpayOrderId },
+      });
+
+      if (existingOrder && existingOrder.payment_status === 'pending') {
+        await prisma.orders.update({
+          where: { id: existingOrder.id },
+          data: {
+            payment_status: 'failed',
+            status: 'cancelled',
+            notes: `Payment failed: ${payment.error_description || 'Unknown error'}`,
+            updated_at: new Date(),
+          },
+        });
+        console.log(`Webhook: payment.failed — order ${existingOrder.id} marked as failed`);
+      }
+    }
+
+    res.status(200).json({ status: 'ok' });
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(500).json({ message: 'Webhook processing error' });
+  }
+};
+
 module.exports = {
   createOrder,
   verifyPayment,
@@ -423,4 +561,5 @@ module.exports = {
   getOrderDetails,
   getAllOrders,
   getDashboardStats,
+  handleWebhook,
 }; 
