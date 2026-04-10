@@ -32,17 +32,16 @@ import {
   ChevronDown,
   ChevronUp,
   Edit,
-  Eye,
   TrendingUp,
   IndianRupee,
-  Users,
   Clock,
   CheckCircle,
   Truck,
   XCircle,
   AlertCircle,
   Filter,
-  Download
+  Download,
+  Tag
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/utils';
@@ -190,6 +189,11 @@ const OrdersManagement = () => {
       newExpanded.add(orderId);
     }
     setExpandedOrders(newExpanded);
+  };
+
+  const handleDownloadDispatchInvoice = async (order) => {
+    const { generateAdminInvoicePDF } = await import('@/lib/generateAdminInvoice');
+    generateAdminInvoicePDF(order);
   };
 
   const getStatusIcon = (status) => {
@@ -373,8 +377,23 @@ const OrdersManagement = () => {
                           {parseFloat(order.shipping_charge || 0) > 0 && (
                             <p className="text-xs text-amber-400">Incl. ₹{parseFloat(order.shipping_charge).toLocaleString()} shipping</p>
                           )}
+                          {parseFloat(order.discount_amount || 0) > 0 && (
+                            <p className="text-xs text-green-400 flex items-center justify-end gap-0.5">
+                              <Tag className="h-3 w-3" />
+                              -{order.discount_code ? `${order.discount_code} ` : ''}₹{parseFloat(order.discount_amount).toLocaleString()}
+                            </p>
+                          )}
                           <p className="text-xs text-muted-foreground">{order.order_items.length} items</p>
                         </div>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          title="Download Dispatch Invoice"
+                          onClick={() => handleDownloadDispatchInvoice(order)}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
 
                         <Dialog>
                           <DialogTrigger asChild>
@@ -554,22 +573,41 @@ const OrdersManagement = () => {
 
                             {/* Order Totals */}
                             <div className="mt-3 p-2 bg-muted/20 rounded text-xs space-y-1">
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Subtotal:</span>
-                                <span>₹{(parseFloat(order.total_amount) - parseFloat(order.shipping_charge || 0)).toLocaleString()}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Shipping:</span>
-                                {parseFloat(order.shipping_charge || 0) > 0 ? (
-                                  <span className="text-amber-400">₹{parseFloat(order.shipping_charge).toLocaleString()} (International)</span>
-                                ) : (
-                                  <span className="text-green-400">Free</span>
-                                )}
-                              </div>
-                              <div className="flex justify-between font-bold border-t border-muted pt-1">
-                                <span>Total:</span>
-                                <span>₹{parseFloat(order.total_amount).toLocaleString()}</span>
-                              </div>
+                              {(() => {
+                                const disc = parseFloat(order.discount_amount || 0);
+                                const ship = parseFloat(order.shipping_charge || 0);
+                                const total = parseFloat(order.total_amount);
+                                const subtotal = total + disc - ship;
+                                return (
+                                  <>
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Subtotal:</span>
+                                      <span>₹{subtotal.toLocaleString()}</span>
+                                    </div>
+                                    {disc > 0 && (
+                                      <div className="flex justify-between">
+                                        <span className="text-green-400 flex items-center gap-0.5">
+                                          <Tag className="h-3 w-3" />
+                                          Discount{order.discount_code ? ` (${order.discount_code})` : ''}:
+                                        </span>
+                                        <span className="text-green-400">-₹{disc.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Shipping:</span>
+                                      {ship > 0 ? (
+                                        <span className="text-amber-400">₹{ship.toLocaleString()} (International)</span>
+                                      ) : (
+                                        <span className="text-green-400">Free</span>
+                                      )}
+                                    </div>
+                                    <div className="flex justify-between font-bold border-t border-muted pt-1">
+                                      <span>Total:</span>
+                                      <span>₹{total.toLocaleString()}</span>
+                                    </div>
+                                  </>
+                                );
+                              })()}
                             </div>
                           </div>
 

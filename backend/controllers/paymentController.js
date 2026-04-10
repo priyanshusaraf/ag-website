@@ -35,7 +35,7 @@ if (isRazorpayConfigured()) {
 // Create Razorpay order
 const createOrder = async (req, res) => {
   try {
-    const { currency = 'INR', items, shipping_address, country } = req.body;
+    const { currency = 'INR', items, shipping_address, country, coupon_code } = req.body;
     const userId = req.user.id;
 
     if (!items || items.length === 0) {
@@ -66,10 +66,42 @@ const createOrder = async (req, res) => {
     // Determine international shipping
     const isInternational = country && country.trim().toLowerCase() !== 'india';
     const shippingChargeINR = isInternational ? INTERNATIONAL_SHIPPING_INR : 0;
-    const grandTotalINR = Math.round((verifiedTotal + shippingChargeINR) * 100) / 100;
+
+    // Validate and apply coupon discount (server-side)
+    let discountAmount = 0;
+    let appliedCouponCode = null;
+    let appliedCouponId = null;
+
+    if (coupon_code) {
+      const coupon = await prisma.discount_codes.findUnique({
+        where: { code: coupon_code.trim().toUpperCase() },
+      });
+
+      if (coupon && coupon.is_active) {
+        const now = new Date();
+        const notExpired = !coupon.expires_at || coupon.expires_at > now;
+        const usageOk = coupon.max_uses === null || coupon.uses_count < coupon.max_uses;
+        const minAmountOk = !coupon.min_order_amount || verifiedTotal >= parseFloat(coupon.min_order_amount);
+        const alreadyUsed = await prisma.coupon_usages.findUnique({
+          where: { discount_code_id_user_id: { discount_code_id: coupon.id, user_id: userId } },
+        });
+
+        if (notExpired && usageOk && minAmountOk && !alreadyUsed) {
+          if (coupon.discount_type === 'percent') {
+            discountAmount = Math.round((verifiedTotal * parseFloat(coupon.discount_value)) / 100 * 100) / 100;
+          } else {
+            discountAmount = Math.min(parseFloat(coupon.discount_value), verifiedTotal);
+          }
+          appliedCouponCode = coupon.code;
+          appliedCouponId = coupon.id;
+        }
+      }
+    }
+
+    const grandTotalINR = Math.round((verifiedTotal - discountAmount + shippingChargeINR) * 100) / 100;
 
     if (!razorpay) {
-      return res.status(503).json({ 
+      return res.status(503).json({
         message: 'Payment gateway not configured. Please contact administrator.',
         error: 'Razorpay credentials not set up'
       });
@@ -102,6 +134,8 @@ const createOrder = async (req, res) => {
         user_id: userId,
         total_amount: grandTotalINR,
         shipping_charge: shippingChargeINR,
+        discount_code: appliedCouponCode,
+        discount_amount: discountAmount,
         status: 'pending',
         payment_status: 'pending',
         order_id_razorpay: razorpayOrder.id,
@@ -131,6 +165,8 @@ const createOrder = async (req, res) => {
       currency: razorpayOrder.currency,
       key_id: process.env.RAZORPAY_KEY_ID,
       order: order,
+      discount_applied: discountAmount > 0 ? { code: appliedCouponCode, amount: discountAmount } : null,
+      coupon_id: appliedCouponId,
     });
   } catch (error) {
     console.error('Create order error:', error);
@@ -203,6 +239,28 @@ const verifyPayment = async (req, res) => {
           where: { id: item.product_id, stock: { gte: item.quantity } },
           data: { stock: { decrement: item.quantity } },
         });
+      }
+
+      // Record coupon usage and increment uses_count
+      if (order.discount_code) {
+        try {
+          const coupon = await prisma.discount_codes.findUnique({
+            where: { code: order.discount_code },
+          });
+          if (coupon) {
+            await prisma.coupon_usages.upsert({
+              where: { discount_code_id_user_id: { discount_code_id: coupon.id, user_id: order.user_id } },
+              create: { discount_code_id: coupon.id, user_id: order.user_id, order_id: order.id },
+              update: { order_id: order.id, used_at: new Date() },
+            });
+            await prisma.discount_codes.update({
+              where: { id: coupon.id },
+              data: { uses_count: { increment: 1 } },
+            });
+          }
+        } catch (couponErr) {
+          console.error('Failed to record coupon usage:', couponErr);
+        }
       }
     }
 

@@ -15,7 +15,7 @@ const emptyForm = {
   discount_type: 'percent',
   discount_value: '',
   min_order_amount: '',
-  max_uses: '',
+  max_uses: '1',
   expires_at: '',
 };
 
@@ -78,7 +78,7 @@ export default function CouponsManagement({ token }) {
       discount_type: coupon.discount_type,
       discount_value: coupon.discount_value,
       min_order_amount: coupon.min_order_amount || '',
-      max_uses: coupon.max_uses || '',
+      max_uses: coupon.max_uses != null ? String(coupon.max_uses) : '',
       expires_at: coupon.expires_at ? coupon.expires_at.slice(0, 16) : '',
     });
   };
@@ -137,8 +137,9 @@ export default function CouponsManagement({ token }) {
               <Input name="min_order_amount" type="number" step="0.01" min="0" value={form.min_order_amount} onChange={handleChange} placeholder="Leave blank for none" />
             </div>
             <div className="space-y-1">
-              <Label>Max Uses</Label>
-              <Input name="max_uses" type="number" min="1" value={form.max_uses} onChange={handleChange} placeholder="Leave blank for unlimited" />
+              <Label>Order Validity <span className="text-xs text-muted-foreground">(how many total orders can use this coupon)</span></Label>
+              <Input name="max_uses" type="number" min="1" value={form.max_uses} onChange={handleChange} placeholder="e.g. 1, 10, 100 — leave blank for unlimited" />
+              <p className="text-[11px] text-muted-foreground">Default: 1 (single-use coupon). Set to blank for unlimited uses.</p>
             </div>
             <div className="space-y-1">
               <Label>Expires At</Label>
@@ -176,7 +177,7 @@ export default function CouponsManagement({ token }) {
                     <th className="text-left py-2 px-3">Code</th>
                     <th className="text-left py-2 px-3">Discount</th>
                     <th className="text-left py-2 px-3">Min. Order</th>
-                    <th className="text-left py-2 px-3">Uses</th>
+                    <th className="text-left py-2 px-3">Orders Used / Validity</th>
                     <th className="text-left py-2 px-3">Expires</th>
                     <th className="text-left py-2 px-3">Status</th>
                     <th className="text-left py-2 px-3">Actions</th>

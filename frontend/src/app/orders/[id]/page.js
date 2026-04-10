@@ -7,13 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  ArrowLeft, 
-  Download, 
-  Receipt, 
-  Calendar, 
-  CreditCard, 
-  Package, 
+import {
+  ArrowLeft,
+  Receipt,
+  Calendar,
+  CreditCard,
+  Package,
   MapPin,
   CheckCircle,
   Clock,
@@ -22,7 +21,7 @@ import {
   AlertCircle,
   User,
   Mail,
-  Phone
+  Tag
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -139,15 +138,6 @@ const OrderReceiptPage = () => {
     });
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleDownloadInvoice = async () => {
-    const { generateInvoicePDF } = await import('@/lib/generateInvoice');
-    generateInvoicePDF(order);
-  };
-
   if (authLoading || !isAuthenticated) {
     return null; // Will redirect
   }
@@ -201,13 +191,10 @@ const OrderReceiptPage = () => {
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={handleDownloadInvoice} variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Download Invoice
-            </Button>
-            <Button onClick={handlePrint} variant="ghost" size="icon" className="print:hidden">
-              <Receipt className="h-4 w-4" />
-            </Button>
+            <Badge variant="outline" className="text-sm px-3 py-1">
+              <Receipt className="h-4 w-4 mr-1" />
+              Order Receipt
+            </Badge>
           </div>
         </div>
 
@@ -325,11 +312,14 @@ const OrderReceiptPage = () => {
                   if (item.customization_details) {
                     try { customization = JSON.parse(item.customization_details); } catch {}
                   }
+                  const engravingEntries = customization
+                    ? Object.entries(customization).filter(([k, v]) => v && v !== 'N/A')
+                    : [];
                   return (
                     <div key={item.id}>
                       {index > 0 && <Separator />}
-                      <div className="flex gap-4 py-2">
-                        <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
+                      <div className="flex gap-4 py-3">
+                        <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
                           {item.products.image_url ? (
                             <img
                               src={item.products.image_url}
@@ -341,28 +331,62 @@ const OrderReceiptPage = () => {
                           )}
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold">{item.products.name}</h4>
-                          <p className="text-sm text-muted-foreground">{item.products.category}</p>
-                          {(item.products.size || item.products.quality || item.products.capacity) && (
-                            <p className="text-xs text-muted-foreground">
-                              {[item.products.quality, item.products.size, item.products.capacity].filter(Boolean).join(' · ')}
-                            </p>
+                          <h4 className="font-semibold text-base">{item.products.name}</h4>
+
+                          {/* Category */}
+                          {item.products.category && (
+                            <p className="text-sm text-muted-foreground">{item.products.category}</p>
                           )}
+
+                          {/* Product specifications */}
+                          <div className="mt-2 space-y-1">
+                            {item.products.quality && (
+                              <div className="flex gap-2 text-xs">
+                                <span className="font-medium text-foreground/70 w-20">Material:</span>
+                                <span>{item.products.quality}</span>
+                              </div>
+                            )}
+                            {item.products.size && (
+                              <div className="flex gap-2 text-xs">
+                                <span className="font-medium text-foreground/70 w-20">Size:</span>
+                                <span>{item.products.size}</span>
+                              </div>
+                            )}
+                            {item.products.capacity && (
+                              <div className="flex gap-2 text-xs">
+                                <span className="font-medium text-foreground/70 w-20">Capacity:</span>
+                                <span>{item.products.capacity}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Description */}
                           {item.products.description && (
-                            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{item.products.description}</p>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.products.description}</p>
                           )}
-                          {customization && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              {Object.entries(customization).filter(([, v]) => v && v !== 'N/A').map(([k, v]) => (
-                                <span key={k} className="inline-block mr-3 capitalize">{k}: {v}</span>
-                              ))}
+
+                          {/* Customisation / Engravings */}
+                          {engravingEntries.length > 0 && (
+                            <div className="mt-2 p-2 bg-primary/5 border border-primary/20 rounded-md">
+                              <p className="text-xs font-semibold text-primary mb-1 flex items-center gap-1">
+                                <Tag className="h-3 w-3" />
+                                Personalisation &amp; Engravings
+                              </p>
+                              <div className="space-y-0.5">
+                                {engravingEntries.map(([k, v]) => (
+                                  <div key={k} className="flex gap-2 text-xs">
+                                    <span className="font-medium capitalize text-foreground/70 min-w-[80px]">{k}:</span>
+                                    <span className="text-foreground">{v}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="text-sm">Quantity: {item.quantity}</span>
+
+                          <div className="flex items-center justify-between mt-3">
+                            <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
                             <div className="text-right">
-                              <p className="text-sm text-muted-foreground">Unit Price: {formatPrice(item.price_at_purchase)}</p>
-                              <p className="font-semibold">Total: {formatPrice(parseFloat(item.price_at_purchase) * item.quantity)}</p>
+                              <p className="font-semibold">{formatPrice(parseFloat(item.price_at_purchase) * item.quantity)}</p>
                             </div>
                           </div>
                         </div>
@@ -376,13 +400,24 @@ const OrderReceiptPage = () => {
                 {/* Order Total */}
                 {(() => {
                   const shippingCharge = parseFloat(order.shipping_charge || 0);
-                  const subtotal = parseFloat(order.total_amount) - shippingCharge;
+                  const discountAmount = parseFloat(order.discount_amount || 0);
+                  const total = parseFloat(order.total_amount);
+                  const subtotal = total + discountAmount - shippingCharge;
                   return (
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Subtotal:</span>
                         <span>{formatPrice(subtotal)}</span>
                       </div>
+                      {discountAmount > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="flex items-center gap-1 text-green-600">
+                            <Tag className="h-3 w-3" />
+                            Discount {order.discount_code ? `(${order.discount_code})` : ''}:
+                          </span>
+                          <span className="text-green-600">-{formatPrice(discountAmount)}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-sm">
                         <span>Shipping:</span>
                         {shippingCharge > 0 ? (

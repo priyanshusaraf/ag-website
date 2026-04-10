@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CreditCard, Package, User, MapPin, CheckCircle, Globe } from 'lucide-react';
+import { ArrowLeft, CreditCard, Package, MapPin, CheckCircle, Globe, Tag, X, Loader2 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -27,7 +27,13 @@ const CheckoutPage = () => {
   const [success, setSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
   const paymentSuccessRef = useRef(false);
-  
+
+  // Coupon state
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discount_amount, discount_type, discount_value }
+  const [couponError, setCouponError] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+
   const [shippingAddress, setShippingAddress] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
@@ -42,7 +48,8 @@ const CheckoutPage = () => {
   const isInternational = shippingAddress.country.trim().toLowerCase() !== 'india';
   const INTERNATIONAL_SHIPPING_INR = 6250; // $75 USD at 1/0.012
   const shippingChargeINR = isInternational ? INTERNATIONAL_SHIPPING_INR : 0;
-  const grandTotal = totalPrice + shippingChargeINR;
+  const discountAmount = appliedCoupon ? appliedCoupon.discount_amount : 0;
+  const grandTotal = totalPrice - discountAmount + shippingChargeINR;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -110,6 +117,35 @@ const CheckoutPage = () => {
     return true;
   };
 
+  const applyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    setCouponError('');
+    try {
+      const response = await api.post('/coupons/validate', {
+        code: couponInput.trim().toUpperCase(),
+        order_amount: totalPrice,
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (response.data.success) {
+        setAppliedCoupon(response.data.coupon);
+        setCouponError('');
+      }
+    } catch (err) {
+      setCouponError(err.response?.data?.message || 'Invalid coupon code');
+      setAppliedCoupon(null);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput('');
+    setCouponError('');
+  };
+
   const handlePayment = async () => {
     if (!validateForm()) return;
 
@@ -139,6 +175,7 @@ const CheckoutPage = () => {
         items: orderItems,
         shipping_address: `${shippingAddress.fullName}\n${shippingAddress.address}\n${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.pincode}\n${shippingAddress.country}\nPhone: ${shippingAddress.phone}`,
         country: shippingAddress.country,
+        coupon_code: appliedCoupon ? appliedCoupon.code : null,
       }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -447,11 +484,67 @@ const CheckoutPage = () => {
 
                 <Separator />
 
+                {/* Coupon Code */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-1">
+                    <Tag className="h-4 w-4" />
+                    Discount Coupon
+                  </Label>
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg">
+                      <div>
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-400 font-mono">{appliedCoupon.code}</p>
+                        <p className="text-xs text-green-600 dark:text-green-500">
+                          {appliedCoupon.discount_type === 'percent'
+                            ? `${appliedCoupon.discount_value}% off`
+                            : `₹${parseFloat(appliedCoupon.discount_value).toLocaleString('en-IN')} off`}
+                          {' · '}Saving {formatPrice(appliedCoupon.discount_amount)}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={removeCoupon} className="h-7 w-7 p-0 text-muted-foreground hover:text-red-500">
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        value={couponInput}
+                        onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                        placeholder="Enter coupon code"
+                        className="font-mono uppercase text-sm"
+                        onKeyDown={(e) => e.key === 'Enter' && applyCoupon()}
+                      />
+                      <Button
+                        variant="outline"
+                        onClick={applyCoupon}
+                        disabled={couponLoading || !couponInput.trim()}
+                        className="flex-shrink-0"
+                      >
+                        {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
+                      </Button>
+                    </div>
+                  )}
+                  {couponError && (
+                    <p className="text-xs text-red-500">{couponError}</p>
+                  )}
+                </div>
+
+                <Separator />
+
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal:</span>
                     <span>{formatPrice(totalPrice)}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span className="flex items-center gap-1">
+                        <Tag className="h-3 w-3" />
+                        Discount ({appliedCoupon?.code}):
+                      </span>
+                      <span>-{formatPrice(discountAmount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span>Shipping:</span>
                     {isInternational ? (
