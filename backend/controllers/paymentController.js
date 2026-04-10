@@ -5,6 +5,11 @@ const emailService = require('../services/emailService');
 
 const prisma = new PrismaClient();
 
+// International shipping: flat $75 USD converted to INR using the same rate as frontend
+const INTERNATIONAL_SHIPPING_USD = 75;
+const USD_TO_INR_RATE = 1 / 0.012; // inverse of frontend CurrencyContext rate
+const INTERNATIONAL_SHIPPING_INR = Math.round(INTERNATIONAL_SHIPPING_USD * USD_TO_INR_RATE);
+
 // Initialize Razorpay (you'll need to add these to your .env file)
 let razorpay = null;
 
@@ -30,7 +35,7 @@ if (isRazorpayConfigured()) {
 // Create Razorpay order
 const createOrder = async (req, res) => {
   try {
-    const { currency = 'INR', items, shipping_address } = req.body;
+    const { currency = 'INR', items, shipping_address, country } = req.body;
     const userId = req.user.id;
 
     if (!items || items.length === 0) {
@@ -58,6 +63,11 @@ const createOrder = async (req, res) => {
     }
     verifiedTotal = Math.round(verifiedTotal * 100) / 100;
 
+    // Determine international shipping
+    const isInternational = country && country.trim().toLowerCase() !== 'india';
+    const shippingChargeINR = isInternational ? INTERNATIONAL_SHIPPING_INR : 0;
+    const grandTotalINR = Math.round((verifiedTotal + shippingChargeINR) * 100) / 100;
+
     if (!razorpay) {
       return res.status(503).json({ 
         message: 'Payment gateway not configured. Please contact administrator.',
@@ -71,7 +81,7 @@ const createOrder = async (req, res) => {
     });
 
     const options = {
-      amount: Math.round(verifiedTotal * 100), // Razorpay expects amount in paise (integer)
+      amount: Math.round(grandTotalINR * 100), // Razorpay expects amount in paise (integer)
       currency,
       receipt: `order_${Date.now()}_${userId}`,
       notes: {
@@ -90,7 +100,8 @@ const createOrder = async (req, res) => {
     const order = await prisma.orders.create({
       data: {
         user_id: userId,
-        total_amount: verifiedTotal,
+        total_amount: grandTotalINR,
+        shipping_charge: shippingChargeINR,
         status: 'pending',
         payment_status: 'pending',
         order_id_razorpay: razorpayOrder.id,
@@ -260,6 +271,11 @@ const getUserOrders = async (req, res) => {
                 name: true,
                 image_url: true,
                 category: true,
+                description: true,
+                size: true,
+                quality: true,
+                capacity: true,
+                stock: true,
               },
             },
           },
@@ -351,6 +367,10 @@ const getAllOrders = async (req, res) => {
                 name: true,
                 image_url: true,
                 category: true,
+                description: true,
+                size: true,
+                quality: true,
+                capacity: true,
               },
             },
           },

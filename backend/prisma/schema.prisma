@@ -49,6 +49,7 @@ model orders {
   id             Int           @id @default(autoincrement())
   user_id        Int
   total_amount   Decimal       @db.Decimal(10, 2)
+  shipping_charge Decimal?     @default(0) @db.Decimal(10, 2)
   status         String?       @default("pending") @db.VarChar(50) // pending, rejected, in_transit, completed
   payment_status String?       @default("pending") @db.VarChar(50) // pending, completed, failed, refunded
   payment_id     String?       @db.VarChar(255) // Razorpay payment ID

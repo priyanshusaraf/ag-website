@@ -370,6 +370,9 @@ const OrdersManagement = () => {
                       <div className="flex items-center gap-3">
                         <div className="text-right">
                           <p className="font-bold text-lg">₹{parseFloat(order.total_amount).toLocaleString()}</p>
+                          {parseFloat(order.shipping_charge || 0) > 0 && (
+                            <p className="text-xs text-amber-400">Incl. ₹{parseFloat(order.shipping_charge).toLocaleString()} shipping</p>
+                          )}
                           <p className="text-xs text-muted-foreground">{order.order_items.length} items</p>
                         </div>
 
@@ -508,27 +511,65 @@ const OrdersManagement = () => {
                           <div>
                             <h4 className="font-semibold text-sm mb-3">Order Items</h4>
                             <div className="space-y-2">
-                              {order.order_items.map((item) => (
-                                <div key={item.id} className="flex gap-3 p-2 border rounded">
-                                  <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                    {item.products.image_url ? (
-                                      <img 
-                                        src={item.products.image_url} 
-                                        alt={item.products.name} 
-                                        className="w-full h-full object-cover" 
-                                      />
-                                    ) : (
-                                      <div className="w-4 h-4 bg-primary/20 rounded"></div>
-                                    )}
+                              {order.order_items.map((item) => {
+                                let customization = null;
+                                if (item.customization_details) {
+                                  try { customization = JSON.parse(item.customization_details); } catch {}
+                                }
+                                return (
+                                  <div key={item.id} className="flex gap-3 p-2 border rounded">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                      {item.products.image_url ? (
+                                        <img
+                                          src={item.products.image_url}
+                                          alt={item.products.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-4 h-4 bg-primary/20 rounded"></div>
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="font-medium text-xs truncate">{item.products.name}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {item.products.category}
+                                        {item.products.size && ` · ${item.products.size}`}
+                                        {item.products.quality && ` · ${item.products.quality}`}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        Qty: {item.quantity} × ₹{parseFloat(item.price_at_purchase).toLocaleString()} = ₹{(parseFloat(item.price_at_purchase) * item.quantity).toLocaleString()}
+                                      </p>
+                                      {customization && (
+                                        <div className="text-[10px] text-muted-foreground mt-0.5">
+                                          {Object.entries(customization).filter(([, v]) => v && v !== 'N/A').map(([k, v]) => (
+                                            <span key={k} className="inline-block mr-2 capitalize">{k}: {v}</span>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-xs truncate">{item.products.name}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                      Qty: {item.quantity} × ₹{parseFloat(item.price_at_purchase).toLocaleString()}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
+                                );
+                              })}
+                            </div>
+
+                            {/* Order Totals */}
+                            <div className="mt-3 p-2 bg-muted/20 rounded text-xs space-y-1">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Subtotal:</span>
+                                <span>₹{(parseFloat(order.total_amount) - parseFloat(order.shipping_charge || 0)).toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Shipping:</span>
+                                {parseFloat(order.shipping_charge || 0) > 0 ? (
+                                  <span className="text-amber-400">₹{parseFloat(order.shipping_charge).toLocaleString()} (International)</span>
+                                ) : (
+                                  <span className="text-green-400">Free</span>
+                                )}
+                              </div>
+                              <div className="flex justify-between font-bold border-t border-muted pt-1">
+                                <span>Total:</span>
+                                <span>₹{parseFloat(order.total_amount).toLocaleString()}</span>
+                              </div>
                             </div>
                           </div>
 
@@ -539,8 +580,12 @@ const OrdersManagement = () => {
                               <div className="text-xs space-y-1">
                                 <p><span className="font-medium">Name:</span> {order.users?.name || 'Unknown User'}</p>
                                 <p><span className="font-medium">Email:</span> {order.users?.email || 'No email'}</p>
+                                <p><span className="font-medium">Phone:</span> {order.users?.phone || 'N/A'}</p>
                                 {order.payment_id && (
-                                  <p><span className="font-medium">Payment ID:</span> {order.payment_id}</p>
+                                  <p><span className="font-medium">Payment ID:</span> <span className="font-mono">{order.payment_id}</span></p>
+                                )}
+                                {order.order_id_razorpay && (
+                                  <p><span className="font-medium">Razorpay Order:</span> <span className="font-mono">{order.order_id_razorpay}</span></p>
                                 )}
                               </div>
                             </div>

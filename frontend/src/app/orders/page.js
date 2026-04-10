@@ -291,7 +291,10 @@ const OrdersPage = () => {
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <p className="font-bold text-lg">{formatPrice(order.total_amount)}</p>
-                        <div className="flex gap-2">
+                        {parseFloat(order.shipping_charge || 0) > 0 && (
+                          <p className="text-xs text-amber-600">Incl. {formatPrice(order.shipping_charge)} shipping</p>
+                        )}
+                        <div className="flex gap-2 mt-1">
                           <Badge className={getStatusColor(order.status)}>
                             <span className="flex items-center gap-1">
                               {getStatusIcon(order.status)}
@@ -327,44 +330,96 @@ const OrdersPage = () => {
                     {/* Order Items */}
                     <div className="space-y-3 mb-4">
                       <h4 className="font-semibold text-sm">Order Items</h4>
-                      {order.order_items.map((item) => (
-                        <div key={item.id} className="flex gap-4 p-3 border rounded-lg">
-                          <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden">
-                            {item.products.image_url ? (
-                              <img 
-                                src={item.products.image_url} 
-                                alt={item.products.name} 
-                                className="w-full h-full object-cover rounded-md" 
-                              />
-                            ) : (
-                              <div className="w-6 h-6 bg-primary/20 rounded"></div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h5 className="font-medium text-sm">{item.products.name}</h5>
-                            <p className="text-xs text-muted-foreground">{item.products.category}</p>
-                            <div className="flex items-center justify-between mt-1">
-                              <span className="text-xs">Qty: {item.quantity}</span>
-                              <span className="text-sm font-medium">
-                                {formatPrice(item.price_at_purchase)}
-                              </span>
+                      {order.order_items.map((item) => {
+                        let customization = null;
+                        if (item.customization_details) {
+                          try { customization = JSON.parse(item.customization_details); } catch {}
+                        }
+                        return (
+                          <div key={item.id} className="flex gap-4 p-3 border rounded-lg">
+                            <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden">
+                              {item.products.image_url ? (
+                                <img
+                                  src={item.products.image_url}
+                                  alt={item.products.name}
+                                  className="w-full h-full object-cover rounded-md"
+                                />
+                              ) : (
+                                <div className="w-6 h-6 bg-primary/20 rounded"></div>
+                              )}
                             </div>
-                            {(order.status === 'completed' || order.status === 'delivered') && (
-                              <div className="mt-2">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm" 
-                                  onClick={() => openReviewModal(item.products, order)}
-                                  className="w-full"
-                                >
-                                  <Star className="h-3 w-3 mr-1" />
-                                  Write Review
-                                </Button>
+                            <div className="flex-1">
+                              <h5 className="font-medium text-sm">{item.products.name}</h5>
+                              <p className="text-xs text-muted-foreground">{item.products.category}</p>
+                              {(item.products.size || item.products.quality || item.products.capacity) && (
+                                <p className="text-xs text-muted-foreground">
+                                  {[item.products.quality, item.products.size, item.products.capacity].filter(Boolean).join(' · ')}
+                                </p>
+                              )}
+                              {item.products.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{item.products.description}</p>
+                              )}
+                              {customization && (
+                                <div className="text-[11px] text-muted-foreground mt-1 space-y-0.5">
+                                  {Object.entries(customization).filter(([, v]) => v && v !== 'N/A').map(([k, v]) => (
+                                    <span key={k} className="block capitalize">{k}: {v}</span>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between mt-1">
+                                <span className="text-xs">Qty: {item.quantity}</span>
+                                <div className="text-right">
+                                  <span className="text-xs text-muted-foreground">{formatPrice(item.price_at_purchase)} each</span>
+                                  <span className="text-sm font-medium block">
+                                    {formatPrice(parseFloat(item.price_at_purchase) * item.quantity)}
+                                  </span>
+                                </div>
                               </div>
-                            )}
+                              {(order.status === 'completed' || order.status === 'delivered') && (
+                                <div className="mt-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => openReviewModal(item.products, order)}
+                                    className="w-full"
+                                  >
+                                    <Star className="h-3 w-3 mr-1" />
+                                    Write Review
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
                           </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Order Summary */}
+                    <div className="bg-muted/30 p-4 rounded-lg mb-4">
+                      <h4 className="font-semibold text-sm mb-2">Order Summary</h4>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Subtotal ({order.order_items.length} item{order.order_items.length > 1 ? 's' : ''}):</span>
+                          <span>{formatPrice(parseFloat(order.total_amount) - parseFloat(order.shipping_charge || 0))}</span>
                         </div>
-                      ))}
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Shipping:</span>
+                          {parseFloat(order.shipping_charge || 0) > 0 ? (
+                            <span className="text-amber-600">{formatPrice(order.shipping_charge)}</span>
+                          ) : (
+                            <span className="text-green-600">Free</span>
+                          )}
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Tax:</span>
+                          <span>Included</span>
+                        </div>
+                        <Separator className="my-1" />
+                        <div className="flex justify-between font-bold">
+                          <span>Total:</span>
+                          <span className="text-primary">{formatPrice(order.total_amount)}</span>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Payment Information */}

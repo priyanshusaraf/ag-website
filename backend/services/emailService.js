@@ -55,13 +55,18 @@ class EmailService {
   }
 
   async sendOrderConfirmation(customerEmail, customerName, order) {
+    const shippingCharge = parseFloat(order.shipping_charge || 0);
+    const totalAmount = parseFloat(order.total_amount);
+    const subtotal = totalAmount - shippingCharge;
+
     const itemRows = (order.order_items || [])
       .map(
         (item) =>
           `<tr>
-            <td style="padding:8px;border-bottom:1px solid #eee;">${item.products?.name || 'Product'}</td>
+            <td style="padding:8px;border-bottom:1px solid #eee;">${item.products?.name || 'Product'}${item.products?.category ? ` <span style="color:#999;font-size:12px;">(${item.products.category})</span>` : ''}</td>
             <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
             <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">₹${parseFloat(item.price_at_purchase).toLocaleString('en-IN')}</td>
+            <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">₹${(parseFloat(item.price_at_purchase) * item.quantity).toLocaleString('en-IN')}</td>
           </tr>`
       )
       .join('');
@@ -85,14 +90,30 @@ class EmailService {
               <tr style="background:#f5f5f5;">
                 <th style="padding:8px;text-align:left;">Item</th>
                 <th style="padding:8px;text-align:center;">Qty</th>
-                <th style="padding:8px;text-align:right;">Price</th>
+                <th style="padding:8px;text-align:right;">Unit Price</th>
+                <th style="padding:8px;text-align:right;">Total</th>
               </tr>
             </thead>
             <tbody>${itemRows}</tbody>
             <tfoot>
               <tr>
-                <td colspan="2" style="padding:12px 8px;text-align:right;font-weight:bold;">Total:</td>
-                <td style="padding:12px 8px;text-align:right;font-weight:bold;color:#8b4513;">₹${parseFloat(order.total_amount).toLocaleString('en-IN')}</td>
+                <td colspan="3" style="padding:8px;text-align:right;">Subtotal:</td>
+                <td style="padding:8px;text-align:right;">₹${subtotal.toLocaleString('en-IN')}</td>
+              </tr>
+              ${shippingCharge > 0 ? `<tr>
+                <td colspan="3" style="padding:8px;text-align:right;">International Shipping:</td>
+                <td style="padding:8px;text-align:right;">₹${shippingCharge.toLocaleString('en-IN')}</td>
+              </tr>` : `<tr>
+                <td colspan="3" style="padding:8px;text-align:right;">Shipping:</td>
+                <td style="padding:8px;text-align:right;color:#16a34a;">Free</td>
+              </tr>`}
+              <tr>
+                <td colspan="3" style="padding:8px;text-align:right;">Tax:</td>
+                <td style="padding:8px;text-align:right;">Included</td>
+              </tr>
+              <tr style="border-top:2px solid #8b4513;">
+                <td colspan="3" style="padding:12px 8px;text-align:right;font-weight:bold;">Total Paid:</td>
+                <td style="padding:12px 8px;text-align:right;font-weight:bold;color:#8b4513;">₹${totalAmount.toLocaleString('en-IN')}</td>
               </tr>
             </tfoot>
           </table>
@@ -118,6 +139,8 @@ class EmailService {
     const adminTo = process.env.EMAIL_TO || process.env.EMAIL_USER;
     if (!adminTo) return { success: false, message: 'No admin email configured' };
 
+    const shippingCharge = parseFloat(order.shipping_charge || 0);
+
     const itemList = (order.order_items || [])
       .map((item) => `• ${item.products?.name || 'Product'} × ${item.quantity} — ₹${parseFloat(item.price_at_purchase).toLocaleString('en-IN')}`)
       .join('\n');
@@ -132,6 +155,7 @@ class EmailService {
           <div style="background:#f0f8ff;padding:16px;border-radius:8px;border-left:4px solid #2196F3;">
             <p style="margin:0;"><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
             <p style="margin:4px 0 0;"><strong>Total:</strong> ₹${parseFloat(order.total_amount).toLocaleString('en-IN')}</p>
+            ${shippingCharge > 0 ? `<p style="margin:4px 0 0;"><strong>Shipping:</strong> ₹${shippingCharge.toLocaleString('en-IN')} (International)</p>` : ''}
             <p style="margin:4px 0 0;"><strong>Items:</strong> ${(order.order_items || []).length}</p>
           </div>
 

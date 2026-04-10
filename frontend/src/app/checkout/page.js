@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CreditCard, Package, User, MapPin, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, Package, User, MapPin, CheckCircle, Globe } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -36,7 +36,13 @@ const CheckoutPage = () => {
     city: '',
     state: '',
     pincode: '',
+    country: 'India',
   });
+
+  const isInternational = shippingAddress.country.trim().toLowerCase() !== 'india';
+  const INTERNATIONAL_SHIPPING_INR = 6250; // $75 USD at 1/0.012
+  const shippingChargeINR = isInternational ? INTERNATIONAL_SHIPPING_INR : 0;
+  const grandTotal = totalPrice + shippingChargeINR;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -72,7 +78,7 @@ const CheckoutPage = () => {
   };
 
   const validateForm = () => {
-    const required = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode'];
+    const required = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode', 'country'];
     for (let field of required) {
       if (!shippingAddress[field]?.trim()) {
         setError(`Please fill in your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
@@ -87,10 +93,18 @@ const CheckoutPage = () => {
       return false;
     }
 
-    // Basic phone validation
-    if (!/^\d{10}$/.test(shippingAddress.phone.replace(/\D/g, ''))) {
-      setError('Please enter a valid 10-digit phone number');
-      return false;
+    // Phone validation: 10 digits for India, at least 7 digits for international
+    const digits = shippingAddress.phone.replace(/\D/g, '');
+    if (isInternational) {
+      if (digits.length < 7 || digits.length > 15) {
+        setError('Please enter a valid phone number');
+        return false;
+      }
+    } else {
+      if (!/^\d{10}$/.test(digits)) {
+        setError('Please enter a valid 10-digit phone number');
+        return false;
+      }
     }
 
     return true;
@@ -121,9 +135,10 @@ const CheckoutPage = () => {
 
       // Create order in backend
       const response = await api.post('/payment/create-order', {
-        amount: totalPrice,
+        amount: grandTotal,
         items: orderItems,
-        shipping_address: `${shippingAddress.fullName}\n${shippingAddress.address}\n${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.pincode}\nPhone: ${shippingAddress.phone}`,
+        shipping_address: `${shippingAddress.fullName}\n${shippingAddress.address}\n${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.pincode}\n${shippingAddress.country}\nPhone: ${shippingAddress.phone}`,
+        country: shippingAddress.country,
       }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -314,6 +329,38 @@ const CheckoutPage = () => {
                   />
                 </div>
 
+                <div>
+                  <Label htmlFor="country">Country *</Label>
+                  <select
+                    id="country"
+                    name="country"
+                    value={shippingAddress.country}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="India">India</option>
+                    <option value="United States">United States</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Germany">Germany</option>
+                    <option value="France">France</option>
+                    <option value="UAE">UAE</option>
+                    <option value="Singapore">Singapore</option>
+                    <option value="Japan">Japan</option>
+                    <option value="Other">Other (International)</option>
+                  </select>
+                </div>
+
+                {isInternational && (
+                  <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
+                    <Globe className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800 dark:text-amber-200">
+                      <strong>International Shipping:</strong> A flat fee of <strong>$75 USD</strong> ({formatPrice(INTERNATIONAL_SHIPPING_INR)}) applies for all deliveries outside India.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="city">City *</Label>
@@ -326,23 +373,23 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="state">State *</Label>
+                    <Label htmlFor="state">State / Province *</Label>
                     <Input
                       id="state"
                       name="state"
                       value={shippingAddress.state}
                       onChange={handleInputChange}
-                      placeholder="State"
+                      placeholder="State / Province"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="pincode">Pincode *</Label>
+                    <Label htmlFor="pincode">Pincode / ZIP *</Label>
                     <Input
                       id="pincode"
                       name="pincode"
                       value={shippingAddress.pincode}
                       onChange={handleInputChange}
-                      placeholder="Pincode"
+                      placeholder="Pincode / ZIP"
                     />
                   </div>
                 </div>
@@ -407,7 +454,11 @@ const CheckoutPage = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Shipping:</span>
-                    <span className="text-green-600">Free</span>
+                    {isInternational ? (
+                      <span className="text-amber-600 font-medium">{formatPrice(shippingChargeINR)}</span>
+                    ) : (
+                      <span className="text-green-600">Free</span>
+                    )}
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Tax:</span>
@@ -416,7 +467,7 @@ const CheckoutPage = () => {
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total:</span>
-                    <span className="text-primary">{formatPrice(totalPrice)}</span>
+                    <span className="text-primary">{formatPrice(grandTotal)}</span>
                   </div>
                 </div>
 
@@ -433,7 +484,7 @@ const CheckoutPage = () => {
                   disabled={isLoading}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
-                  {isLoading ? 'Processing...' : `Pay ${formatPrice(totalPrice)}`}
+                  {isLoading ? 'Processing...' : `Pay ${formatPrice(grandTotal)}`}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
