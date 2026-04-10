@@ -45,7 +45,15 @@ const Product = {
   },
 
   async getById(id) {
-    return await prisma.products.findUnique({ where: { id: Number(id) } });
+    return await prisma.products.findUnique({
+      where: { id: Number(id) },
+      include: {
+        product_variants: {
+          where: { is_active: true },
+          orderBy: { id: 'asc' },
+        },
+      },
+    });
   },
 
   async create(data) {

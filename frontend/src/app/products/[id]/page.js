@@ -6,7 +6,9 @@ import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ArrowLeft, Minus, Plus, Shield, Truck, RotateCcw, Heart, MessageSquare, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Star, ArrowLeft, Minus, Plus, Shield, Truck, RotateCcw, Heart, MessageSquare, User, Pen } from 'lucide-react';
 import api, { resolveImageUrl } from '@/lib/utils';
 import { useCart } from '@/contexts/CartContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -27,6 +29,8 @@ const ProductDetail = () => {
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [engravingText, setEngravingText] = useState('');
 
   useEffect(() => {
     setLoading(true);
@@ -101,8 +105,30 @@ const ProductDetail = () => {
     );
   }
 
+  const variantPriceDelta = selectedVariant?.price_delta ? parseFloat(selectedVariant.price_delta) : 0;
+  const basePrice = parseFloat(product?.sale_price || product?.price || 0);
+  const effectivePrice = basePrice + variantPriceDelta;
+
   const handleAddToCart = () => {
-    addItem(product, quantity);
+    const customization = {};
+    if (selectedVariant) {
+      customization.variant = selectedVariant.name;
+      if (selectedVariant.size) customization.size = selectedVariant.size;
+      if (selectedVariant.color) customization.color = selectedVariant.color;
+      if (selectedVariant.material) customization.material = selectedVariant.material;
+      if (selectedVariant.sku) customization.sku = selectedVariant.sku;
+    }
+    if (engravingText.trim()) {
+      customization.engraving = engravingText.trim();
+    }
+
+    const productWithCustomization = {
+      ...product,
+      price: effectivePrice,
+      customization: Object.keys(customization).length > 0 ? customization : undefined,
+    };
+
+    addItem(productWithCustomization, quantity);
   };
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -224,6 +250,74 @@ const ProductDetail = () => {
               </Card>
 
               <div className="space-y-4">
+
+                {/* Variant Selector */}
+                {product.product_variants && product.product_variants.length > 0 && (
+                  <div>
+                    <Label className="block text-sm font-medium mb-2">
+                      Select Option
+                      {selectedVariant?.price_delta && parseFloat(selectedVariant.price_delta) !== 0 && (
+                        <span className="ml-2 text-xs text-muted-foreground font-normal">
+                          ({parseFloat(selectedVariant.price_delta) > 0 ? '+' : ''}{formatPrice(selectedVariant.price_delta)})
+                        </span>
+                      )}
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {product.product_variants.map((variant) => (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          onClick={() => setSelectedVariant(selectedVariant?.id === variant.id ? null : variant)}
+                          className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                            selectedVariant?.id === variant.id
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-input bg-background hover:border-primary hover:bg-primary/5'
+                          } ${variant.stock === 0 ? 'opacity-40 cursor-not-allowed line-through' : ''}`}
+                          disabled={variant.stock === 0}
+                          title={variant.stock === 0 ? 'Out of stock' : ''}
+                        >
+                          {variant.name}
+                          {variant.stock === 0 && ' (OOS)'}
+                        </button>
+                      ))}
+                    </div>
+                    {selectedVariant && (
+                      <div className="mt-2 text-xs text-muted-foreground space-x-3">
+                        {selectedVariant.size && <span>Size: <span className="text-foreground font-medium">{selectedVariant.size}</span></span>}
+                        {selectedVariant.color && <span>Color: <span className="text-foreground font-medium">{selectedVariant.color}</span></span>}
+                        {selectedVariant.material && <span>Material: <span className="text-foreground font-medium">{selectedVariant.material}</span></span>}
+                        {selectedVariant.sku && <span>SKU: <span className="text-foreground font-mono text-[11px]">{selectedVariant.sku}</span></span>}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Engraving / Personalisation */}
+                <div>
+                  <Label htmlFor="engraving" className="flex items-center gap-1.5 text-sm font-medium mb-2">
+                    <Pen className="h-3.5 w-3.5" />
+                    Personalisation / Engraving
+                    <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Input
+                    id="engraving"
+                    value={engravingText}
+                    onChange={(e) => setEngravingText(e.target.value.slice(0, 40))}
+                    placeholder="e.g. Initials, name, or short message..."
+                    maxLength={40}
+                    className="text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">{engravingText.length}/40 characters</p>
+                </div>
+
+                {/* Effective Price (updates when variant selected) */}
+                {variantPriceDelta !== 0 && (
+                  <div className="p-3 bg-primary/5 border border-primary/20 rounded-md text-sm">
+                    <span className="text-muted-foreground">Price with selected option: </span>
+                    <span className="font-bold text-primary">{formatPrice(effectivePrice)}</span>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Quantity</label>
                   <div className="flex items-center space-x-3">
