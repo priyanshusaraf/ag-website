@@ -108,7 +108,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self'",
-              "connect-src 'self' https://api.razorpay.com https://www.google-analytics.com https://*.railway.app https://*.render.com https://*.andregarciacases.com",
+              "connect-src 'self' https://api.razorpay.com https://www.google-analytics.com https://*.railway.app https://*.onrender.com https://*.render.com https://*.andregarciacases.com",
               "frame-src https://api.razorpay.com",
               "object-src 'none'",
               "base-uri 'self'",

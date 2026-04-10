@@ -29,6 +29,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     const result = await adminLogin(credentials);
+
     if (result.success) {
       router.push('/admin');
     } else {
