@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 /**
  * Generates a professional admin packing/dispatch invoice.
@@ -209,7 +209,7 @@ export function generateAdminInvoicePDF(order) {
     ];
   });
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: y,
     head: [['#', 'Item & Details', 'Qty']],
     body: tableRows,
