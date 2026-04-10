@@ -165,15 +165,6 @@ export function generateAdminInvoicePDF(order) {
     doc.setTextColor(...darkGray);
   }
 
-  // Payment reference
-  if (order.payment_id) {
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...lightGray);
-    doc.text(`Payment Ref: ${order.payment_id}`, margin, y);
-    y += 5;
-  }
-
   y += 2;
 
   // ── Items table ────────────────────────────────────────────────────────────
@@ -199,7 +190,7 @@ export function generateAdminInvoicePDF(order) {
       } catch (_) {}
     }
 
-    const allLines = [...specLines, ...(customLines.length ? ['── Personalisation ──', ...customLines] : [])];
+    const allLines = [...specLines, ...(customLines.length ? ['', 'Personalisation', ...customLines] : [])];
     const description = allLines.join('\n');
 
     return [
@@ -236,7 +227,7 @@ export function generateAdminInvoicePDF(order) {
         if (raw.includes('\n')) {
           data.cell.styles.minCellHeight = 10;
         }
-        if (raw.includes('── Personalisation ──')) {
+        if (raw.includes('\nPersonalisation\n')) {
           data.cell.styles.fontStyle = 'italic';
         }
       }
@@ -244,35 +235,6 @@ export function generateAdminInvoicePDF(order) {
   });
 
   y = doc.lastAutoTable.finalY + 12;
-
-  // ── Footer ─────────────────────────────────────────────────────────────────
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 8;
-
-  doc.setTextColor(...brandColor);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('INTERNAL DISPATCH DOCUMENT — CONFIDENTIAL', pageWidth / 2, y, { align: 'center' });
-  y += 5;
-
-  doc.setTextColor(...lightGray);
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica', 'normal');
-  doc.text(
-    'This document is for internal use only. Please verify all item details and personalisation before dispatch.',
-    pageWidth / 2,
-    y,
-    { align: 'center' },
-  );
-  y += 4;
-  doc.text(
-    `Generated: ${new Date().toLocaleString('en-IN')}`,
-    pageWidth / 2,
-    y,
-    { align: 'center' },
-  );
 
   // ── Save ───────────────────────────────────────────────────────────────────
   doc.save(`AG-Dispatch-Order-${order.id}.pdf`);
