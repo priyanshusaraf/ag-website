@@ -58,11 +58,14 @@ model orders {
   shipping_address String?     @db.Text // Shipping address
   notes          String?       @db.Text // Order notes
   tracking_number String?      @db.VarChar(100) // Tracking number for shipping
+  discount_code   String?      @db.VarChar(50)
+  discount_amount Decimal?     @default(0) @db.Decimal(10, 2)
   created_at     DateTime?     @default(now()) @db.Timestamp(0)
   updated_at     DateTime?     @updatedAt @db.Timestamp(0)
-  order_items    order_items[]
-  order_reviews  reviews[]
-  users          users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
+  order_items     order_items[]
+  order_reviews   reviews[]
+  return_requests return_requests[]
+  users           users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
 
   @@index([user_id], map: "user_id")
   @@index([payment_id], map: "payment_id")
@@ -93,24 +96,31 @@ model products {
   sale_end_date   DateTime?     @db.Timestamp(0)
   created_at      DateTime?     @default(now()) @db.Timestamp(0)
   updated_at      DateTime?     @updatedAt @db.Timestamp(0)
-  cart_items      cart_items[]
-  order_items     order_items[]
-  product_reviews reviews[]
+  cart_items       cart_items[]
+  order_items      order_items[]
+  product_reviews  reviews[]
+  wishlist_items   wishlist_items[]
+  product_variants product_variants[]
 }
 
 model users {
-  id            Int             @id @default(autoincrement())
-  name          String          @db.VarChar(100)
-  email         String          @unique(map: "email") @db.VarChar(100)
-  password_hash String          @db.VarChar(255)
-  phone         String?         @db.VarChar(20)
-  is_admin      Boolean?        @default(false)
-  created_at    DateTime?       @default(now()) @db.Timestamp(0)
-  carts         carts[]
-  orders        orders[]
-  notifications notifications[]
-  user_reviews  reviews[]
-  messages      messages[]
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(100)
+  email                 String                  @unique(map: "email") @db.VarChar(100)
+  password_hash         String                  @db.VarChar(255)
+  phone                 String?                 @db.VarChar(20)
+  is_admin              Boolean?                @default(false)
+  is_banned             Boolean?                @default(false)
+  created_at            DateTime?               @default(now()) @db.Timestamp(0)
+  carts                 carts[]
+  orders                orders[]
+  notifications         notifications[]
+  user_reviews          reviews[]
+  messages              messages[]
+  password_reset_tokens password_reset_tokens?
+  wishlists             wishlists?
+  coupon_usages         coupon_usages[]
+  return_requests       return_requests[]
 }
 
 model notifications {
@@ -180,6 +190,126 @@ model admin_settings {
   id    Int    @id @default(autoincrement())
   key   String @unique @db.VarChar(100)
   value String @db.Text
+}
+
+model password_reset_tokens {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  token      String   @unique @db.VarChar(64)
+  expires_at DateTime @db.Timestamp(0)
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([token])
+}
+
+model wishlists {
+  id             Int             @id @default(autoincrement())
+  user_id        Int             @unique
+  created_at     DateTime        @default(now()) @db.Timestamp(0)
+  users          users           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  wishlist_items wishlist_items[]
+}
+
+model wishlist_items {
+  id          Int       @id @default(autoincrement())
+  wishlist_id Int
+  product_id  Int
+  added_at    DateTime  @default(now()) @db.Timestamp(0)
+  wishlists   wishlists @relation(fields: [wishlist_id], references: [id], onDelete: Cascade)
+  products    products  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([wishlist_id, product_id])
+  @@index([wishlist_id])
+  @@index([product_id])
+}
+
+model discount_codes {
+  id               Int              @id @default(autoincrement())
+  code             String           @unique @db.VarChar(50)
+  description      String?          @db.VarChar(255)
+  discount_type    String           @db.VarChar(20) // 'percent' or 'fixed'
+  discount_value   Decimal          @db.Decimal(10, 2)
+  min_order_amount Decimal?         @db.Decimal(10, 2)
+  max_uses         Int?
+  uses_count       Int              @default(0)
+  is_active        Boolean          @default(true)
+  expires_at       DateTime?        @db.Timestamp(0)
+  created_at       DateTime         @default(now()) @db.Timestamp(0)
+  updated_at       DateTime         @updatedAt @db.Timestamp(0)
+  coupon_usages    coupon_usages[]
+
+  @@index([code])
+  @@index([is_active])
+}
+
+model coupon_usages {
+  id               Int            @id @default(autoincrement())
+  discount_code_id Int
+  user_id          Int
+  order_id         Int?
+  used_at          DateTime       @default(now()) @db.Timestamp(0)
+  discount_codes   discount_codes @relation(fields: [discount_code_id], references: [id], onDelete: Cascade)
+  users            users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([discount_code_id, user_id])
+  @@index([discount_code_id])
+  @@index([user_id])
+}
+
+model product_variants {
+  id          Int      @id @default(autoincrement())
+  product_id  Int
+  name        String   @db.VarChar(100) // e.g. "5-Cigar / Dark Brown"
+  sku         String?  @db.VarChar(100)
+  size        String?  @db.VarChar(50)
+  color       String?  @db.VarChar(50)
+  material    String?  @db.VarChar(100)
+  stock       Int      @default(0)
+  price_delta Decimal? @db.Decimal(10, 2) // price adjustment from base product price
+  image_url   String?  @db.VarChar(500)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  updated_at  DateTime @updatedAt @db.Timestamp(0)
+  products    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([product_id])
+}
+
+model return_requests {
+  id          Int      @id @default(autoincrement())
+  order_id    Int
+  user_id     Int
+  reason      String   @db.VarChar(50)  // 'defective', 'wrong_item', 'not_as_described', 'changed_mind', 'other'
+  description String?  @db.Text
+  status      String   @default("pending") @db.VarChar(30) // pending, approved, rejected, refunded
+  refund_amount Decimal? @db.Decimal(10, 2)
+  admin_notes String?  @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  updated_at  DateTime @updatedAt @db.Timestamp(0)
+  orders      orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([order_id])
+  @@index([user_id])
+  @@index([status])
+}
+
+model audit_logs {
+  id           Int      @id @default(autoincrement())
+  admin_id     Int?
+  admin_name   String?  @db.VarChar(100)
+  action       String   @db.VarChar(100) // e.g. 'UPDATE_ORDER_STATUS', 'DELETE_PRODUCT'
+  entity_type  String   @db.VarChar(50)  // e.g. 'order', 'product', 'user'
+  entity_id    Int?
+  old_value    String?  @db.Text
+  new_value    String?  @db.Text
+  ip_address   String?  @db.VarChar(45)
+  created_at   DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([admin_id])
+  @@index([entity_type, entity_id])
+  @@index([created_at])
 }
 
 model gallery_images {

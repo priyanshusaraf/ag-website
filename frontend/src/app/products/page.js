@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { resolveImageUrl } from '@/lib/utils';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -323,9 +324,9 @@ const ProductsContent = () => {
                 <CardHeader className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
                     {/* Product Image */}
-                    <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center overflow-hidden">
+                    <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden relative">
                       {product.image_url ? (
-                        <img src={resolveImageUrl(product.image_url)} alt={product.name} className="w-full h-full object-cover" />
+                        <Image src={resolveImageUrl(product.image_url)} alt={product.name} fill className="object-cover" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" />
                       ) : (
                         <div className="w-32 h-32 bg-primary/20 rounded-lg flex items-center justify-center">
                           <div className="w-20 h-20 bg-primary/30 rounded"></div>

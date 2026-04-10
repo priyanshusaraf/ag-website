@@ -24,7 +24,7 @@ export async function GET(req) {
     return NextResponse.json({ images });
   } catch (err) {
     return NextResponse.json(
-      { message: 'Failed to read website images', error: err?.message || String(err) },
+      { message: 'Failed to read website images' },
       { status: 500 }
     );
   }

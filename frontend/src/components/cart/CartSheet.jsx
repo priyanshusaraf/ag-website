@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -97,11 +98,13 @@ const CartSheet = () => {
                   return (
                     <div key={item.id} className="flex gap-4 p-4 border rounded-lg">
                       {/* Product Image */}
-                      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md flex-shrink-0 relative overflow-hidden">
                         {product.image_url ? (
-                          <img src={resolveImageUrl(product.image_url)} alt={product.name} className="w-full h-full object-cover rounded-md" />
+                          <Image src={resolveImageUrl(product.image_url)} alt={product.name || 'Product'} fill className="object-cover rounded-md" sizes="64px" />
                         ) : (
-                          <div className="w-8 h-8 bg-primary/20 rounded"></div>
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-primary/20 rounded"></div>
+                          </div>
                         )}
                       </div>
 

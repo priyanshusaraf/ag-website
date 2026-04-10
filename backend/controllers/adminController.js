@@ -746,6 +746,69 @@ async function resetHomepageContent(req, res) {
   }
 }
 
+// AUDIT LOGS
+async function getAuditLogs(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = (page - 1) * limit;
+    const entity_type = req.query.entity_type;
+
+    const where = entity_type ? { entity_type } : {};
+
+    const [logs, total] = await Promise.all([
+      prisma.audit_logs.findMany({
+        where,
+        orderBy: { created_at: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.audit_logs.count({ where }),
+    ]);
+
+    res.json({
+      success: true,
+      logs,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+// COUPONS (proxied from couponController for admin route)
+const couponController = require('./couponController');
+const getAllCoupons = couponController.getAllCoupons;
+const createCoupon = couponController.createCoupon;
+const updateCoupon = couponController.updateCoupon;
+const deleteCoupon = couponController.deleteCoupon;
+
+// RETURNS (proxied from returnController for admin route)
+const returnController = require('./returnController');
+const getAllReturnRequests = returnController.getAllReturnRequests;
+const updateReturnStatus = returnController.updateReturnStatus;
+
+// BAN / UNBAN USER
+async function banUser(req, res) {
+  try {
+    const { id } = req.params;
+    await prisma.users.update({ where: { id: Number(id) }, data: { is_banned: true } });
+    res.json({ success: true, message: 'User banned' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+async function unbanUser(req, res) {
+  try {
+    const { id } = req.params;
+    await prisma.users.update({ where: { id: Number(id) }, data: { is_banned: false } });
+    res.json({ success: true, message: 'User unbanned' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 module.exports = {
   // Orders
   getAllOrders,
@@ -800,5 +863,22 @@ module.exports = {
   // Homepage CMS
   getHomepageContent,
   updateHomepageContent,
-  resetHomepageContent
+  resetHomepageContent,
+
+  // Audit logs
+  getAuditLogs,
+
+  // Coupons
+  getAllCoupons,
+  createCoupon,
+  updateCoupon,
+  deleteCoupon,
+
+  // Returns
+  getAllReturnRequests,
+  updateReturnStatus,
+
+  // User management
+  banUser,
+  unbanUser,
 }; 

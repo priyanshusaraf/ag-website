@@ -1,11 +1,21 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/user');
+const { PrismaClient } = require('@prisma/client');
+const emailService = require('../services/emailService');
 
-// Admin credentials from environment variables
+const prisma = new PrismaClient();
+
+// Admin credentials — MUST be provided via environment variables; no fallback
+if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+  console.error('FATAL: ADMIN_USERNAME and ADMIN_PASSWORD environment variables must be set.');
+  process.exit(1);
+}
+
 const ADMIN_CREDENTIALS = {
-  username: process.env.ADMIN_USERNAME || 'admin',
-  password: process.env.ADMIN_PASSWORD || 'Admin@123!'
+  username: process.env.ADMIN_USERNAME,
+  password: process.env.ADMIN_PASSWORD,
 };
 
 const register = async (req, res) => {
@@ -234,45 +244,83 @@ const changePassword = async (req, res) => {
   }
 };
 
-const resetPassword = async (req, res) => {
-  const { email, newPassword } = req.body;
+// Step 1: request a reset link via email
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
 
-  if (!email || !newPassword) {
-    return res.status(400).json({ message: 'Email and new password are required' });
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
   }
 
-  // Password validation
+  try {
+    const user = await User.getByEmail(email);
+
+    // Always respond with success to prevent user enumeration
+    if (!user) {
+      return res.json({ success: true, message: 'If that email exists, a reset link has been sent.' });
+    }
+
+    // Delete any existing tokens for this user
+    await prisma.password_reset_tokens.deleteMany({ where: { user_id: user.id } });
+
+    // Generate a cryptographically secure token
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await prisma.password_reset_tokens.create({
+      data: { user_id: user.id, token, expires_at: expiresAt },
+    });
+
+    const siteUrl = process.env.FRONTEND_URL?.split(',')[0]?.trim() || 'http://localhost:3000';
+    const resetUrl = `${siteUrl}/auth/reset-password?token=${token}`;
+
+    await emailService.sendPasswordResetEmail(user.email, user.name, resetUrl).catch((e) =>
+      console.error('Password reset email failed:', e.message)
+    );
+
+    res.json({ success: true, message: 'If that email exists, a reset link has been sent.' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Step 2: verify token and update password
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ message: 'Token and new password are required' });
+  }
+
   if (newPassword.length < 8) {
     return res.status(400).json({ message: 'New password must be at least 8 characters long' });
   }
 
   if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
-    return res.status(400).json({ 
-      message: 'New password must contain at least one uppercase letter, one lowercase letter, and one number' 
+    return res.status(400).json({
+      message: 'New password must contain at least one uppercase letter, one lowercase letter, and one number',
     });
   }
 
   try {
-    // Check if user exists
-    const user = await User.getByEmail(email);
-    if (!user) {
-      return res.status(404).json({ message: 'No account found with that email address' });
+    const record = await prisma.password_reset_tokens.findUnique({ where: { token } });
+
+    if (!record || record.expires_at < new Date()) {
+      return res.status(400).json({ message: 'This reset link is invalid or has expired. Please request a new one.' });
     }
 
-    // Hash new password
     const password_hash = await bcrypt.hash(newPassword, 10);
+    await User.update(record.user_id, { password_hash });
 
-    // Update user password
-    await User.update(user.id, { password_hash });
+    // Invalidate the token immediately after use
+    await prisma.password_reset_tokens.delete({ where: { token } });
 
-    res.json({
-      success: true,
-      message: 'Password reset successfully'
-    });
+    res.json({ success: true, message: 'Password reset successfully' });
   } catch (err) {
     console.error('Reset password error:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-module.exports = { register, login, adminLogin, getProfile, updateProfile, changePassword, resetPassword }; 
+module.exports = { register, login, adminLogin, getProfile, updateProfile, changePassword, forgotPassword, resetPassword }; 

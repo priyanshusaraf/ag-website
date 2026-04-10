@@ -3,22 +3,14 @@ const router = express.Router();
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const { productUpload, bannerUpload, heroUpload, homepageUpload, collectionUpload } = require('../middleware/upload');
 const adminController = require('../controllers/adminController');
+const auditLog = require('../middleware/auditLog');
 
 // All routes below require admin authentication
 router.use(authenticateToken, requireAdmin);
 
 // ORDERS MANAGEMENT
 router.get('/orders', adminController.getAllOrders);
-router.patch('/orders/:id', (req, res, next) => {
-  console.log('Admin route hit - PATCH /orders/:id', { params: req.params, body: req.body });
-  next();
-}, adminController.updateOrderStatus);
-
-// Test endpoint
-router.post('/test-status', (req, res) => {
-  console.log('Test endpoint hit:', req.body);
-  res.json({ received: req.body });
-});
+router.patch('/orders/:id', auditLog('UPDATE_ORDER_STATUS', 'order'), adminController.updateOrderStatus);
 
 // STATS AND ANALYTICS
 router.get('/stats', adminController.getStats);
@@ -29,13 +21,30 @@ router.delete('/users/:id', adminController.deleteUser);
 
 // PRODUCTS MANAGEMENT
 router.get('/products', adminController.getAllProducts);
-router.post('/products', adminController.createProduct);
-router.put('/products/:id', adminController.updateProduct);
-router.delete('/products/:id', adminController.deleteProduct);
-router.patch('/products/:id/featured', adminController.setProductFeatured);
-router.patch('/products/:id/new', adminController.setProductNew);
-router.patch('/products/:id/sale', adminController.setProductSale);
-router.patch('/products/:id/stock', adminController.updateProductStock); // Legacy
+router.post('/products', auditLog('CREATE_PRODUCT', 'product', () => null), adminController.createProduct);
+router.put('/products/:id', auditLog('UPDATE_PRODUCT', 'product'), adminController.updateProduct);
+router.delete('/products/:id', auditLog('DELETE_PRODUCT', 'product'), adminController.deleteProduct);
+router.patch('/products/:id/featured', auditLog('SET_FEATURED', 'product'), adminController.setProductFeatured);
+router.patch('/products/:id/new', auditLog('SET_NEW', 'product'), adminController.setProductNew);
+router.patch('/products/:id/sale', auditLog('SET_SALE', 'product'), adminController.setProductSale);
+router.patch('/products/:id/stock', auditLog('UPDATE_STOCK', 'product'), adminController.updateProductStock);
+
+// AUDIT LOG
+router.get('/audit-logs', adminController.getAuditLogs);
+
+// COUPONS MANAGEMENT
+router.get('/coupons', adminController.getAllCoupons);
+router.post('/coupons', auditLog('CREATE_COUPON', 'coupon', () => null), adminController.createCoupon);
+router.put('/coupons/:id', auditLog('UPDATE_COUPON', 'coupon'), adminController.updateCoupon);
+router.delete('/coupons/:id', auditLog('DELETE_COUPON', 'coupon'), adminController.deleteCoupon);
+
+// RETURNS MANAGEMENT
+router.get('/returns', adminController.getAllReturnRequests);
+router.patch('/returns/:id', auditLog('UPDATE_RETURN', 'return_request'), adminController.updateReturnStatus);
+
+// BAN/UNBAN USER
+router.patch('/users/:id/ban', auditLog('BAN_USER', 'user'), adminController.banUser);
+router.patch('/users/:id/unban', auditLog('UNBAN_USER', 'user'), adminController.unbanUser);
 
 // SALE BANNERS MANAGEMENT
 router.get('/sale-banners', adminController.getAllSaleBanners);

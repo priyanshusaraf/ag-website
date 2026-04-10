@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,17 +12,21 @@ import { useCart } from '@/contexts/CartContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { CurrencySelector } from '@/components/CurrencyPrice';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ProductDetail = () => {
   const params = useParams();
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
+  const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -29,14 +34,38 @@ const ProductDetail = () => {
       .then(res => {
         setProduct(res.data);
         setLoading(false);
-        // Load reviews after product loads
         fetchReviews(res.data.id);
       })
-      .catch(err => {
+      .catch(() => {
         setError('Failed to load product');
         setLoading(false);
       });
   }, [params.id]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    api.get('/wishlist')
+      .then(res => {
+        const ids = res.data.wishlist?.wishlist_items?.map(i => i.product_id) || [];
+        setWishlisted(ids.includes(Number(params.id)));
+      })
+      .catch(() => {});
+  }, [isAuthenticated, params.id]);
+
+  const handleToggleWishlist = async () => {
+    if (!isAuthenticated) return;
+    setWishlistLoading(true);
+    try {
+      if (wishlisted) {
+        await api.post('/wishlist/remove', { product_id: Number(params.id) });
+        setWishlisted(false);
+      } else {
+        await api.post('/wishlist/add', { product_id: Number(params.id) });
+        setWishlisted(true);
+      }
+    } catch {}
+    setWishlistLoading(false);
+  };
 
   const fetchReviews = async (productId) => {
     setReviewsLoading(true);
@@ -100,15 +129,18 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Image */}
             <div className="space-y-4">
-              <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center shadow-luxury overflow-hidden">
+              <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg shadow-luxury overflow-hidden relative">
                 {product.image_url ? (
-                  <img 
-                    src={resolveImageUrl(product.image_url)} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover rounded-lg"
+                  <Image
+                    src={resolveImageUrl(product.image_url)}
+                    alt={product.name}
+                    fill
+                    className="object-cover rounded-lg"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
                   />
                 ) : (
-                  <div className="w-64 h-64 bg-primary/20 rounded-lg flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center">
                     <div className="w-40 h-40 bg-primary/30 rounded"></div>
                   </div>
                 )}
@@ -223,8 +255,14 @@ const ProductDetail = () => {
                   >
                     {product.stock && product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                   </Button>
-                  <Button variant="outline" size="lg">
-                    <Heart className="h-4 w-4" />
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handleToggleWishlist}
+                    disabled={wishlistLoading || !isAuthenticated}
+                    title={isAuthenticated ? (wishlisted ? 'Remove from wishlist' : 'Add to wishlist') : 'Sign in to save'}
+                  >
+                    <Heart className={`h-4 w-4 ${wishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                   </Button>
                 </div>
 

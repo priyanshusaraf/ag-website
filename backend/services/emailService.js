@@ -228,6 +228,33 @@ class EmailService {
     });
   }
 
+  async sendPasswordResetEmail(customerEmail, customerName, resetUrl) {
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">
+        <div style="background:#8b4513;padding:24px;text-align:center;">
+          <h1 style="color:#fff;margin:0;font-weight:300;">Andre Garcia Cases</h1>
+        </div>
+        <div style="padding:24px;">
+          <h2 style="font-weight:300;">Password Reset Request</h2>
+          <p>Hi ${customerName},</p>
+          <p>We received a request to reset your password. Click the button below to choose a new password. This link expires in <strong>1 hour</strong>.</p>
+          <div style="text-align:center;margin:32px 0;">
+            <a href="${resetUrl}" style="background:#8b4513;color:#fff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Reset My Password</a>
+          </div>
+          <p>If you didn't request a password reset, you can safely ignore this email — your password will remain unchanged.</p>
+          <p style="color:#999;font-size:12px;margin-top:32px;">
+            If the button doesn't work, copy and paste this link: <a href="${resetUrl}">${resetUrl}</a>
+          </p>
+        </div>
+      </div>`;
+
+    return this._send({
+      to: customerEmail,
+      subject: 'Reset Your Password | Andre Garcia Cases',
+      html,
+    });
+  }
+
   async sendConfirmationEmail(customerEmail, customerName) {
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">

@@ -1,4 +1,5 @@
 import './globals.css';
+import Script from 'next/script';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import SaleBanner from '@/components/sections/SaleBanner';
@@ -9,6 +10,8 @@ import Link from 'next/link';
 import AdminNavLink from '@/components/layout/AdminNavLink';
 import { Toaster } from '@/components/ui/toaster';
 import BackendWarmup from '@/components/layout/BackendWarmup';
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://andregarciacases.com';
 
@@ -201,6 +204,23 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
         />
+        {/* Google Analytics 4 */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+              `}
+            </Script>
+          </>
+        )}
       </head>
       <body className="min-h-screen flex flex-col">
         <AuthProvider>

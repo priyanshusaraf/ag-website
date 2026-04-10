@@ -22,6 +22,9 @@ import GalleryManagement from './components/GalleryManagement';
 import ReviewsManagement from './components/ReviewsManagement';
 import CollectionsManagement from './components/CollectionsManagement';
 import MessagesManagement from './components/MessagesManagement';
+import CouponsManagement from './components/CouponsManagement';
+import ReturnsManagement from './components/ReturnsManagement';
+import AuditLogsManagement from './components/AuditLogsManagement';
 
 export default function AdminPanel() {
   const { isLoading, isSuperAdmin, token } = useAuth();
@@ -62,13 +65,16 @@ export default function AdminPanel() {
           <TabsList className="hidden lg:flex w-full flex-wrap gap-1 h-auto p-1">
             <TabsTrigger value="stats">Dashboard</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="returns">Returns</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="coupons">Coupons</TabsTrigger>
             <TabsTrigger value="collections">Collections</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="banners">Sale Banners</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
-            <TabsTrigger value="gallery">Carousel Images</TabsTrigger>
+            <TabsTrigger value="gallery">Gallery</TabsTrigger>
+            <TabsTrigger value="audit">Audit Log</TabsTrigger>
           </TabsList>
           
           {/* Mobile Tabs - Responsive Grid */}
@@ -144,6 +150,18 @@ export default function AdminPanel() {
 
           <TabsContent value="gallery" className="mt-6">
             <GalleryManagement token={token} />
+          </TabsContent>
+
+          <TabsContent value="coupons" className="mt-6">
+            <CouponsManagement token={token} />
+          </TabsContent>
+
+          <TabsContent value="returns" className="mt-6">
+            <ReturnsManagement token={token} />
+          </TabsContent>
+
+          <TabsContent value="audit" className="mt-6">
+            <AuditLogsManagement token={token} />
           </TabsContent>
 
         </Tabs>

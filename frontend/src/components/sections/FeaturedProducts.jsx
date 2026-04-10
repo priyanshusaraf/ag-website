@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -96,9 +97,9 @@ const FeaturedProducts = () => {
     <div className="group h-full">
       <Link href={`/products/${product.id}`} className="block">
         <div className="lookbook-frame p-3">
-          <div className="aspect-[4/5] w-full bg-white/5 flex items-end">
+          <div className="aspect-[4/5] w-full bg-white/5 flex items-end relative overflow-hidden">
             {product.image_url ? (
-              <img src={resolveImageUrl(product.image_url)} alt={product.name} className="w-full h-full object-cover" />
+              <Image src={resolveImageUrl(product.image_url)} alt={product.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="lookbook-kicker">Image placeholder</div>

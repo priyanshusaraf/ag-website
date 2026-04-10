@@ -195,16 +195,15 @@ const verifyPayment = async (req, res) => {
       },
     });
 
-    // Update product stock
-    for (const item of order.order_items) {
-      await prisma.products.update({
-        where: { id: item.product_id },
-        data: {
-          stock: {
-            decrement: item.quantity,
-          },
-        },
-      });
+    // Update product stock only if not already decremented by webhook
+    // Use updateMany with a guard to prevent double-decrement
+    if (existingOrder.payment_status !== 'completed') {
+      for (const item of order.order_items) {
+        await prisma.products.updateMany({
+          where: { id: item.product_id, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } },
+        });
+      }
     }
 
     // Clear user's cart
@@ -496,9 +495,11 @@ const handleWebhook = async (req, res) => {
     return res.status(400).json({ message: 'Missing webhook signature' });
   }
 
+  // req.body is a raw Buffer (set via express.raw in app.js) for accurate HMAC
+  const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body));
   const expectedSignature = crypto
     .createHmac('sha256', webhookSecret)
-    .update(JSON.stringify(req.body))
+    .update(rawBody)
     .digest('hex');
 
   if (expectedSignature !== signature) {
@@ -506,8 +507,16 @@ const handleWebhook = async (req, res) => {
     return res.status(400).json({ message: 'Invalid webhook signature' });
   }
 
-  const event = req.body.event;
-  const payment = req.body.payload?.payment?.entity;
+  // Parse the raw buffer into a JS object for processing
+  let payload;
+  try {
+    payload = Buffer.isBuffer(req.body) ? JSON.parse(req.body.toString()) : req.body;
+  } catch {
+    return res.status(400).json({ message: 'Invalid JSON payload' });
+  }
+
+  const event = payload.event;
+  const payment = payload.payload?.payment?.entity;
 
   if (!payment) {
     return res.status(200).json({ status: 'ok', message: 'No payment entity in payload' });
