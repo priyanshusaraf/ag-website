@@ -21,7 +21,9 @@ import {
   AlertCircle,
   User,
   Mail,
-  Tag
+  Tag,
+  Download,
+  Globe,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -34,9 +36,23 @@ const OrderReceiptPage = () => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { formatPrice } = useCurrency();
   
-  const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [order, setOrder]       = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState('');
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  const handleDownloadInvoice = async () => {
+    if (!order) return;
+    setPdfLoading(true);
+    try {
+      const { generateInvoicePDF } = await import('@/lib/generateInvoice');
+      generateInvoicePDF(order);
+    } catch (e) {
+      console.error('Invoice generation error:', e);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -195,6 +211,20 @@ const OrderReceiptPage = () => {
               <Receipt className="h-4 w-4 mr-1" />
               Order Receipt
             </Badge>
+            {order?.is_international && (
+              <Badge variant="outline" className="text-sm px-3 py-1 text-amber-700 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
+                <Globe className="h-4 w-4 mr-1" />
+                International
+              </Badge>
+            )}
+            <Button
+              variant="outline" size="sm"
+              onClick={handleDownloadInvoice}
+              disabled={pdfLoading || !order}
+            >
+              <Download className="h-4 w-4 mr-1" />
+              {pdfLoading ? 'Generating…' : 'Download Invoice'}
+            </Button>
           </div>
         </div>
 

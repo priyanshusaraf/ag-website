@@ -55,9 +55,14 @@ class EmailService {
   }
 
   async sendOrderConfirmation(customerEmail, customerName, order) {
-    const shippingCharge = parseFloat(order.shipping_charge || 0);
-    const totalAmount = parseFloat(order.total_amount);
-    const subtotal = totalAmount - shippingCharge;
+    const shippingCharge  = parseFloat(order.shipping_charge || 0);
+    const totalAmount     = parseFloat(order.total_amount);
+    const discountAmount  = parseFloat(order.discount_amount || 0);
+    // subtotal = items total before discount and shipping
+    const subtotal        = totalAmount + discountAmount - shippingCharge;
+    const isIntl          = order.is_international === true || shippingCharge > 0;
+    const country         = order.country || '';
+    const INTL_USD        = 75;
 
     const itemRows = (order.order_items || [])
       .map(
@@ -71,18 +76,43 @@ class EmailService {
       )
       .join('');
 
+    const intlBanner = isIntl
+      ? `<div style="background:#b45309;color:#fff;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px;">
+           🌍 <strong>International Order</strong> — Country: ${country} &nbsp;·&nbsp; Flat shipping fee: $${INTL_USD} USD included in total
+         </div>`
+      : '';
+
+    const discountRow = discountAmount > 0
+      ? `<tr>
+           <td colspan="3" style="padding:8px;text-align:right;color:#16a34a;">Discount${order.discount_code ? ` (${order.discount_code})` : ''}:</td>
+           <td style="padding:8px;text-align:right;color:#16a34a;">-₹${discountAmount.toLocaleString('en-IN')}</td>
+         </tr>`
+      : '';
+
+    const shippingRow = isIntl
+      ? `<tr>
+           <td colspan="3" style="padding:8px;text-align:right;color:#b45309;">International Shipping ($${INTL_USD} USD):</td>
+           <td style="padding:8px;text-align:right;color:#b45309;">₹${shippingCharge.toLocaleString('en-IN')}</td>
+         </tr>`
+      : `<tr>
+           <td colspan="3" style="padding:8px;text-align:right;">Shipping:</td>
+           <td style="padding:8px;text-align:right;color:#16a34a;">Free</td>
+         </tr>`;
+
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">
         <div style="background:#8b4513;padding:24px;text-align:center;">
           <h1 style="color:#fff;margin:0;font-weight:300;">Andre Garcia Cases</h1>
         </div>
         <div style="padding:24px;">
+          ${intlBanner}
           <h2 style="font-weight:300;">Thank you for your order, ${customerName}!</h2>
           <p>Your payment has been confirmed and your order is being prepared.</p>
 
           <div style="background:#f9f9f9;padding:16px;border-radius:8px;margin:16px 0;">
             <p style="margin:0 0 4px;"><strong>Order #${order.id}</strong></p>
             <p style="margin:0;color:#666;">Placed on ${new Date(order.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            ${isIntl ? `<p style="margin:4px 0 0;color:#b45309;font-size:13px;">🌍 International delivery to ${country}</p>` : ''}
           </div>
 
           <table style="width:100%;border-collapse:collapse;">
@@ -100,13 +130,8 @@ class EmailService {
                 <td colspan="3" style="padding:8px;text-align:right;">Subtotal:</td>
                 <td style="padding:8px;text-align:right;">₹${subtotal.toLocaleString('en-IN')}</td>
               </tr>
-              ${shippingCharge > 0 ? `<tr>
-                <td colspan="3" style="padding:8px;text-align:right;">International Shipping:</td>
-                <td style="padding:8px;text-align:right;">₹${shippingCharge.toLocaleString('en-IN')}</td>
-              </tr>` : `<tr>
-                <td colspan="3" style="padding:8px;text-align:right;">Shipping:</td>
-                <td style="padding:8px;text-align:right;color:#16a34a;">Free</td>
-              </tr>`}
+              ${discountRow}
+              ${shippingRow}
               <tr>
                 <td colspan="3" style="padding:8px;text-align:right;">Tax:</td>
                 <td style="padding:8px;text-align:right;">Included</td>
@@ -130,7 +155,7 @@ class EmailService {
 
     return this._send({
       to: customerEmail,
-      subject: `Order Confirmed — #${order.id} | Andre Garcia Cases`,
+      subject: `Order Confirmed — #${order.id}${isIntl ? ' 🌍 International' : ''} | Andre Garcia Cases`,
       html,
     });
   }
@@ -139,23 +164,43 @@ class EmailService {
     const adminTo = process.env.EMAIL_TO || process.env.EMAIL_USER;
     if (!adminTo) return { success: false, message: 'No admin email configured' };
 
-    const shippingCharge = parseFloat(order.shipping_charge || 0);
+    const shippingCharge  = parseFloat(order.shipping_charge || 0);
+    const discountAmount  = parseFloat(order.discount_amount || 0);
+    const totalAmount     = parseFloat(order.total_amount);
+    const subtotal        = totalAmount + discountAmount - shippingCharge;
+    const isIntl          = order.is_international === true || shippingCharge > 0;
+    const country         = order.country || '';
+    const phone           = order.phone || '';
+    const INTL_USD        = 75;
 
     const itemList = (order.order_items || [])
       .map((item) => `• ${item.products?.name || 'Product'} × ${item.quantity} — ₹${parseFloat(item.price_at_purchase).toLocaleString('en-IN')}`)
       .join('\n');
 
+    const intlAlertBanner = isIntl
+      ? `<div style="background:#b45309;color:#fff;padding:12px 16px;border-radius:6px;margin-bottom:16px;">
+           ⚠️ <strong>INTERNATIONAL ORDER</strong><br>
+           Country: <strong>${country}</strong> &nbsp;·&nbsp; Flat shipping fee: <strong>$${INTL_USD} USD (₹${shippingCharge.toLocaleString('en-IN')})</strong><br>
+           <small>Ensure correct customs documentation before dispatch.</small>
+         </div>`
+      : '';
+
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">
         <div style="background:#1a1a2e;padding:24px;text-align:center;">
-          <h1 style="color:#fff;margin:0;font-weight:300;">New Order Received</h1>
+          <h1 style="color:#fff;margin:0;font-weight:300;">${isIntl ? '🌍 ' : ''}New Order Received</h1>
         </div>
         <div style="padding:24px;">
+          ${intlAlertBanner}
           <h2 style="font-weight:300;">Order #${order.id}</h2>
-          <div style="background:#f0f8ff;padding:16px;border-radius:8px;border-left:4px solid #2196F3;">
+          <div style="background:#f0f8ff;padding:16px;border-radius:8px;border-left:4px solid ${isIntl ? '#b45309' : '#2196F3'};">
             <p style="margin:0;"><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
-            <p style="margin:4px 0 0;"><strong>Total:</strong> ₹${parseFloat(order.total_amount).toLocaleString('en-IN')}</p>
-            ${shippingCharge > 0 ? `<p style="margin:4px 0 0;"><strong>Shipping:</strong> ₹${shippingCharge.toLocaleString('en-IN')} (International)</p>` : ''}
+            ${phone ? `<p style="margin:4px 0 0;"><strong>Phone:</strong> ${phone}</p>` : ''}
+            ${isIntl ? `<p style="margin:4px 0 0;"><strong>Country:</strong> ${country} 🌍</p>` : ''}
+            <p style="margin:4px 0 0;"><strong>Subtotal:</strong> ₹${subtotal.toLocaleString('en-IN')}</p>
+            ${discountAmount > 0 ? `<p style="margin:4px 0 0;color:#16a34a;"><strong>Discount${order.discount_code ? ` (${order.discount_code})` : ''}:</strong> -₹${discountAmount.toLocaleString('en-IN')}</p>` : ''}
+            ${isIntl ? `<p style="margin:4px 0 0;color:#b45309;"><strong>International Shipping ($${INTL_USD} USD):</strong> ₹${shippingCharge.toLocaleString('en-IN')}</p>` : ''}
+            <p style="margin:4px 0 0;"><strong>Total Paid:</strong> ₹${totalAmount.toLocaleString('en-IN')}</p>
             <p style="margin:4px 0 0;"><strong>Items:</strong> ${(order.order_items || []).length}</p>
           </div>
 
@@ -170,7 +215,7 @@ class EmailService {
 
     return this._send({
       to: adminTo,
-      subject: `[New Order] #${order.id} — ₹${parseFloat(order.total_amount).toLocaleString('en-IN')} from ${customerName}`,
+      subject: `[New Order${isIntl ? ' 🌍 INTL' : ''}] #${order.id} — ₹${totalAmount.toLocaleString('en-IN')} from ${customerName}`,
       html,
     });
   }

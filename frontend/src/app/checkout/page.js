@@ -9,107 +9,180 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CreditCard, Package, MapPin, CheckCircle, Globe, Tag, X, Loader2 } from 'lucide-react';
+import { ArrowLeft, CreditCard, Package, MapPin, CheckCircle, Globe, Tag, X, Loader2, Phone } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import api from '@/lib/utils';
 import Link from 'next/link';
 
+// ── Complete list of all 195 UN-recognised countries ─────────────────────────
+// India is first so it appears at the top of the dropdown
+const ALL_COUNTRIES = [
+  'India',
+  'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda',
+  'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan',
+  'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize',
+  'Benin', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil',
+  'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi',
+  'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Central African Republic', 'Chad',
+  'Chile', 'China', 'Colombia', 'Comoros', 'Congo (Brazzaville)', 'Congo (Kinshasa)',
+  'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic',
+  'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic',
+  'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia',
+  'Eswatini', 'Ethiopia',
+  'Fiji', 'Finland', 'France',
+  'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala',
+  'Guinea', 'Guinea-Bissau', 'Guyana',
+  'Haiti', 'Honduras', 'Hungary',
+  'Iceland', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Ivory Coast',
+  'Jamaica', 'Japan', 'Jordan',
+  'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan',
+  'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein',
+  'Lithuania', 'Luxembourg',
+  'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands',
+  'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia',
+  'Montenegro', 'Morocco', 'Mozambique', 'Myanmar',
+  'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger',
+  'Nigeria', 'North Korea', 'North Macedonia', 'Norway',
+  'Oman',
+  'Pakistan', 'Palau', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru',
+  'Philippines', 'Poland', 'Portugal',
+  'Qatar',
+  'Romania', 'Russia', 'Rwanda',
+  'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa',
+  'San Marino', 'São Tomé and Príncipe', 'Saudi Arabia', 'Senegal', 'Serbia',
+  'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands',
+  'Somalia', 'South Africa', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka',
+  'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria',
+  'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga',
+  'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu',
+  'UAE', 'Uganda', 'Ukraine', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan',
+  'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam',
+  'Yemen',
+  'Zambia', 'Zimbabwe',
+];
+
+// ── Pincode / postal-code validation ─────────────────────────────────────────
+// Must match the backend rules in paymentController.js
+const INDIA_PINCODE_REGEX = /^\d{6}$/;
+const INTL_POSTAL_REGEX   = /^[A-Z0-9][A-Z0-9\s\-]{2,14}$/i;
+
 const CheckoutPage = () => {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { formatPrice } = useCurrency();
-  
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [orderId, setOrderId] = useState('');
-  const paymentSuccessRef = useRef(false);
+
+  const [isLoading, setIsLoading]   = useState(false);
+  const [error, setError]           = useState('');
+  const [success, setSuccess]       = useState(false);
+  const [orderId, setOrderId]       = useState('');
+  const paymentSuccessRef           = useRef(false);
 
   // Coupon state
-  const [couponInput, setCouponInput] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discount_amount, discount_type, discount_value }
-  const [couponError, setCouponError] = useState('');
+  const [couponInput, setCouponInput]     = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError]     = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
 
+  // Country search filter
+  const [countrySearch, setCountrySearch] = useState('');
+
   const [shippingAddress, setShippingAddress] = useState({
-    fullName: user?.name || '',
-    email: user?.email || '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-    country: 'India',
+    fullName: user?.name  || '',
+    email:    user?.email || '',
+    phone:    '',
+    address:  '',
+    city:     '',
+    state:    '',
+    pincode:  '',
+    country:  'India',
   });
 
-  const isInternational = shippingAddress.country.trim().toLowerCase() !== 'india';
-  const INTERNATIONAL_SHIPPING_INR = 6250; // $75 USD at 1/0.012
-  const shippingChargeINR = isInternational ? INTERNATIONAL_SHIPPING_INR : 0;
-  const discountAmount = appliedCoupon ? appliedCoupon.discount_amount : 0;
-  const grandTotal = totalPrice - discountAmount + shippingChargeINR;
+  const isInternational        = shippingAddress.country.trim().toLowerCase() !== 'india';
+  const INTERNATIONAL_SHIPPING_INR = 6250; // $75 USD at 1/0.012 — must match paymentController constant
+  const shippingChargeINR      = isInternational ? INTERNATIONAL_SHIPPING_INR : 0;
+  const discountAmount         = appliedCoupon ? appliedCoupon.discount_amount : 0;
+  const grandTotal             = totalPrice - discountAmount + shippingChargeINR;
+
+  // Filtered country list for the searchable dropdown
+  const filteredCountries = countrySearch.trim()
+    ? ALL_COUNTRIES.filter(c => c.toLowerCase().includes(countrySearch.toLowerCase()))
+    : ALL_COUNTRIES;
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/auth/signin?redirect=/checkout');
       return;
     }
-
-    // Don't redirect if payment was successful
     if (items.length === 0 && !success && !paymentSuccessRef.current) {
       router.push('/cart');
       return;
     }
 
-    // Load Razorpay script
     const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.src   = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
     document.body.appendChild(script);
-
     return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
+      if (document.body.contains(script)) document.body.removeChild(script);
     };
   }, [isAuthenticated, items.length, router, success]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setShippingAddress(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setShippingAddress(prev => ({ ...prev, [name]: value }));
+    // Reset country search when country changes via direct select
+    if (name === 'country') setCountrySearch('');
   };
 
+  // ── Client-side form validation ─────────────────────────────────────────────
   const validateForm = () => {
     const required = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode', 'country'];
-    for (let field of required) {
+    for (const field of required) {
       if (!shippingAddress[field]?.trim()) {
-        setError(`Please fill in your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+        setError(`Please fill in your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}.`);
         return false;
       }
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(shippingAddress.email)) {
-      setError('Please enter a valid email address');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shippingAddress.email)) {
+      setError('Please enter a valid email address.');
       return false;
     }
 
-    // Phone validation: 10 digits for India, at least 7 digits for international
     const digits = shippingAddress.phone.replace(/\D/g, '');
     if (isInternational) {
       if (digits.length < 7 || digits.length > 15) {
-        setError('Please enter a valid phone number');
+        setError('Please enter a valid international phone number (7–15 digits, including country code).');
         return false;
       }
     } else {
       if (!/^\d{10}$/.test(digits)) {
-        setError('Please enter a valid 10-digit phone number');
+        setError('Please enter a valid 10-digit Indian mobile number.');
+        return false;
+      }
+    }
+
+    // Pincode format validation — mirrors backend logic
+    const pin = shippingAddress.pincode.trim();
+    if (!isInternational) {
+      if (!INDIA_PINCODE_REGEX.test(pin)) {
+        setError('Indian PIN code must be exactly 6 digits (e.g. 110001).');
+        return false;
+      }
+    } else {
+      if (!INTL_POSTAL_REGEX.test(pin)) {
+        setError('Please enter a valid postal / ZIP code (3–15 alphanumeric characters).');
+        return false;
+      }
+      // Warn if user picked a non-India country but typed an Indian-looking PIN
+      if (INDIA_PINCODE_REGEX.test(pin)) {
+        setError(
+          `Your postal code "${pin}" looks like an Indian PIN code, but you selected "${shippingAddress.country}" as your country. ` +
+          `Please verify your country and postal code — international orders include a $75 shipping fee.`
+        );
         return false;
       }
     }
@@ -123,10 +196,10 @@ const CheckoutPage = () => {
     setCouponError('');
     try {
       const response = await api.post('/coupons/validate', {
-        code: couponInput.trim().toUpperCase(),
+        code:         couponInput.trim().toUpperCase(),
         order_amount: totalPrice,
       }, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       if (response.data.success) {
         setAppliedCoupon(response.data.coupon);
@@ -153,56 +226,53 @@ const CheckoutPage = () => {
     setError('');
 
     try {
-      // Prepare order items for backend
       const orderItems = items.map(item => {
-        const product = item.products || item;
-        const override = item.price_override != null ? parseFloat(item.price_override) : null;
+        const product   = item.products || item;
+        const override  = item.price_override != null ? parseFloat(item.price_override) : null;
         const unitPrice = override || parseFloat(product.sale_price || product.price);
-        const orderItem = {
-          product_id: product.id,
-          quantity: item.quantity,
-          price: unitPrice,
-        };
+        const orderItem = { product_id: product.id, quantity: item.quantity, price: unitPrice };
         if (item.customization_details) {
           try { orderItem.customization = JSON.parse(item.customization_details); } catch {}
         }
         return orderItem;
       });
 
-      // Create order in backend
+      // Send structured shipping_details — the backend builds the text blob and validates
       const response = await api.post('/payment/create-order', {
-        amount: grandTotal,
-        items: orderItems,
-        shipping_address: `${shippingAddress.fullName}\n${shippingAddress.address}\n${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.pincode}\n${shippingAddress.country}\nPhone: ${shippingAddress.phone}`,
-        country: shippingAddress.country,
+        amount:  grandTotal,
+        items:   orderItems,
+        shipping_details: {
+          fullName: shippingAddress.fullName,
+          email:    shippingAddress.email,
+          phone:    shippingAddress.phone,
+          address:  shippingAddress.address,
+          city:     shippingAddress.city,
+          state:    shippingAddress.state,
+          pincode:  shippingAddress.pincode,
+          country:  shippingAddress.country,
+        },
         coupon_code: appliedCoupon ? appliedCoupon.code : null,
       }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
 
       const { order_id, amount, currency, key_id } = response.data;
 
-      // Configure Razorpay
       const options = {
-        key: key_id,
-        amount: amount,
-        currency: currency,
-        name: 'André García',
+        key:         key_id,
+        amount,
+        currency,
+        name:        'André García',
         description: 'Premium Cigar Containers',
-        order_id: order_id,
-        handler: async function (response) {
+        order_id,
+        handler: async function (rzpResponse) {
           try {
-            // Verify payment
             const verifyResponse = await api.post('/payment/verify-payment', {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
+              razorpay_order_id:   rzpResponse.razorpay_order_id,
+              razorpay_payment_id: rzpResponse.razorpay_payment_id,
+              razorpay_signature:  rzpResponse.razorpay_signature,
             }, {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-              }
+              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
 
             if (verifyResponse.data.success) {
@@ -213,31 +283,25 @@ const CheckoutPage = () => {
             } else {
               setError('Payment verification failed. Please contact support.');
             }
-          } catch (error) {
-            console.error('Payment verification error:', error);
+          } catch (verifyErr) {
+            console.error('Payment verification error:', verifyErr);
             setError('Payment verification failed. Please contact support.');
           }
         },
         prefill: {
-          name: shippingAddress.fullName,
-          email: shippingAddress.email,
+          name:    shippingAddress.fullName,
+          email:   shippingAddress.email,
           contact: shippingAddress.phone,
         },
-        theme: {
-          color: '#8b4513',
-        },
-        modal: {
-          ondismiss: function() {
-            setIsLoading(false);
-          }
-        }
+        theme: { color: '#8b4513' },
+        modal: { ondismiss: () => setIsLoading(false) },
       };
 
       const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response) {
-        console.error('Payment failed:', response.error);
+      rzp.on('payment.failed', (rzpResponse) => {
+        console.error('Payment failed:', rzpResponse.error);
         setError(
-          response.error?.description ||
+          rzpResponse.error?.description ||
           'Payment failed. Please try again or use a different payment method.'
         );
         setIsLoading(false);
@@ -262,9 +326,7 @@ const CheckoutPage = () => {
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
               <CardTitle className="text-2xl font-light">Order Placed Successfully!</CardTitle>
-              <CardDescription>
-                Your payment has been confirmed
-              </CardDescription>
+              <CardDescription>Your payment has been confirmed</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-2">
@@ -276,14 +338,10 @@ const CheckoutPage = () => {
             </CardContent>
             <div className="p-6 pt-0 flex flex-col space-y-3">
               <Button asChild className="w-full">
-                <Link href="/orders">
-                  View My Orders
-                </Link>
+                <Link href="/orders">View My Orders</Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link href="/">
-                  Continue Shopping
-                </Link>
+                <Link href="/">Continue Shopping</Link>
               </Button>
             </div>
           </Card>
@@ -292,9 +350,7 @@ const CheckoutPage = () => {
     );
   }
 
-  if (!isAuthenticated || items.length === 0) {
-    return null; // Will redirect
-  }
+  if (!isAuthenticated || items.length === 0) return null;
 
   return (
     <div className="min-h-screen bg-background py-8">
@@ -302,15 +358,13 @@ const CheckoutPage = () => {
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/cart">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+            <Link href="/cart"><ArrowLeft className="h-5 w-5" /></Link>
           </Button>
           <h1 className="text-3xl font-light">Checkout</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Shipping Information */}
+          {/* ── Shipping Information ───────────────────────────────────────── */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -320,12 +374,12 @@ const CheckoutPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Name + Email */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fullName">Full Name *</Label>
                     <Input
-                      id="fullName"
-                      name="fullName"
+                      id="fullName" name="fullName"
                       value={shippingAddress.fullName}
                       onChange={handleInputChange}
                       placeholder="Enter your full name"
@@ -334,9 +388,7 @@ const CheckoutPage = () => {
                   <div>
                     <Label htmlFor="email">Email *</Label>
                     <Input
-                      id="email"
-                      name="email"
-                      type="email"
+                      id="email" name="email" type="email"
                       value={shippingAddress.email}
                       onChange={handleInputChange}
                       placeholder="Enter your email"
@@ -344,66 +396,86 @@ const CheckoutPage = () => {
                   </div>
                 </div>
 
+                {/* Phone */}
                 <div>
-                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Label htmlFor="phone" className="flex items-center gap-1">
+                    <Phone className="h-3.5 w-3.5" />
+                    Phone Number *
+                  </Label>
                   <Input
-                    id="phone"
-                    name="phone"
+                    id="phone" name="phone"
                     value={shippingAddress.phone}
                     onChange={handleInputChange}
-                    placeholder="Enter your phone number"
+                    placeholder={isInternational ? '+1 212 555 0100 (include country code)' : '10-digit mobile number'}
                   />
+                  {isInternational && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Include your country dialling code (e.g. +1, +44, +971).
+                    </p>
+                  )}
                 </div>
 
+                {/* Street address */}
                 <div>
-                  <Label htmlFor="address">Address *</Label>
+                  <Label htmlFor="address">Street Address *</Label>
                   <Input
-                    id="address"
-                    name="address"
+                    id="address" name="address"
                     value={shippingAddress.address}
                     onChange={handleInputChange}
-                    placeholder="Enter your complete address"
+                    placeholder="House / flat number, street, area"
                   />
                 </div>
 
+                {/* Country — searchable full list */}
                 <div>
-                  <Label htmlFor="country">Country *</Label>
+                  <Label htmlFor="countrySearch" className="flex items-center gap-1">
+                    <Globe className="h-3.5 w-3.5" />
+                    Country *
+                  </Label>
+                  <Input
+                    id="countrySearch"
+                    value={countrySearch || shippingAddress.country}
+                    onChange={(e) => {
+                      setCountrySearch(e.target.value);
+                    }}
+                    placeholder="Type to search countries..."
+                    className="mb-1"
+                    autoComplete="off"
+                  />
                   <select
-                    id="country"
-                    name="country"
+                    id="country" name="country"
                     value={shippingAddress.country}
                     onChange={handleInputChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    size={countrySearch ? Math.min(filteredCountries.length + 1, 6) : 1}
+                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <option value="India">India</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Germany">Germany</option>
-                    <option value="France">France</option>
-                    <option value="UAE">UAE</option>
-                    <option value="Singapore">Singapore</option>
-                    <option value="Japan">Japan</option>
-                    <option value="Other">Other (International)</option>
+                    {filteredCountries.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
                   </select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Currently selected: <strong>{shippingAddress.country}</strong>
+                  </p>
                 </div>
 
+                {/* International shipping notice */}
                 {isInternational && (
                   <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
                     <Globe className="h-4 w-4 text-amber-600" />
                     <AlertDescription className="text-amber-800 dark:text-amber-200">
-                      <strong>International Shipping:</strong> A flat fee of <strong>$75 USD</strong> ({formatPrice(INTERNATIONAL_SHIPPING_INR)}) applies for all deliveries outside India.
+                      <strong>International Shipping:</strong> A flat fee of{' '}
+                      <strong>$75 USD</strong> ({formatPrice(INTERNATIONAL_SHIPPING_INR)}) applies
+                      for all deliveries outside India.
                     </AlertDescription>
                   </Alert>
                 )}
 
+                {/* City, State, Pincode */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="city">City *</Label>
                     <Input
-                      id="city"
-                      name="city"
+                      id="city" name="city"
                       value={shippingAddress.city}
                       onChange={handleInputChange}
                       placeholder="City"
@@ -412,29 +484,35 @@ const CheckoutPage = () => {
                   <div>
                     <Label htmlFor="state">State / Province *</Label>
                     <Input
-                      id="state"
-                      name="state"
+                      id="state" name="state"
                       value={shippingAddress.state}
                       onChange={handleInputChange}
                       placeholder="State / Province"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="pincode">Pincode / ZIP *</Label>
+                    <Label htmlFor="pincode">
+                      {isInternational ? 'ZIP / Postal Code *' : 'PIN Code *'}
+                    </Label>
                     <Input
-                      id="pincode"
-                      name="pincode"
+                      id="pincode" name="pincode"
                       value={shippingAddress.pincode}
                       onChange={handleInputChange}
-                      placeholder="Pincode / ZIP"
+                      placeholder={isInternational ? 'e.g. 10001 or SW1A 1AA' : '6-digit PIN code'}
+                      maxLength={isInternational ? 15 : 6}
                     />
+                    {!isInternational && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Must be exactly 6 digits (e.g. 110001).
+                      </p>
+                    )}
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Order Summary */}
+          {/* ── Order Summary ──────────────────────────────────────────────── */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -445,7 +523,7 @@ const CheckoutPage = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {items.map((item) => {
-                  const product = item.products || item;
+                  const product  = item.products || item;
                   const override = item.price_override != null ? parseFloat(item.price_override) : null;
                   const unitPrice = override || parseFloat(product.sale_price || product.price);
                   let customization = null;
@@ -458,7 +536,7 @@ const CheckoutPage = () => {
                         {product.image_url ? (
                           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-md" />
                         ) : (
-                          <div className="w-8 h-8 bg-primary/20 rounded"></div>
+                          <div className="w-8 h-8 bg-primary/20 rounded" />
                         )}
                       </div>
                       <div className="flex-1">
@@ -466,9 +544,11 @@ const CheckoutPage = () => {
                         <p className="text-xs text-muted-foreground">{product.category}</p>
                         {customization && (
                           <div className="text-[11px] text-muted-foreground mt-1 space-y-0.5">
-                            {Object.entries(customization).filter(([, v]) => v && v !== 'N/A').map(([k, v]) => (
-                              <span key={k} className="block capitalize">{k}: {v}</span>
-                            ))}
+                            {Object.entries(customization)
+                              .filter(([, v]) => v && v !== 'N/A')
+                              .map(([k, v]) => (
+                                <span key={k} className="block capitalize">{k}: {v}</span>
+                              ))}
                           </div>
                         )}
                         <div className="flex items-center justify-between mt-2">
@@ -484,7 +564,7 @@ const CheckoutPage = () => {
 
                 <Separator />
 
-                {/* Coupon Code */}
+                {/* Coupon */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium flex items-center gap-1">
                     <Tag className="h-4 w-4" />
@@ -493,7 +573,9 @@ const CheckoutPage = () => {
                   {appliedCoupon ? (
                     <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg">
                       <div>
-                        <p className="text-sm font-semibold text-green-700 dark:text-green-400 font-mono">{appliedCoupon.code}</p>
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-400 font-mono">
+                          {appliedCoupon.code}
+                        </p>
                         <p className="text-xs text-green-600 dark:text-green-500">
                           {appliedCoupon.discount_type === 'percent'
                             ? `${appliedCoupon.discount_value}% off`
@@ -501,7 +583,11 @@ const CheckoutPage = () => {
                           {' · '}Saving {formatPrice(appliedCoupon.discount_amount)}
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={removeCoupon} className="h-7 w-7 p-0 text-muted-foreground hover:text-red-500">
+                      <Button
+                        variant="ghost" size="sm"
+                        onClick={removeCoupon}
+                        className="h-7 w-7 p-0 text-muted-foreground hover:text-red-500"
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -524,13 +610,12 @@ const CheckoutPage = () => {
                       </Button>
                     </div>
                   )}
-                  {couponError && (
-                    <p className="text-xs text-red-500">{couponError}</p>
-                  )}
+                  {couponError && <p className="text-xs text-red-500">{couponError}</p>}
                 </div>
 
                 <Separator />
 
+                {/* Totals */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal:</span>
@@ -546,7 +631,10 @@ const CheckoutPage = () => {
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span>Shipping:</span>
+                    <span className="flex items-center gap-1">
+                      {isInternational && <Globe className="h-3 w-3 text-amber-500" />}
+                      {isInternational ? 'International Shipping ($75 USD):' : 'Shipping:'}
+                    </span>
                     {isInternational ? (
                       <span className="text-amber-600 font-medium">{formatPrice(shippingChargeINR)}</span>
                     ) : (
@@ -562,6 +650,11 @@ const CheckoutPage = () => {
                     <span>Total:</span>
                     <span className="text-primary">{formatPrice(grandTotal)}</span>
                   </div>
+                  {isInternational && (
+                    <p className="text-xs text-amber-600 text-right">
+                      Includes $75 USD international shipping fee
+                    </p>
+                  )}
                 </div>
 
                 {error && (
@@ -570,15 +663,21 @@ const CheckoutPage = () => {
                   </Alert>
                 )}
 
-                <Button 
-                  className="w-full" 
-                  size="lg"
+                <Button
+                  className="w-full" size="lg"
                   onClick={handlePayment}
                   disabled={isLoading}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
                   {isLoading ? 'Processing...' : `Pay ${formatPrice(grandTotal)}`}
                 </Button>
+
+                {isInternational && (
+                  <Badge variant="outline" className="w-full justify-center text-amber-700 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
+                    <Globe className="h-3 w-3 mr-1" />
+                    International order — $75 USD shipping included
+                  </Badge>
+                )}
 
                 <p className="text-xs text-muted-foreground text-center">
                   Your payment is secured by Razorpay. Your card details are safe and encrypted.
@@ -592,4 +691,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage; 
+export default CheckoutPage;
