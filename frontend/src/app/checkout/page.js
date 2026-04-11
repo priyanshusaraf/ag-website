@@ -70,7 +70,7 @@ const INTL_POSTAL_REGEX   = /^[A-Z0-9][A-Z0-9\s\-]{2,14}$/i;
 
 const CheckoutPage = () => {
   const router = useRouter();
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, clearCart, loading: cartLoading } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { formatPrice } = useCurrency();
 
@@ -116,7 +116,7 @@ const CheckoutPage = () => {
       router.push('/auth/signin?redirect=/checkout');
       return;
     }
-    if (items.length === 0 && !success && !paymentSuccessRef.current) {
+    if (!cartLoading && items.length === 0 && !success && !paymentSuccessRef.current) {
       router.push('/cart');
       return;
     }
@@ -128,7 +128,7 @@ const CheckoutPage = () => {
     return () => {
       if (document.body.contains(script)) document.body.removeChild(script);
     };
-  }, [isAuthenticated, items.length, router, success]);
+  }, [isAuthenticated, items.length, cartLoading, router, success]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -350,7 +350,7 @@ const CheckoutPage = () => {
     );
   }
 
-  if (!isAuthenticated || items.length === 0) return null;
+  if (!isAuthenticated || (cartLoading ? false : items.length === 0)) return null;
 
   return (
     <div className="min-h-screen bg-background py-8">
@@ -460,14 +460,10 @@ const CheckoutPage = () => {
 
                 {/* International shipping notice */}
                 {isInternational && (
-                  <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
-                    <Globe className="h-4 w-4 text-amber-600" />
-                    <AlertDescription className="text-amber-800 dark:text-amber-200">
-                      <strong>International Shipping:</strong> A flat fee of{' '}
-                      <strong>$75 USD</strong> ({formatPrice(INTERNATIONAL_SHIPPING_INR)}) applies
-                      for all deliveries outside India.
-                    </AlertDescription>
-                  </Alert>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                    <Globe className="h-3.5 w-3.5 flex-shrink-0" />
+                    International delivery — flat $75 USD shipping fee applies
+                  </p>
                 )}
 
                 {/* City, State, Pincode */}
@@ -573,7 +569,7 @@ const CheckoutPage = () => {
                   {appliedCoupon ? (
                     <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg">
                       <div>
-                        <p className="text-sm font-semibold text-green-700 dark:text-green-400 font-mono">
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-400 tracking-wide">
                           {appliedCoupon.code}
                         </p>
                         <p className="text-xs text-green-600 dark:text-green-500">
@@ -597,7 +593,7 @@ const CheckoutPage = () => {
                         value={couponInput}
                         onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
                         placeholder="Enter coupon code"
-                        className="font-mono uppercase text-sm"
+                        className="uppercase text-sm tracking-wide"
                         onKeyDown={(e) => e.key === 'Enter' && applyCoupon()}
                       />
                       <Button
@@ -631,12 +627,9 @@ const CheckoutPage = () => {
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span className="flex items-center gap-1">
-                      {isInternational && <Globe className="h-3 w-3 text-amber-500" />}
-                      {isInternational ? 'International Shipping ($75 USD):' : 'Shipping:'}
-                    </span>
+                    <span>Shipping:</span>
                     {isInternational ? (
-                      <span className="text-amber-600 font-medium">{formatPrice(shippingChargeINR)}</span>
+                      <span className="text-amber-600">{formatPrice(shippingChargeINR)} <span className="text-xs text-muted-foreground">(intl)</span></span>
                     ) : (
                       <span className="text-green-600">Free</span>
                     )}
@@ -650,11 +643,6 @@ const CheckoutPage = () => {
                     <span>Total:</span>
                     <span className="text-primary">{formatPrice(grandTotal)}</span>
                   </div>
-                  {isInternational && (
-                    <p className="text-xs text-amber-600 text-right">
-                      Includes $75 USD international shipping fee
-                    </p>
-                  )}
                 </div>
 
                 {error && (
@@ -671,13 +659,6 @@ const CheckoutPage = () => {
                   <CreditCard className="mr-2 h-4 w-4" />
                   {isLoading ? 'Processing...' : `Pay ${formatPrice(grandTotal)}`}
                 </Button>
-
-                {isInternational && (
-                  <Badge variant="outline" className="w-full justify-center text-amber-700 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
-                    <Globe className="h-3 w-3 mr-1" />
-                    International order — $75 USD shipping included
-                  </Badge>
-                )}
 
                 <p className="text-xs text-muted-foreground text-center">
                   Your payment is secured by Razorpay. Your card details are safe and encrypted.

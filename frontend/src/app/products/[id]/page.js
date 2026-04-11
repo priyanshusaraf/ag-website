@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Star, ArrowLeft, Minus, Plus, Shield, Truck, RotateCcw, Heart, MessageSquare, User, Pen } from 'lucide-react';
+import { Star, ArrowLeft, Minus, Plus, Shield, Truck, RotateCcw, Heart, MessageSquare, User, Pen, X } from 'lucide-react';
 import api, { resolveImageUrl } from '@/lib/utils';
 import { useCart } from '@/contexts/CartContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -31,6 +31,9 @@ const ProductDetail = () => {
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [engravingText, setEngravingText] = useState('');
+  const [initialsMode, setInitialsMode] = useState(false);
+  const [initials, setInitials] = useState(['']);
+  const MAX_INITIALS = 6;
 
   useEffect(() => {
     setLoading(true);
@@ -293,21 +296,113 @@ const ProductDetail = () => {
                 )}
 
                 {/* Engraving / Personalisation */}
-                <div>
-                  <Label htmlFor="engraving" className="flex items-center gap-1.5 text-sm font-medium mb-2">
-                    <Pen className="h-3.5 w-3.5" />
-                    Personalisation / Engraving
-                    <span className="text-xs font-normal text-muted-foreground">(optional)</span>
-                  </Label>
-                  <Input
-                    id="engraving"
-                    value={engravingText}
-                    onChange={(e) => setEngravingText(e.target.value.slice(0, 40))}
-                    placeholder="e.g. Initials, name, or short message..."
-                    maxLength={40}
-                    className="text-sm"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{engravingText.length}/40 characters</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="flex items-center gap-1.5 text-sm font-medium">
+                      <Pen className="h-3.5 w-3.5" />
+                      Personalisation / Engraving
+                      <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                    </Label>
+                    {/* Mode toggle */}
+                    <div className="flex items-center gap-1 text-xs border rounded-md overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInitialsMode(false);
+                          // keep whatever was in text box
+                        }}
+                        className={`px-2 py-1 transition-colors ${!initialsMode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                      >
+                        Text
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInitialsMode(true);
+                          // seed initials boxes from existing text if switching over
+                          const chars = engravingText.split('').filter((_, i) => i < MAX_INITIALS);
+                          setInitials(chars.length ? chars : ['']);
+                        }}
+                        className={`px-2 py-1 transition-colors ${initialsMode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                      >
+                        Initials
+                      </button>
+                    </div>
+                  </div>
+
+                  {initialsMode ? (
+                    /* Individual initial boxes */
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {initials.map((char, idx) => (
+                          <input
+                            key={idx}
+                            type="text"
+                            maxLength={1}
+                            value={char}
+                            data-initial-idx={idx}
+                            onChange={(e) => {
+                              const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                              const next = [...initials];
+                              next[idx] = val;
+                              setInitials(next);
+                              setEngravingText(next.join(''));
+                              if (val && idx < initials.length - 1) {
+                                const nextEl = document.querySelector(`[data-initial-idx="${idx + 1}"]`);
+                                if (nextEl) nextEl.focus();
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Backspace' && !initials[idx] && idx > 0) {
+                                const prev = document.querySelector(`[data-initial-idx="${idx - 1}"]`);
+                                if (prev) prev.focus();
+                              }
+                            }}
+                            className="w-10 h-10 text-center text-base font-semibold uppercase rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                            placeholder="_"
+                          />
+                        ))}
+                        {initials.length < MAX_INITIALS && (
+                          <button
+                            type="button"
+                            onClick={() => { const n = [...initials, '']; setInitials(n); setEngravingText(n.join('')); }}
+                            className="w-10 h-10 rounded-md border border-dashed border-input text-muted-foreground hover:border-primary hover:text-primary transition-colors flex items-center justify-center text-lg"
+                            title="Add initial"
+                          >
+                            +
+                          </button>
+                        )}
+                        {initials.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => { const n = initials.slice(0, -1); setInitials(n); setEngravingText(n.join('')); }}
+                            className="w-10 h-10 rounded-md border border-dashed border-input text-muted-foreground hover:border-destructive hover:text-destructive transition-colors flex items-center justify-center"
+                            title="Remove last initial"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {initials.filter(Boolean).length > 0
+                          ? `Initials: "${initials.join('')}" · ${initials.length} box${initials.length > 1 ? 'es' : ''} (up to ${MAX_INITIALS})`
+                          : `Enter each initial in its own box · up to ${MAX_INITIALS} characters`}
+                      </p>
+                    </div>
+                  ) : (
+                    /* Free-text message */
+                    <div>
+                      <Input
+                        id="engraving"
+                        value={engravingText}
+                        onChange={(e) => setEngravingText(e.target.value.slice(0, 40))}
+                        placeholder="e.g. Initials, name, or short message…"
+                        maxLength={40}
+                        className="text-sm"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">{engravingText.length}/40 characters</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Effective Price (updates when variant selected) */}

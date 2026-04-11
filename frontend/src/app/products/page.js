@@ -318,9 +318,9 @@ const ProductsContent = () => {
               </p>
             </div>
           ) : (
-            <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-4 lg:gap-8`}>
+            <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-4 lg:gap-8 items-stretch`}>
               {filteredProducts.map((product) => (
-              <Card key={product.id} className="group hover:shadow-luxury transition-all duration-300 border-border/50 bg-card">
+              <Card key={product.id} className="group hover:shadow-luxury transition-all duration-300 border-border/50 bg-card flex flex-col">
                 <CardHeader className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
                     {/* Product Image */}
@@ -364,7 +364,7 @@ const ProductsContent = () => {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4 lg:p-6">
+                <CardContent className="p-4 lg:p-6 flex-1">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs lg:text-sm text-muted-foreground">{product.category || 'Uncategorized'}</span>

@@ -345,26 +345,26 @@ const AccountPage = () => {
               <CardContent className="space-y-3">
                 <Button variant="outline" className="w-full justify-start" asChild>
                   <Link href="/orders">
-                    <Package className="h-4 w-4 mr-2" />
-                    View Orders
+                    <Package className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">View Orders</span>
                   </Link>
                 </Button>
                 <Button variant="outline" className="w-full justify-start" asChild>
                   <Link href="/account/messages">
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Messages & Notifications
+                    <MessageSquare className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Messages &amp; Notifications</span>
                   </Link>
                 </Button>
                 <Button variant="outline" className="w-full justify-start" asChild>
                   <Link href="/products">
-                    <Package className="h-4 w-4 mr-2" />
-                    Browse Products
+                    <Package className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Browse Products</span>
                   </Link>
                 </Button>
                 <Button variant="outline" className="w-full justify-start" asChild>
                   <Link href="/auth/forgot-password">
-                    <Key className="h-4 w-4 mr-2" />
-                    Reset Password
+                    <Key className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Reset Password</span>
                   </Link>
                 </Button>
                 <Separator />
@@ -373,8 +373,8 @@ const AccountPage = () => {
                   className="w-full justify-start"
                   onClick={logout}
                 >
-                  <X className="h-4 w-4 mr-2" />
-                  Sign Out
+                  <X className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Sign Out</span>
                 </Button>
               </CardContent>
             </Card>
