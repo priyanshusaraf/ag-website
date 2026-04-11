@@ -20,9 +20,9 @@ const Footer = () => {
               <span className="text-base font-light tracking-wide text-white/60">Andre Garcia</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
-              Handcrafting luxury cigar cases since 2003. 
-              The Rolls-Royce of Cigar Cases — each piece is meticulously 
-              designed to preserve the essence of your finest cigars.
+              Made in Kolkata, India since 2003 by Abhik and Anindya Roy.
+              Featured in Robb Report and Cigar Aficionado.
+              A cigar case built to last a lifetime.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-white/40 hover:text-foreground transition-colors">

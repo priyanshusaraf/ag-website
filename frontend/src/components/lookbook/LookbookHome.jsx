@@ -866,94 +866,43 @@ function Spread8({ data }) {
   );
 }
 
-function PdfThumbnail({ src }) {
-  const canvasRef = React.useRef(null);
-  const [loaded, setLoaded] = React.useState(false);
-  const [err, setErr] = React.useState(false);
-
-  React.useEffect(() => {
-    let cancelled = false;
-
-    async function render() {
-      try {
-        // Dynamically load pdfjs from CDN — no npm install required
-        if (!window.pdfjsLib) {
-          await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-            s.onload = resolve;
-            s.onerror = reject;
-            document.head.appendChild(s);
-          });
-        }
-        const pdfjsLib = window.pdfjsLib;
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        const pdf = await pdfjsLib.getDocument(src).promise;
-        if (cancelled) return;
-        const page = await pdf.getPage(1);
-        if (cancelled) return;
-
-        const scale = 2;
-        const viewport = page.getViewport({ scale });
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-        if (!cancelled) setLoaded(true);
-      } catch {
-        if (!cancelled) setErr(true);
-      }
-    }
-
-    render();
-    return () => { cancelled = true; };
-  }, [src]);
-
-  if (err) {
-    return (
-      <div className="w-full aspect-[3/4] bg-white/[0.03] flex items-center justify-center border border-white/5">
-        <span className="text-white/30 text-xs tracking-wider uppercase">Preview unavailable</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-full aspect-[3/4] overflow-hidden border border-white/5">
-      {!loaded && (
-        <div className="absolute inset-0 bg-white/[0.03] animate-pulse flex items-center justify-center">
-          <span className="text-white/20 text-[10px] tracking-wider uppercase">Loading preview…</span>
-        </div>
-      )}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ display: loaded ? 'block' : 'none' }}
-      />
-    </div>
-  );
-}
-
 function SpreadPublications() {
   const publications = [
     {
-      title: 'Publication I',
-      subtitle: 'Featured Article',
+      outlet: 'Robb Report',
+      issue: 'Front Runner — 2009',
+      headline: 'Recognized among the year\'s most notable new luxury goods.',
+      coverImg: '/imagecompressor/buffalo-horn-collection-main.png',
       href: '/pub-one.pdf',
+      cta: 'Download PDF',
+      external: false,
+      download: true,
     },
     {
-      title: 'Publication II',
-      subtitle: 'Press Coverage',
+      outlet: 'Cigar Aficionado',
+      issue: 'Good Life Guide — 2009',
+      headline: 'Selected for the definitive guide to exceptional cigars and accessories.',
+      coverImg: '/imagecompressor/golf-collection-main.png',
       href: '/pub-two.pdf',
+      cta: 'Download PDF',
+      external: false,
+      download: true,
+    },
+    {
+      outlet: 'Cigar Aficionado',
+      issue: 'March / April 2026',
+      headline: '"If you think whisky is Scotland\'s only contribution to the cigar world, consider these new Cuero y Tweed Harris Tweed cases by accessories manufacturer Andre Garcia."',
+      coverImg: '/harris-tweed-collection/ht-main-cover.jpeg',
+      href: 'https://www.cigaraficionado.com/article/harris-tweed-cases',
+      cta: 'Read Article',
+      external: true,
+      download: false,
     },
   ];
 
   return (
-    <section className="bg-[#0a0a0b] py-20 md:py-28">
-      <div className="max-w-5xl mx-auto px-6">
-        {/* Section header */}
+    <section className="bg-[#0a0a0b] py-20 md:py-28 border-t border-white/5">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <p className="text-[10px] tracking-[0.3em] text-white/40 uppercase mb-4">Press &amp; Media</p>
           <h2 className="text-[clamp(36px,5vw,56px)] font-light tracking-tight text-white">
@@ -961,55 +910,37 @@ function SpreadPublications() {
           </h2>
         </div>
 
-        {/* Publication cards with PDF preview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
           {publications.map((pub, i) => (
             <a
               key={i}
               href={pub.href}
-              download
-              className="group relative bg-[#0a0a0b] transition-all duration-500"
+              target={pub.external ? '_blank' : undefined}
+              rel={pub.external ? 'noopener noreferrer' : undefined}
+              download={pub.download ? true : undefined}
+              className="group flex flex-col"
             >
-              {/* PDF first-page preview */}
-              <div className="relative overflow-hidden mb-6 shadow-luxury group-hover:shadow-[0_28px_70px_rgba(0,0,0,0.8)] transition-shadow duration-500">
-                <PdfThumbnail src={pub.href} />
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-500 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 border border-white/40 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-white"
-                      >
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                      </svg>
-                    </div>
-                    <span className="text-[11px] tracking-[0.15em] text-white/90 uppercase">
-                      Download PDF
-                    </span>
-                  </div>
+              {/* Cover image */}
+              <div className="relative overflow-hidden aspect-[3/4] mb-5 border border-white/5">
+                <img
+                  src={pub.coverImg}
+                  alt={pub.outlet}
+                  className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-white text-[11px] tracking-[0.2em] uppercase font-medium">{pub.outlet}</p>
+                  <p className="text-white/60 text-[10px] tracking-[0.1em] mt-0.5">{pub.issue}</p>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+                  <span className="bg-black/50 backdrop-blur-sm border border-white/20 px-5 py-2.5 text-[10px] tracking-[0.15em] uppercase text-white">
+                    {pub.cta}
+                  </span>
                 </div>
               </div>
-
-              {/* Title + subtitle */}
-              <div className="text-center">
-                <h3 className="text-lg md:text-xl font-light tracking-wide text-white mb-1 group-hover:text-white/90 transition-colors">
-                  {pub.title}
-                </h3>
-                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                  {pub.subtitle}
-                </p>
-              </div>
+              <p className="text-[12px] leading-[1.7] text-white/50 line-clamp-3">
+                {pub.headline}
+              </p>
             </a>
           ))}
         </div>
