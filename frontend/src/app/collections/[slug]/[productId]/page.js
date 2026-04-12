@@ -167,10 +167,6 @@ export default function CollectionProductPage() {
       if (capacity) total += (capacity.price || 0) * quantity;
     }
     
-    if (collection.initialsEmbossing !== false && initialsText.trim()) {
-      total += 2975 * quantity;
-    }
-    
     return total;
   };
 
@@ -515,7 +511,7 @@ export default function CollectionProductPage() {
               {collection.initialsEmbossing !== false && (
                 <div className="space-y-2">
                   <Label className="text-white/80 text-sm font-medium">
-                    Initials Embossing <span className="text-white/40">(+{formatPrice(2975)})</span>
+                    Initials Embossing <span className="text-white/40">(complimentary)</span>
                   </Label>
                   <div className="flex gap-2">
                     {[0, 1, 2].map((index) => (

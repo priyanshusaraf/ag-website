@@ -39,9 +39,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
-      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring' },
-      { value: 'gordo', label: 'Gordo', description: '6" x 60 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: true,
     boneCarvingOptions: true,
@@ -69,8 +67,8 @@ const hardcodedCollections = {
       { value: 'woven-leather', label: 'Woven Leather', price: 850 },
     ],
     sizeOptions: [
-      { value: 'robusto', label: 'Robusto', description: 'For Robusto sizes (Grande)' },
-      { value: 'churchill', label: 'Churchill', description: 'For Churchill sizes (Venti)', price: 425 },
+      { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: true,
     boneCarvingOptions: true,
@@ -92,7 +90,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: false,
     boneCarvingOptions: false,
@@ -124,8 +122,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
-      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: true,
     boneCarvingOptions: true,
@@ -154,8 +151,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring' },
-      { value: 'double-corona', label: 'Double Corona', description: '7.5" x 49 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     capacityOptions: [
       { value: '3-finger', label: '3 Finger', price: 0 },
@@ -189,7 +185,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: false,
     boneCarvingOptions: false,
@@ -215,9 +211,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
-      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring' },
-      { value: 'gordo', label: 'Gordo', description: '6" x 60 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: true,
     boneCarvingOptions: true,
@@ -240,8 +234,8 @@ const hardcodedCollections = {
       { value: 'croco-pattern', label: 'Croco Pattern', price: 1275 },
     ],
     sizeOptions: [
-      { value: 'grande', label: 'Grande', description: 'Standard size' },
-      { value: 'venti', label: 'Venti', description: 'Large size' },
+      { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: false,
     boneCarvingOptions: false,
@@ -270,9 +264,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
-      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring' },
-      { value: 'gordo', label: 'Gordo', description: '6" x 60 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: true,
     boneCarvingOptions: true,
@@ -295,7 +287,8 @@ const hardcodedCollections = {
       { value: 'burgundy', label: 'Burgundy', price: 425 },
     ],
     sizeOptions: [
-      { value: 'standard', label: 'Standard', description: 'One size fits all' },
+      { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: false,
     boneCarvingOptions: false,
@@ -320,8 +313,7 @@ const hardcodedCollections = {
     ],
     sizeOptions: [
       { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
-      { value: 'toro', label: 'Toro', description: '6" x 50 ring' },
-      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     leatherLabel: 'Tweed Pattern',
     zodiacOptions: false,
@@ -344,8 +336,8 @@ const hardcodedCollections = {
       { value: 'carbon-accent', label: 'Carbon Accent', price: 2125 },
     ],
     sizeOptions: [
-      { value: 'grande', label: 'Grande', description: 'Standard size' },
-      { value: 'venti', label: 'Venti', description: 'Large size' },
+      { value: 'robusto', label: 'Robusto', description: '5" x 50 ring' },
+      { value: 'churchill', label: 'Churchill', description: '7" x 48 ring', price: 833 },
     ],
     zodiacOptions: false,
     boneCarvingOptions: false,

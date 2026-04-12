@@ -176,6 +176,8 @@ const createOrder = async (req, res) => {
       `Phone: ${phone.trim()}`;
 
     // ── 4. Server-side price recalculation and stock check ────────────────────
+    // Base price comes from DB; if the client sent a higher price (e.g. Churchill +$10 size
+    // upcharge, leather premium, etc.) that override is honoured — but never below DB price.
     let verifiedTotal = 0;
     const verifiedItems = [];
     for (const item of items) {
@@ -190,7 +192,11 @@ const createOrder = async (req, res) => {
           message: `"${product.name}" is out of stock or has insufficient quantity (available: ${product.stock}).`,
         });
       }
-      const unitPrice = parseFloat(product.sale_price || product.price);
+      const basePrice = parseFloat(product.sale_price || product.price);
+      // Honour price overrides (size upcharges, leather premiums, etc.) but never allow
+      // a price lower than the DB base price to prevent undercharging.
+      const sentPrice = item.price != null ? parseFloat(item.price) : null;
+      const unitPrice = (sentPrice != null && sentPrice >= basePrice) ? sentPrice : basePrice;
       verifiedTotal += unitPrice * item.quantity;
       verifiedItems.push({ ...item, verifiedPrice: unitPrice });
     }
